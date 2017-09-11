@@ -1,4 +1,8 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
+using System.Linq;
+using System.Numerics;
+using TaschenRechnerLib;
 // ReSharper disable RedundantAssignment
 // ReSharper disable UnusedVariable
 // ReSharper disable UnusedMember.Local
@@ -42,16 +46,22 @@ namespace TaschenRechnerTest
       Debug.Assert(val14.ToString() == long.MaxValue.ToString());
       var val15 = new ui(ulong.MaxValue);
       Debug.Assert(val15.ToString() == ulong.MaxValue.ToString());
-      //var val16 = ui.Parse("0");
-      //Debug.Assert(val16.ToString() == "0");
-      //var val17 = ui.Parse("1");
-      //Debug.Assert(val17.ToString() == "1");
-      //var val18 = ui.Parse("100");
-      //Debug.Assert(val18.ToString() == "100");
-      //var val19 = ui.Parse("12345678901234567890");
-      //Debug.Assert(val19.ToString() == "12345678901234567890");
-      //var val20 = ui.Parse(new string('9', 1000000));
-      //Debug.Assert(val20.ToString() == new string('9', 1000000));
+      var val16 = ui.Parse("0");
+      Debug.Assert(val16.ToString() == "0");
+      var val17 = ui.Parse("1");
+      Debug.Assert(val17.ToString() == "1");
+      var val18 = ui.Parse("100");
+      Debug.Assert(val18.ToString() == "100");
+      var val19 = ui.Parse("12345678901234567890");
+      Debug.Assert(val19.ToString() == "12345678901234567890");
+      var val20 = ui.Parse(new string('9', 1000000));
+      Debug.Assert(val20.ToString() == new string('9', 1000000));
+      for (int i = 1; i < 100; i++)
+      {
+        string num = string.Concat(Enumerable.Range(1, i));
+        var val21 = ui.Parse("        " + num + "       ");
+        Debug.Assert(val21.ToString() == num);
+      }
     }
 
     static void Add()
@@ -114,10 +124,103 @@ namespace TaschenRechnerTest
       //Debug.Assert(val15.ToString() == "1000000000");
     }
 
+    static void SpeedCheck()
+    {
+      string num = "     " + string.Concat(Enumerable.Range(0, 1000)) + "     ";
+      string numTrimmed = num.TrimStart(' ', '0').TrimEnd();
+      var big = BigInteger.Parse(num);
+      var simple = UIntSimple.Parse(num);
+      var limbs = UIntLimbs.Parse(num);
+
+      if (big.ToString() != numTrimmed) throw new Exception();
+      if (simple.ToString() != numTrimmed) throw new Exception();
+      if (limbs.ToString() != numTrimmed) throw new Exception();
+
+      const int RetryCount = 5;
+      const int TestCountStr = 300;
+
+      Console.WriteLine();
+      Console.WriteLine("  --- Test ToString() ---");
+
+      Console.WriteLine();
+      Console.WriteLine("  - BigInteger.ToString() -");
+      Console.WriteLine();
+      for (int r = 0; r < RetryCount; r++)
+      {
+        var m = Stopwatch.StartNew();
+        long n = 0;
+        for (int i = 0; i < TestCountStr; i++)
+        {
+          n += big.ToString().Length;
+        }
+        m.Stop();
+        Console.WriteLine("    " + (n == numTrimmed.Length * (long)TestCountStr) + ": " + (m.ElapsedTicks * 1000 / (double)Stopwatch.Frequency).ToString("N1") + " ms");
+      }
+
+      Console.WriteLine();
+      Console.WriteLine("  - UIntSimple.ToString() -");
+      Console.WriteLine();
+      for (int r = 0; r < RetryCount; r++)
+      {
+        var m = Stopwatch.StartNew();
+        long n = 0;
+        for (int i = 0; i < TestCountStr; i++)
+        {
+          n += simple.ToString().Length;
+        }
+        m.Stop();
+        Console.WriteLine("    " + (n == numTrimmed.Length * (long)TestCountStr) + ": " + (m.ElapsedTicks * 1000 / (double)Stopwatch.Frequency).ToString("N1") + " ms");
+      }
+
+      Console.WriteLine();
+      Console.WriteLine("  - UIntLimbs.ToString() -");
+      Console.WriteLine();
+      for (int r = 0; r < RetryCount; r++)
+      {
+        var m = Stopwatch.StartNew();
+        long n = 0;
+        for (int i = 0; i < TestCountStr; i++)
+        {
+          n += limbs.ToString().Length;
+        }
+        m.Stop();
+        Console.WriteLine("    " + (n == numTrimmed.Length * (long)TestCountStr) + ": " + (m.ElapsedTicks * 1000 / (double)Stopwatch.Frequency).ToString("N1") + " ms");
+      }
+
+    }
+
+    static void SpeedDiv()
+    {
+      for (int r = 0; r < 5; r++)
+      {
+        long sum = 0;
+        Stopwatch mess = Stopwatch.StartNew();
+        for (int i = 0; i < int.MaxValue - 1; i++)
+        {
+          sum += UnsafeHelper.Div1000000(i);
+          //sum += i / 1000000;
+          //sum += i / (uint)1000000;
+        }
+        mess.Stop();
+
+        Console.WriteLine(sum.ToString().Replace("2304769387962", "ok") + " (" + mess.ElapsedMilliseconds.ToString("N0") + " ms)");
+      }
+
+      // --- Validate ---
+      for (int i = 0; i < int.MaxValue - 1; i++)
+      {
+        int d1 = UnsafeHelper.Div1000000(i);
+        int d2 = i / 1000000;
+        if (d1 != d2) throw new Exception(i.ToString("N0"));
+      }
+    }
+
     static void Main(string[] args)
     {
-      Constructor();
-      Add();
+      //Constructor();
+      //Add();
+      SpeedCheck();
+      //SpeedDiv();
     }
   }
 }

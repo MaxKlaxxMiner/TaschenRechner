@@ -24,7 +24,7 @@ namespace TaschenRechnerLib
     {
       if (number == null) throw new ArgumentNullException();
       var chars = number.Where(char.IsDigit).ToArray();
-      if (chars.Length == 0 || number.Any(c => !char.IsDigit(c) && !char.IsWhiteSpace(c) && c != '.' && c != ',')) throw new FormatException();
+      if (chars.Length == 0 || number.Any(c => !char.IsDigit(c) && !char.IsWhiteSpace(c))) throw new FormatException();
       int start = 0;
       while (start < chars.Length - 1 && chars[start] == '0') start++;
       return ParseInternalChars(chars, start);
@@ -43,7 +43,7 @@ namespace TaschenRechnerLib
       {
         for (int i = start; i < chars.Length; i++)
         {
-          dg[-i] = (byte)(chars[i] - '0');
+          dg[-i + start] = (byte)(chars[i] - '0');
         }
       }
       return result;

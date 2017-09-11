@@ -76,11 +76,11 @@ namespace TaschenRechnerLib
       }
     }
 
-    ///// <summary>
-    ///// Konstruktor mit einer Zeichenkette, welche aus einer unsignierten Integer-Zahl besteht
-    ///// </summary>
-    ///// <param name="val">Wert, welcher verwendet werden soll</param>
-    //public UIntLimbs(string val) : this(ParseInternal(val)) { }
+    /// <summary>
+    /// Konstruktor mit einer Zeichenkette, welche aus einer unsignierten Integer-Zahl besteht
+    /// </summary>
+    /// <param name="val">Wert, welcher verwendet werden soll</param>
+    public UIntLimbs(string val) : this(ParseInternal(val)) { }
 
     /// <summary>
     /// direkter Konstruktor mit den einzelnen Zahlen

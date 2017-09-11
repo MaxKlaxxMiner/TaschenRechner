@@ -147,13 +147,16 @@ namespace TaschenRechnerLib
     /// <param name="limb">Limb, welches verwendet werden soll</param>
     static unsafe void Mark9Chars(char* p, int limb)
     {
-      int l3 = limb / 1000000; limb -= l3 * 1000000;
+      int l3 = UnsafeHelper.Div1000000(limb); limb -= l3 * 1000000;
       var c3 = DirectChars1K + l3 * 3;
-      int l2 = limb / 1000; limb -= l2 * 1000;
-      var c2 = DirectChars1K + l2 * 3;
       *(ulong*)p = *(ulong*)c3;
+
+      int l2 = UnsafeHelper.Div1000(limb); limb -= l2 * 1000;
+      var c2 = DirectChars1K + l2 * 3;
       *(ulong*)(p + 3) = *(ulong*)c2 & 0xffffffffffff;
-      Mark3Chars(p + 6, limb);
+
+      var c1 = DirectChars1K + limb * 3;
+      *(ulong*)(p + 6) |= *(ulong*)c1 & 0xffffffffffff;
     }
 
     /// <summary>
