@@ -1,9 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace TaschenRechnerLib
 {
-  public partial class UIntSimple
+  public sealed partial class UIntSimple
   {
+    /// <summary>
+    /// merkt sich die einzelnen Zahlen-Werte (niedrigster Wert zu erst)
+    /// </summary>
+    readonly byte[] digits;
+
     /// <summary>
     /// Konstruktor mit einem signierten 8-Bit Wert
     /// </summary>
@@ -52,7 +58,18 @@ namespace TaschenRechnerLib
     /// <param name="val">Wert, welcher verwendet werden soll</param>
     public UIntSimple(ulong val)
     {
+      var d = new List<byte>();
 
+      do
+      {
+        var tmp = val / 10;
+        val -= tmp * 10;
+        d.Add((byte)val);
+        val = tmp;
+      }
+      while (val != 0);
+
+      digits = d.ToArray();
     }
   }
 }

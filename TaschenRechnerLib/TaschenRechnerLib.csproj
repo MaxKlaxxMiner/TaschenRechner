@@ -42,7 +42,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UintSimple\UIntSimple.cs" />
+    <Compile Include="UIntSimple\ToString.cs" />
+    <Compile Include="UIntSimple\UIntSimple.cs" />
+    <Compile Include="UnsafeHelper.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
