@@ -1,4 +1,5 @@
-﻿namespace TaschenRechnerLib
+﻿// ReSharper disable UnusedMember.Global
+namespace TaschenRechnerLib
 {
   public sealed partial class UIntSimple
   {

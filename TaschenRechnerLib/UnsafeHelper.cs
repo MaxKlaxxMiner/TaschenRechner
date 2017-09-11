@@ -6,7 +6,7 @@ namespace TaschenRechnerLib
   /// <summary>
   /// Klasse mit Hilfsmethoden
   /// </summary>
-  public class UnsafeHelper
+  public static class UnsafeHelper
   {
     /// <summary>
     /// schnelle Methode um einen leeren String zu erstellen

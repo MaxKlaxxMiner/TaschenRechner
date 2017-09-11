@@ -1,4 +1,5 @@
-﻿using System;
+﻿#region # using *.*
+using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
@@ -6,6 +7,7 @@ using TaschenRechnerLib;
 // ReSharper disable RedundantAssignment
 // ReSharper disable UnusedVariable
 // ReSharper disable UnusedMember.Local
+#endregion
 
 //using ui = TaschenRechnerLib.UIntSimple;
 using ui = TaschenRechnerLib.UIntLimbs;
