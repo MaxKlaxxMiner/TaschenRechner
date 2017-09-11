@@ -43,6 +43,8 @@
   <ItemGroup>
     <Compile Include="IUInt.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UIntSimple\Add.cs" />
+    <Compile Include="UIntSimple\Operators.cs" />
     <Compile Include="UIntSimple\Parse.cs" />
     <Compile Include="UIntSimple\Const.cs" />
     <Compile Include="UIntSimple\ToString.cs" />
