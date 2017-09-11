@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using TaschenRechnerLib;
+// ReSharper disable RedundantAssignment
 
 namespace TaschenRechnerTest
 {
@@ -61,6 +62,10 @@ namespace TaschenRechnerTest
       for (int i = 64; i < 128; i++) val18 += val18;
       // val18 == 340282366920938463463374607431768211456
       Debug.Assert(val18.ToString() == "340282366920938463463374607431768211456");
+
+      val04++; // 100
+      val04++; // 101
+      val15++; // 1000000000
     }
 
     static void Main(string[] args)
