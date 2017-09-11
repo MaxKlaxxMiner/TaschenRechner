@@ -141,6 +141,7 @@ namespace TaschenRechnerTest
       const int RetryCount = 5;
       const int TestCountStr = 300;
 
+      #region # // --- ToString() Tests ---
       Console.WriteLine();
       Console.WriteLine("  --- Test ToString() ---");
 
@@ -190,6 +191,70 @@ namespace TaschenRechnerTest
       }
 
       Console.WriteLine();
+      #endregion
+
+      #region # // --- Parse() Tests ---
+      Console.WriteLine();
+      Console.WriteLine("  --- Test Parse() ---");
+
+      Console.WriteLine();
+      Console.WriteLine("  - BigInteger.Parse() -");
+      Console.WriteLine();
+      for (int r = 0; r < RetryCount; r++)
+      {
+        var m = Stopwatch.StartNew();
+        for (int i = 0; i < TestCountStr; i++)
+        {
+          var val = BigInteger.Parse(num);
+        }
+        m.Stop();
+        Console.WriteLine("    Parse: " + (m.ElapsedTicks * 1000 / (double)Stopwatch.Frequency).ToString("N2") + " ms");
+      }
+
+      Console.WriteLine();
+      Console.WriteLine("  - UIntSimple.Parse() -");
+      Console.WriteLine();
+      for (int r = 0; r < RetryCount; r++)
+      {
+        var m = Stopwatch.StartNew();
+        for (int i = 0; i < TestCountStr; i++)
+        {
+          var val = UIntSimple.Parse(num);
+        }
+        m.Stop();
+        Console.WriteLine("    Parse: " + (m.ElapsedTicks * 1000 / (double)Stopwatch.Frequency).ToString("N2") + " ms");
+      }
+
+      Console.WriteLine();
+      Console.WriteLine("  - UIntLimbs.Parse() -");
+      Console.WriteLine();
+      for (int r = 0; r < RetryCount; r++)
+      {
+        var m = Stopwatch.StartNew();
+        for (int i = 0; i < TestCountStr; i++)
+        {
+          var val = UIntLimbs.Parse(num);
+        }
+        m.Stop();
+        Console.WriteLine("    Parse: " + (m.ElapsedTicks * 1000 / (double)Stopwatch.Frequency).ToString("N2") + " ms");
+      }
+
+      Console.WriteLine();
+      Console.WriteLine("  - UIntLimbs.ParseFast() -");
+      Console.WriteLine();
+      for (int r = 0; r < RetryCount; r++)
+      {
+        var m = Stopwatch.StartNew();
+        for (int i = 0; i < TestCountStr; i++)
+        {
+          var val = UIntLimbs.ParseFast(num);
+        }
+        m.Stop();
+        Console.WriteLine("    Parse: " + (m.ElapsedTicks * 1000 / (double)Stopwatch.Frequency).ToString("N2") + " ms");
+      }
+
+      Console.WriteLine();
+      #endregion
     }
 
     static void SpeedDiv()

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 // ReSharper disable UnusedMember.Global
@@ -259,7 +258,6 @@ namespace TaschenRechnerLib
 
           var c1 = DirectChars1K + limb * 3;
           *(ulong*)(p + 6) |= *(ulong*)c1 & 0xffffffffffff;
-          p += 9;
         }
       }
     }
