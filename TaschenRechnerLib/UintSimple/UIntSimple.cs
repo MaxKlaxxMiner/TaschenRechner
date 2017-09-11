@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+// ReSharper disable MemberCanBePrivate.Global
 
 namespace TaschenRechnerLib
 {
@@ -70,6 +71,21 @@ namespace TaschenRechnerLib
       while (val != 0);
 
       digits = d.ToArray();
+    }
+
+    /// <summary>
+    /// Konstruktor mit einer Zeichenkette, welche aus einer unsignierten Integer-Zahl besteht
+    /// </summary>
+    /// <param name="val">Wert, welcher verwendet werden soll</param>
+    public UIntSimple(string val) : this(ParseInternal(val)) { }
+
+    /// <summary>
+    /// direkter Konstruktor mit den einzelnen Zahlen
+    /// </summary>
+    /// <param name="digits">Zahlen-Array, welches direkt verwendet werden soll</param>
+    UIntSimple(byte[] digits)
+    {
+      this.digits = digits;
     }
   }
 }

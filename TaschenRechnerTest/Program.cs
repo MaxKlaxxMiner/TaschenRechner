@@ -21,6 +21,11 @@ namespace TaschenRechnerTest
       var val13 = new UIntSimple(uint.MaxValue);
       var val14 = new UIntSimple(long.MaxValue);
       var val15 = new UIntSimple(ulong.MaxValue);
+      var val16 = UIntSimple.Parse("0");
+      var val17 = UIntSimple.Parse("1");
+      var val18 = UIntSimple.Parse("100");
+      var val19 = UIntSimple.Parse("12345678901234567890");
+      var val20 = UIntSimple.Parse(new string('9', 1000000));
     }
   }
 }
