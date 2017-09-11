@@ -156,7 +156,7 @@ namespace TaschenRechnerTest
           n += big.ToString().Length;
         }
         m.Stop();
-        Console.WriteLine("    " + (n == numTrimmed.Length * (long)TestCountStr) + ": " + (m.ElapsedTicks * 1000 / (double)Stopwatch.Frequency).ToString("N1") + " ms");
+        Console.WriteLine("    " + (n == numTrimmed.Length * (long)TestCountStr) + ": " + (m.ElapsedTicks * 1000 / (double)Stopwatch.Frequency).ToString("N2") + " ms");
       }
 
       Console.WriteLine();
@@ -171,7 +171,7 @@ namespace TaschenRechnerTest
           n += simple.ToString().Length;
         }
         m.Stop();
-        Console.WriteLine("    " + (n == numTrimmed.Length * (long)TestCountStr) + ": " + (m.ElapsedTicks * 1000 / (double)Stopwatch.Frequency).ToString("N1") + " ms");
+        Console.WriteLine("    " + (n == numTrimmed.Length * (long)TestCountStr) + ": " + (m.ElapsedTicks * 1000 / (double)Stopwatch.Frequency).ToString("N2") + " ms");
       }
 
       Console.WriteLine();
@@ -186,9 +186,10 @@ namespace TaschenRechnerTest
           n += limbs.ToString().Length;
         }
         m.Stop();
-        Console.WriteLine("    " + (n == numTrimmed.Length * (long)TestCountStr) + ": " + (m.ElapsedTicks * 1000 / (double)Stopwatch.Frequency).ToString("N1") + " ms");
+        Console.WriteLine("    " + (n == numTrimmed.Length * (long)TestCountStr) + ": " + (m.ElapsedTicks * 1000 / (double)Stopwatch.Frequency).ToString("N2") + " ms");
       }
 
+      Console.WriteLine();
     }
 
     static void SpeedDiv()

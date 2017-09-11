@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 // ReSharper disable UnusedMember.Global
@@ -141,25 +142,6 @@ namespace TaschenRechnerLib
     }
 
     /// <summary>
-    /// setzt fix die nächsten 9 Ziffern in die Zeichenfolge
-    /// </summary>
-    /// <param name="p">Zeiger der Zeichenfolge, wohin die Zeichen gesetzt werden sollen</param>
-    /// <param name="limb">Limb, welches verwendet werden soll</param>
-    static unsafe void Mark9Chars(char* p, int limb)
-    {
-      int l3 = UnsafeHelper.Div1000000(limb); limb -= l3 * 1000000;
-      var c3 = DirectChars1K + l3 * 3;
-      *(ulong*)p = *(ulong*)c3;
-
-      int l2 = UnsafeHelper.Div1000(limb); limb -= l2 * 1000;
-      var c2 = DirectChars1K + l2 * 3;
-      *(ulong*)(p + 3) = *(ulong*)c2 & 0xffffffffffff;
-
-      var c1 = DirectChars1K + limb * 3;
-      *(ulong*)(p + 6) |= *(ulong*)c1 & 0xffffffffffff;
-    }
-
-    /// <summary>
     /// setzt fix die nächsten 9 Ziffern mit Tausender-Trennzeichen (3) in die Zeichenfolge
     /// </summary>
     /// <param name="p">Zeiger der Zeichenfolge, wohin die Zeichen gesetzt werden sollen</param>
@@ -242,12 +224,46 @@ namespace TaschenRechnerLib
       fixed (char* tmpP = tmp)
       {
         var p = tmpP + MarkFirstChars(tmpP, limbs[limbs.Length - 1]);
-        for (int i = limbs.Length - 2; i >= 0; i--)
-        {
-          Mark9Chars(p, limbs[i]); p += 9;
-        }
+        if (limbs.Length > 1) FastMark9Steps(limbs, p);
       }
       return tmp;
+    }
+
+    private static unsafe void FastMark9Steps(int[] limbs, char* p)
+    {
+      fixed (int* limbsP = limbs)
+      {
+        for (int i = limbs.Length - 2; i > 0; i--)
+        {
+          int limb = limbsP[i];
+          int l3 = UnsafeHelper.Div1000000(limb); limb -= l3 * 1000000;
+          var c3 = DirectChars1K + l3 * 3;
+          *(ulong*)p = *(ulong*)c3;
+
+          int l2 = UnsafeHelper.Div1000(limb); limb -= l2 * 1000;
+          var c2 = DirectChars1K + l2 * 3;
+          *(ulong*)(p + 3) = *(ulong*)c2;
+
+          var c1 = DirectChars1K + limb * 3;
+          *(ulong*)(p + 6) = *(ulong*)c1;
+          p += 9;
+        }
+        // --- Last-Limb ---
+        {
+          int limb = limbsP[0];
+          int l3 = UnsafeHelper.Div1000000(limb); limb -= l3 * 1000000;
+          var c3 = DirectChars1K + l3 * 3;
+          *(ulong*)p = *(ulong*)c3;
+
+          int l2 = UnsafeHelper.Div1000(limb); limb -= l2 * 1000;
+          var c2 = DirectChars1K + l2 * 3;
+          *(ulong*)(p + 3) = *(ulong*)c2 & 0xffffffffffff;
+
+          var c1 = DirectChars1K + limb * 3;
+          *(ulong*)(p + 6) |= *(ulong*)c1 & 0xffffffffffff;
+          p += 9;
+        }
+      }
     }
 
     /// <summary>
