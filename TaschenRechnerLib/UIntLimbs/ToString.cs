@@ -108,8 +108,6 @@ namespace TaschenRechnerLib
     /// <returns>Anzahl der Ziffer, welche benötigt werden</returns>
     static int GetStrLen(int[] limbs)
     {
-      if (limbs.Length == 1) return GetStrLen(limbs[0]);
-
       return (limbs.Length - 1) * 9 + GetStrLen(limbs[limbs.Length - 1]);
     }
 

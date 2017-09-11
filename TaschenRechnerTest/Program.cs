@@ -220,8 +220,8 @@ namespace TaschenRechnerTest
 
     static void Main(string[] args)
     {
-      //Constructor();
-      //Add();
+      Constructor();
+      Add();
       SpeedCheck();
       //SpeedDiv();
     }
