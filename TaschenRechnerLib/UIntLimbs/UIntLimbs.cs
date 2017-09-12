@@ -13,7 +13,7 @@ namespace TaschenRechnerLib
     /// <summary>
     /// maximale Limb-Größe
     /// </summary>
-    const int LimbMax = 1000000000;
+    const int LimbSize = 1000000000;
 
     /// <summary>
     /// Konstruktor mit einem signierten 8-Bit Wert
@@ -63,17 +63,17 @@ namespace TaschenRechnerLib
     /// <param name="val">Wert, welcher verwendet werden soll</param>
     public UIntLimbs(ulong val)
     {
-      if (val < LimbMax) // ein-limb Wert
+      if (val < LimbSize) // ein-limb Wert
       {
         limbs = new[] { (int)val };
       }
-      else if (val < LimbMax * (ulong)LimbMax) // zwei-limbs Wert
+      else if (val < LimbSize * (ulong)LimbSize) // zwei-limbs Wert
       {
-        limbs = new[] { (int)(val % LimbMax), (int)(val / LimbMax) };
+        limbs = new[] { (int)(val % LimbSize), (int)(val / LimbSize) };
       }
       else // drei-limbs Wert
       {
-        limbs = new[] { (int)(val % LimbMax), (int)(val / LimbMax % LimbMax), (int)(val / LimbMax / LimbMax) };
+        limbs = new[] { (int)(val % LimbSize), (int)(val / LimbSize % LimbSize), (int)(val / LimbSize / LimbSize) };
       }
     }
 
