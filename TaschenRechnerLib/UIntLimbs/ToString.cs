@@ -6,7 +6,7 @@ using System.Text;
 
 namespace TaschenRechnerLib
 {
-  public sealed partial class UIntLimbs
+  public partial struct UIntLimbs
   {
     /// <summary>
     /// merkt sich die Char-Map für die Zahlen von 0 bis 999 ('0','0','0', '0','0','1', '0','0','2', '0','0','3', '0','0','4', usw. bis '9', '9', '9')

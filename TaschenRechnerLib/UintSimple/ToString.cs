@@ -1,7 +1,7 @@
 ﻿// ReSharper disable UnusedMember.Global
 namespace TaschenRechnerLib
 {
-  public sealed partial class UIntSimple
+  public partial struct UIntSimple
   {
     /// <summary>
     /// gibt die Zahl als lesbare Zeichenkette zurück

@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace TaschenRechnerLib
 {
-  public sealed partial class UIntSimple
+  public partial struct UIntSimple
   {
     /// <summary>
     /// liest eine Zeichenkette als Zahl ein

@@ -5,7 +5,7 @@ using System.Diagnostics;
 
 namespace TaschenRechnerLib
 {
-  public sealed partial class UIntLimbs
+  public partial struct UIntLimbs
   {
     /// <summary>
     /// liest eine Zeichenkette als Zahl ein

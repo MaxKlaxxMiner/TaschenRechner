@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace TaschenRechnerLib
 {
-  public sealed partial class UIntSimple
+  public partial struct UIntSimple
   {
     /// <summary>
     /// merkt sich die einzelnen Zahlen-Werte (niedrigster Wert zu erst)

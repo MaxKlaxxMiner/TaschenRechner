@@ -3,7 +3,7 @@
 
 namespace TaschenRechnerLib
 {
-  public sealed partial class UIntLimbs
+  public partial struct UIntLimbs
   {
     /// <summary>
     /// merkt sich die eigentlichen Zahlen-Werte (0-999999999)

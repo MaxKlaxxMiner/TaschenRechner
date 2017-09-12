@@ -3,7 +3,7 @@
 
 namespace TaschenRechnerLib
 {
-  public sealed partial class UIntLimbs
+  public partial struct UIntLimbs
   {
     /// <summary>
     /// merkt sich die ersten 10 Zahlen als Konstanten (0 bis 9)
