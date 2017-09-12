@@ -46,8 +46,8 @@ namespace TaschenRechnerLib
       for (int i = 0; i < add.Length; i++)
       {
         var r = target[i] + add[i] + carry;
-        if (r > 9) { r -= 10; carry = 1; } else carry = 0;
-        target[i] = (byte)r;
+        carry = UnsafeHelper.Div10(r);
+        target[i] = (byte)(r - carry * 10);
       }
 
       // --- carry-flag auf die restlichen Zahlen addieren (sofern notwendig) ---

@@ -45,9 +45,9 @@ namespace TaschenRechnerLib
       // --- normale Addition ---
       for (int i = 0; i < add.Length; i++)
       {
-        var r = target[i] + add[i] + carry;
-        if (r >= LimbSize) { r -= LimbSize; carry = 1; } else carry = 0;
-        target[i] = r;
+        int r = target[i] + add[i] + carry;
+        carry = UnsafeHelper.Div1000000000(r);
+        target[i] = r - carry * LimbSize;
       }
 
       // --- carry-flag auf die restlichen Zahlen addieren (sofern notwendig) ---

@@ -30,6 +30,18 @@ namespace TaschenRechnerLib
     }
 
     /// <summary>
+    /// Teilt eine (positive) Integer-Zahl durch 10 (40% bis 60% schneller als eine direkt Division)
+    /// </summary>
+    /// <param name="val">positiver Wert, welcher durch 10 gerechnet werden soll</param>
+    /// <returns>fertig geteilter Wert</returns>
+    public static int Div10(int val)
+    {
+      const int Div = 10;
+      const int Shift = 34;
+      return (int)((uint)val * (((1UL << Shift) + Div - 1) / Div) >> Shift);
+    }
+
+    /// <summary>
     /// Teilt eine (positive) Integer-Zahl durch 1000 (40% bis 60% schneller als eine direkt Division)
     /// </summary>
     /// <param name="val">positiver Wert, welcher durch 1000 gerechnet werden soll</param>
@@ -51,6 +63,16 @@ namespace TaschenRechnerLib
       const int Div = 1000000;
       const int Shift = 50;
       return (int)((uint)val * (((1UL << Shift) + Div - 1) / Div) >> Shift);
+    }
+
+    /// <summary>
+    /// Teilt eine (positive) Integer-Zahl durch 1000000000 (40% bis 60% schneller als eine direkt Division)
+    /// </summary>
+    /// <param name="val">positiver Wert, welcher durch 1000000000 gerechnet werden soll</param>
+    /// <returns>fertig geteilter Wert</returns>
+    public static int Div1000000000(int val)
+    {
+      return (int)((uint)val + 1147483648u >> 31);
     }
   }
 }
