@@ -50,6 +50,7 @@
     <Compile Include="UIntLimbs\Sub.cs" />
     <Compile Include="UIntLimbs\ToString.cs" />
     <Compile Include="UIntLimbs\UIntLimbs.cs" />
+    <Compile Include="UIntSimple\Mul.cs" />
     <Compile Include="UIntSimple\Sub.cs" />
     <Compile Include="UIntSimple\Add.cs" />
     <Compile Include="UIntSimple\Parse.cs" />

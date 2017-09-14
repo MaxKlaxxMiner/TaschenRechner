@@ -35,12 +35,7 @@ namespace TaschenRechnerLib
     {
       var limbs1 = val1.limbs;
       var limbs2 = val2.limbs;
-      if (limbs2.Length > limbs1.Length)
-      {
-        var tmp = limbs1;
-        limbs1 = limbs2;
-        limbs2 = tmp;
-      }
+      if (limbs2.Length > limbs1.Length) { var tmp = limbs1; limbs1 = limbs2; limbs2 = tmp; }
       if (limbs2.Length == 1 && limbs2[0] == 0) return new UIntLimbs(limbs1); // nichts zu addieren?
 
       int preCarry = limbs1.Length == limbs2.Length && limbs1[limbs1.Length - 1] + limbs2[limbs2.Length - 1] >= LimbSize ? 1 : 0;
