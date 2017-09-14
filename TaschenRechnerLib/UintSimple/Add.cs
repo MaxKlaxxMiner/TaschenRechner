@@ -56,10 +56,10 @@ namespace TaschenRechnerLib
     /// </summary>
     /// <param name="target">Zahlen-Array, worauf die Zahlen add-Zahlen addiert werden sollen</param>
     /// <param name="add">Zahlen-Array, welche für die Addition verwendet werden soll</param>
-    /// <returns></returns>
+    /// <returns>eventuell übrig gebliebenes Carry-Flag</returns>
     static int Add(byte[] target, byte[] add)
     {
-      if (add.Length > target.Length) throw new ArgumentOutOfRangeException();
+      if (add.Length > target.Length) throw new InvalidCalcException();
 
       int carry = 0;
 

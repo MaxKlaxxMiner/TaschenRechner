@@ -10,8 +10,8 @@ using System.Collections.Generic;
 // ReSharper disable UnusedMember.Local
 #endregion
 
-//using ui = TaschenRechnerLib.UIntSimple;
-using ui = TaschenRechnerLib.UIntLimbs;
+using ui = TaschenRechnerLib.UIntSimple;
+//using ui = TaschenRechnerLib.UIntLimbs;
 
 namespace TaschenRechnerTest
 {
@@ -165,11 +165,36 @@ namespace TaschenRechnerTest
       Debug.Assert(!val03.Equals((object)val02));
     }
 
+    static void Sub()
+    {
+      var val01 = new ui(123);
+      Debug.Assert(val01.ToString() == "123");
+      var val02 = new ui(456);
+      Debug.Assert(val02.ToString() == "456");
+      var val03 = val02 - val01;
+      Debug.Assert(val03.ToString() == "333");
+      var val04 = val03 - val01;
+      Debug.Assert(val04.ToString() == "210");
+      var val05 = val04 - val01;
+      Debug.Assert(val05.ToString() == "87");
+      var val06 = val02 - val05;
+      Debug.Assert(val06.ToString() == "369");
+      var val07 = val01 - val05;
+      Debug.Assert(val07.ToString() == "36");
+      var val08 = ui.Parse("1" + new string('0', 100));
+      Debug.Assert(val08.ToString() == "1" + new string('0', 100));
+      var val09 = val08 - ui.One;
+      Debug.Assert(val09.ToString() == new string('9', 100));
+      var val10 = val08 - val09;
+      Debug.Assert(val10.ToString() == "1");
+    }
+
     static void Main(string[] args)
     {
-      Constructor();
-      Add();
-      Compare();
+      //Constructor();
+      //Add();
+      //Compare();
+      Sub();
 
       //SpeedDiv();
       //SpeedCheckStr();

@@ -59,7 +59,7 @@ namespace TaschenRechnerLib
     /// <returns></returns>
     static int Add(int[] target, int[] add)
     {
-      if (add.Length > target.Length) throw new ArgumentOutOfRangeException();
+      if (add.Length > target.Length) throw new InvalidCalcException();
 
       int carry = 0;
 
