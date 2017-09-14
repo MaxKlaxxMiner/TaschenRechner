@@ -38,37 +38,23 @@ namespace TaschenRechnerLib
       }
 
       // --- multiplizieren nach Schulmethode ---
-      var sum = new ulong[limbs1.Length + limbs2.Length];
-      int lim = 19;
+      var result = new int[limbs1.Length + limbs2.Length];
       for (int y = 0; y < limbs2.Length; y++)
       {
+        long carry = 0;
         for (int x = 0; x < limbs1.Length; x++)
         {
-          if (--lim == 0)
-          {
-            ulong mc = 0;
-            for (int i = 0; i < sum.Length; i++)
-            {
-              ulong r = sum[i] + mc;
-              mc = r / LimbSize;
-              sum[i] = r - mc * LimbSize;
-            }
-            lim = 19;
-          }
-          sum[x + y] += (ulong)(limbs1[x] * (long)limbs2[y]);
+          long r = result[x + y] + carry + limbs1[x] * (long)limbs2[y];
+          carry = r / LimbSize;
+          result[x + y] = (int)(r - carry * LimbSize);
+        }
+        for (int c = limbs1.Length + y; carry != 0; c++)
+        {
+          long r = result[c] + carry;
+          carry = r / LimbSize;
+          result[c] = (int)(r - carry * LimbSize);
         }
       }
-
-      // --- Ergebnisse zusammenrechnen ---
-      var result = new int[sum.Length];
-      ulong carry = 0;
-      for (int i = 0; i < result.Length; i++)
-      {
-        ulong r = sum[i] + carry;
-        carry = r / LimbSize;
-        result[i] = (int)(r - carry * LimbSize);
-      }
-      if (carry != 0) throw new InvalidCalcException();
 
       return new UIntLimbs(SubNormalize(result));
     }

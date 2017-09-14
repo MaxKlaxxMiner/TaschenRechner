@@ -11,7 +11,7 @@ namespace TaschenRechnerTest
     static void SpeedCheckMul()
     {
       const int RetryCount = 5;
-      const int TestCount = 17;
+      const int TestCount = 19;
       const string StartValue = "2";
 
       Console.WriteLine();
@@ -33,28 +33,12 @@ namespace TaschenRechnerTest
       //  Console.WriteLine("    " + sum.ToString("N0") + ": " + (m.ElapsedTicks * 1000 / (double)Stopwatch.Frequency).ToString("N2") + " ms");
       //}
 
-      Console.WriteLine();
-      Console.WriteLine("  - UIntSimple.Mul() -");
-      Console.WriteLine();
-      for (int r = 0; r < RetryCount; r++)
-      {
-        var val = UIntSimple.Parse(StartValue);
-        var m = Stopwatch.StartNew();
-        for (int i = 0; i < TestCount; i++)
-        {
-          val *= val;
-        }
-        m.Stop();
-        long sum = val.ToString().Sum(c => (long)(c - '/'));
-        Console.WriteLine("    " + sum.ToString("N0") + ": " + (m.ElapsedTicks * 1000 / (double)Stopwatch.Frequency).ToString("N2") + " ms");
-      }
-
       //Console.WriteLine();
-      //Console.WriteLine("  - UIntLimbs.Mul() -");
+      //Console.WriteLine("  - UIntSimple.Mul() -");
       //Console.WriteLine();
       //for (int r = 0; r < RetryCount; r++)
       //{
-      //  var val = UIntLimbs.Parse(StartValue);
+      //  var val = UIntSimple.Parse(StartValue);
       //  var m = Stopwatch.StartNew();
       //  for (int i = 0; i < TestCount; i++)
       //  {
@@ -64,6 +48,22 @@ namespace TaschenRechnerTest
       //  long sum = val.ToString().Sum(c => (long)(c - '/'));
       //  Console.WriteLine("    " + sum.ToString("N0") + ": " + (m.ElapsedTicks * 1000 / (double)Stopwatch.Frequency).ToString("N2") + " ms");
       //}
+
+      Console.WriteLine();
+      Console.WriteLine("  - UIntLimbs.Mul() -");
+      Console.WriteLine();
+      for (int r = 0; r < RetryCount; r++)
+      {
+        var val = UIntLimbs.Parse(StartValue);
+        var m = Stopwatch.StartNew();
+        for (int i = 0; i < TestCount; i++)
+        {
+          val *= val;
+        }
+        m.Stop();
+        long sum = val.ToString().Sum(c => (long)(c - '/'));
+        Console.WriteLine("    " + sum.ToString("N0") + ": " + (m.ElapsedTicks * 1000 / (double)Stopwatch.Frequency).ToString("N2") + " ms");
+      }
 
       Console.WriteLine();
     }
