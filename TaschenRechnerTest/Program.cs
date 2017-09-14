@@ -211,6 +211,11 @@ namespace TaschenRechnerTest
       Debug.Assert(val09.ToString() == new string('9', 999) + "8" + new string('0', 999) + "1");
       var val10 = val01 * val02 * val03 * val04 * val05;
       Debug.Assert(val10.ToString() == "9896458695813697536");
+      val10 *= val10;
+      val10 *= val10;
+      var val11 = val10 * val10 * val09;
+      string cmp11 = (BigInteger.Parse(val10.ToString()) * BigInteger.Parse(val10.ToString()) * BigInteger.Parse(val09.ToString())).ToString();
+      Debug.Assert(val11.ToString() == cmp11);
     }
 
     static void Main(string[] args)
@@ -219,13 +224,13 @@ namespace TaschenRechnerTest
       //Add();
       //Compare();
       //Sub();
-      //Mul();
+      Mul();
 
       //SpeedDiv();
       //SpeedCheckStr();
       //SpeedCheckAdd();
       //SpeedCheckSub();
-      SpeedCheckMul();
+      //SpeedCheckMul();
     }
   }
 }

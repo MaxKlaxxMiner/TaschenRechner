@@ -38,7 +38,7 @@ namespace TaschenRechnerLib
     {
       var limbs1 = val1.limbs;
       var limbs2 = val2.limbs;
-      if (limbs1.Length > limbs2.Length) { var tmp = limbs1; limbs1 = limbs2; limbs2 = tmp; }
+      if (limbs2.Length > limbs1.Length) { var tmp = limbs1; limbs1 = limbs2; limbs2 = tmp; }
 
       if (limbs2.Length == 1) // Einstellige Sonderfälle abfangen
       {
@@ -50,7 +50,7 @@ namespace TaschenRechnerLib
         }
       }
 
-      if (UseKaratsuba && limbs2.Length > 64)
+      if (UseKaratsuba && limbs2.Length > 16)
       {
         // --- multiplizieren nach Karatsuba ---
         return new UIntLimbs(SubNormalize(MulKaratsuba(limbs1, limbs2)));
