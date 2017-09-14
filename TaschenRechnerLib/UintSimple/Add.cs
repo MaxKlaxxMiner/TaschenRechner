@@ -67,7 +67,8 @@ namespace TaschenRechnerLib
       for (int i = 0; i < add.Length; i++)
       {
         var r = target[i] + add[i] + carry;
-        carry = UnsafeHelper.Div10(r);
+        //carry = UnsafeHelper.Div10(r);
+        carry = (int)((uint)(r + (int)((1u << 31) - 10)) >> 31);
         target[i] = (byte)(r - carry * 10);
       }
 

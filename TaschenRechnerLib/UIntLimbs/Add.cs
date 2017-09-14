@@ -67,7 +67,7 @@ namespace TaschenRechnerLib
       for (int i = 0; i < add.Length; i++)
       {
         int r = target[i] + add[i] + carry;
-        carry = UnsafeHelper.Div1000000000(r);
+        carry = (int)((uint)(r + (int)((1u << 31) - LimbSize)) >> 31);
         target[i] = r - carry * LimbSize;
       }
 

@@ -16,7 +16,7 @@ namespace TaschenRechnerTest
         {
           sum += UnsafeHelper.Div10(i);
           //sum += i / 10;
-          //sum += i / (uint)1000000000;
+          //sum += i / (uint)10;
         }
         mess.Stop();
 

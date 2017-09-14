@@ -194,11 +194,11 @@ namespace TaschenRechnerTest
       //Constructor();
       //Add();
       //Compare();
-      Sub();
+      //Sub();
 
       //SpeedDiv();
       //SpeedCheckStr();
-      //SpeedCheckCalc();
+      SpeedCheckCalc();
     }
   }
 }
