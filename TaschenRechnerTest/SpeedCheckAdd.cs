@@ -23,8 +23,8 @@ namespace TaschenRechnerTest
       Console.WriteLine();
       for (int r = 0; r < RetryCount; r++)
       {
-        var m = Stopwatch.StartNew();
         var val = BigInteger.Parse(StartValue);
+        var m = Stopwatch.StartNew();
         for (int i = 0; i < TestCount; i++)
         {
           val += val;
@@ -39,8 +39,8 @@ namespace TaschenRechnerTest
       Console.WriteLine();
       for (int r = 0; r < RetryCount; r++)
       {
-        var m = Stopwatch.StartNew();
         var val = new UIntSimple(1);
+        var m = Stopwatch.StartNew();
         for (int i = 0; i < TestCount; i++)
         {
           val += val;
@@ -55,8 +55,8 @@ namespace TaschenRechnerTest
       Console.WriteLine();
       for (int r = 0; r < RetryCount; r++)
       {
-        var m = Stopwatch.StartNew();
         var val = UIntLimbs.Parse(StartValue);
+        var m = Stopwatch.StartNew();
         for (int i = 0; i < TestCount; i++)
         {
           val += val;

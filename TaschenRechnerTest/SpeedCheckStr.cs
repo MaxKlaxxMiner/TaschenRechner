@@ -32,8 +32,8 @@ namespace TaschenRechnerTest
       Console.WriteLine();
       for (int r = 0; r < RetryCount; r++)
       {
-        var m = Stopwatch.StartNew();
         long n = 0;
+        var m = Stopwatch.StartNew();
         for (int i = 0; i < TestCountStr; i++)
         {
           n += big.ToString().Length;
@@ -47,8 +47,8 @@ namespace TaschenRechnerTest
       Console.WriteLine();
       for (int r = 0; r < RetryCount; r++)
       {
-        var m = Stopwatch.StartNew();
         long n = 0;
+        var m = Stopwatch.StartNew();
         for (int i = 0; i < TestCountStr; i++)
         {
           n += simple.ToString().Length;
@@ -62,8 +62,8 @@ namespace TaschenRechnerTest
       Console.WriteLine();
       for (int r = 0; r < RetryCount; r++)
       {
-        var m = Stopwatch.StartNew();
         long n = 0;
+        var m = Stopwatch.StartNew();
         for (int i = 0; i < TestCountStr; i++)
         {
           n += limbs.ToString().Length;
