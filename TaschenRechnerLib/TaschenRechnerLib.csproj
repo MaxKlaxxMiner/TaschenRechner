@@ -47,6 +47,7 @@
     <Compile Include="UIntLimbs\Compare.cs" />
     <Compile Include="UIntLimbs\Parse.cs" />
     <Compile Include="UIntLimbs\Const.cs" />
+    <Compile Include="UIntLimbs\Sub.cs" />
     <Compile Include="UIntLimbs\ToString.cs" />
     <Compile Include="UIntLimbs\UIntLimbs.cs" />
     <Compile Include="UIntSimple\Sub.cs" />
