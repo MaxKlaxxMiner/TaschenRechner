@@ -14,7 +14,6 @@ namespace TaschenRechnerTest
       const int TestCount = 100000;
       const string StartValue = "1";
 
-      #region # // --- ToString() Tests ---
       Console.WriteLine();
       Console.WriteLine("  --- Test Add() ---");
 
@@ -67,7 +66,6 @@ namespace TaschenRechnerTest
       }
 
       Console.WriteLine();
-      #endregion
     }
   }
 }

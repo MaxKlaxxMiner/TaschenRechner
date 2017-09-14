@@ -21,7 +21,7 @@ namespace TaschenRechnerLib
     /// <param name="val1">erster Wert, welcher verwendet werden soll</param>
     /// <param name="val2">zweiter Wert, welcher verwendet werden soll</param>
     /// <returns>fertiges Ergebnis</returns>
-    static UIntSimple Mul(UIntSimple val1, UIntSimple val2)
+    static unsafe UIntSimple Mul(UIntSimple val1, UIntSimple val2)
     {
       var digits1 = val1.digits;
       var digits2 = val2.digits;
@@ -39,12 +39,9 @@ namespace TaschenRechnerLib
 
       // --- multiplizieren nach Schulmethode ---
       var sum = new int[digits1.Length + digits2.Length];
-      for (int y = 0; y < digits2.Length; y++)
+      fixed (int* sumP = sum)
       {
-        for (int x = 0; x < digits1.Length; x++)
-        {
-          sum[x + y] += digits1[x] * digits2[y];
-        }
+        MulInternal(digits1, digits2, sumP);
       }
 
       // --- Ergebnisse zusammenrechnen ---
@@ -59,6 +56,29 @@ namespace TaschenRechnerLib
       if (carry != 0) throw new InvalidCalcException();
 
       return new UIntSimple(SubNormalize(result));
+    }
+
+    static unsafe void MulInternal(byte[] digits1, byte[] digits2, int* sum)
+    {
+      for (int y = 0; y < digits2.Length; y++)
+      {
+        var sumP = sum + y;
+        int mul = digits2[y];
+        switch (mul)
+        {
+          case 0: break;
+          case 1: for (int x = 0; x < digits1.Length; x++) sumP[x] += digits1[x]; break;
+          case 2: for (int x = 0; x < digits1.Length; x++) sumP[x] += digits1[x] << 1; break;
+          case 3: for (int x = 0; x < digits1.Length; x++) sumP[x] += digits1[x] * mul; break;
+          case 4: for (int x = 0; x < digits1.Length; x++) sumP[x] += digits1[x] << 2; break;
+          case 5: for (int x = 0; x < digits1.Length; x++) sumP[x] += digits1[x] * mul; break;
+          case 6: for (int x = 0; x < digits1.Length; x++) sumP[x] += digits1[x] * mul; break;
+          case 7: for (int x = 0; x < digits1.Length; x++) sumP[x] += digits1[x] * mul; break;
+          case 8: for (int x = 0; x < digits1.Length; x++) sumP[x] += digits1[x] << 3; break;
+          case 9: for (int x = 0; x < digits1.Length; x++) sumP[x] += digits1[x] * mul; break;
+          default: throw new Exception();
+        }
+      }
     }
   }
 }

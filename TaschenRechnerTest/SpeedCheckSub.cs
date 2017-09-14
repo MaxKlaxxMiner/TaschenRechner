@@ -17,7 +17,6 @@ namespace TaschenRechnerTest
       string subValue2 = new string('3', 9998);
       string subValue3 = new string('1', 9999) + "0";
 
-      #region # // --- ToString() Tests ---
       Console.WriteLine();
       Console.WriteLine("  --- Test Sub() ---");
 
@@ -232,7 +231,6 @@ namespace TaschenRechnerTest
       }
 
       Console.WriteLine();
-      #endregion
     }
   }
 }

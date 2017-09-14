@@ -219,12 +219,13 @@ namespace TaschenRechnerTest
       //Add();
       //Compare();
       //Sub();
-      Mul();
+      //Mul();
 
       //SpeedDiv();
       //SpeedCheckStr();
       //SpeedCheckAdd();
       //SpeedCheckSub();
+      SpeedCheckMul();
     }
   }
 }
