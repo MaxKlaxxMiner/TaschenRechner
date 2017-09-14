@@ -92,5 +92,37 @@ namespace TaschenRechnerLib
 
       return borrow;
     }
+
+    /// <summary>
+    /// subtrahiert zwei Zahlen-Arrays und ein eventuell vorhandenen Borrow-Wert zurück
+    /// </summary>
+    /// <param name="target">Basis-Wert, wovon der zweite Wert subtrahiert werden soll</param>
+    /// <param name="sub">zweite Wert, welcher subtrahiert werden soll</param>
+    /// <param name="subOffset">zusätzlicher Offset</param>
+    /// <returns>1 = wenn Borrow-Flag gesetzt</returns>
+    static int Sub(int[] target, int[] sub, int subOffset)
+    {
+      if (sub.Length + subOffset > target.Length) throw new InvalidCalcException();
+
+      int borrow = 0;
+
+      // --- normale Subtraction ---
+      for (int i = 0; i < sub.Length; i++)
+      {
+        var r = target[i + subOffset] - sub[i] - borrow;
+        borrow = (int)((uint)r >> 31);
+        target[i + subOffset] = r + borrow * LimbSize;
+      }
+
+      // --- borrow-flag von den restlichen Zahlen subtrahieren (sofern notwendig) ---
+      for (int i = sub.Length + subOffset; borrow != 0 && i < target.Length; i++)
+      {
+        var r = target[i] - borrow;
+        borrow = (int)((uint)r >> 31);
+        target[i] = r + borrow * LimbSize;
+      }
+
+      return borrow;
+    }
   }
 }

@@ -1,9 +1,22 @@
-﻿using System;
+﻿#region # using *.*
+using System;
+// ReSharper disable TailRecursiveCall
+// ReSharper disable ConditionIsAlwaysTrueOrFalse
+// ReSharper disable HeuristicUnreachableCode
+// ReSharper disable RedundantIfElseBlock
+// ReSharper disable RedundantLogicalConditionalExpressionOperand
+#pragma warning disable 162
+#endregion
 
 namespace TaschenRechnerLib
 {
   public partial struct UIntLimbs
   {
+    /// <summary>
+    /// gibt an, ob der Karatsuba-Algorythmus benutzt werden soll (bei aufwendigen Multiplikationen)
+    /// </summary>
+    const bool UseKaratsuba = true;
+
     /// <summary>
     /// Operator zum multiplizieren zweier Zahlen
     /// </summary>
@@ -37,14 +50,70 @@ namespace TaschenRechnerLib
         }
       }
 
-      // --- multiplizieren nach Schulmethode ---
-      var result = new int[limbs1.Length + limbs2.Length];
-      fixed (int* resultP = result, limbs1P = limbs1, limbs2P = limbs2)
+      if (UseKaratsuba && limbs2.Length > 64)
       {
-        MulInternal(resultP, limbs1P, limbs1.Length, limbs2P, limbs2.Length);
+        // --- multiplizieren nach Karatsuba ---
+        return new UIntLimbs(SubNormalize(MulKaratsuba(limbs1, limbs2)));
+      }
+      else
+      {
+        // --- multiplizieren nach Schulmethode ---
+        var resultOld = new int[limbs1.Length + limbs2.Length];
+        fixed (int* resultP = resultOld, limbs1P = limbs1, limbs2P = limbs2)
+        {
+          MulInternal(resultP, limbs1P, limbs1.Length, limbs2P, limbs2.Length);
+        }
+        return new UIntLimbs(SubNormalize(resultOld));
+      }
+    }
+
+    static int[] MulKaratsuba(int[] limbs1, int[] limbs2)
+    {
+      int kLen = (Math.Max(limbs1.Length, limbs2.Length) + 1) / 2;
+      Array.Resize(ref limbs1, kLen * 2);
+      Array.Resize(ref limbs2, kLen * 2);
+
+      var result = new int[kLen * 4];
+
+      MulKaratsubaInternal(result, limbs1, limbs2, kLen);
+
+      return result;
+    }
+
+    static unsafe void MulKaratsubaInternal(int[] result, int[] limbs1, int[] limbs2, int kLen)
+    {
+      if (result.Length < 64) // zu klein für Karatsuba? -> Schulmethode verwendet
+      {
+        fixed (int* resultP = result, limbs1P = limbs1, limbs2P = limbs2)
+        {
+          MulInternal(resultP, limbs1P, limbs1.Length, limbs2P, limbs2.Length);
+        }
+        return;
       }
 
-      return new UIntLimbs(SubNormalize(result));
+      int kLenNext = (kLen + 2) / 2;
+      var xh = new int[kLenNext * 2];
+      Array.Copy(limbs1, kLen, xh, 0, kLen);
+      var yh = new int[kLenNext * 2];
+      Array.Copy(limbs2, kLen, yh, 0, kLen);
+      var xl = new int[kLenNext * 2];
+      Array.Copy(limbs1, 0, xl, 0, kLen);
+      var yl = new int[kLenNext * 2];
+      Array.Copy(limbs2, 0, yl, 0, kLen);
+      var p1 = new int[kLenNext * 4];
+      MulKaratsubaInternal(p1, xh, yh, kLenNext);
+      var p2 = new int[kLenNext * 4];
+      MulKaratsubaInternal(p2, xl, yl, kLenNext);
+      if (Add(xh, xl) != 0) throw new InvalidCalcException();
+      if (Add(yh, yl) != 0) throw new InvalidCalcException();
+      var p3 = new int[kLenNext * 4];
+      MulKaratsubaInternal(p3, xh, yh, kLenNext);
+
+      Array.Copy(p2, result, p2.Length);
+      Array.Copy(p1, 0, result, kLen * 2, kLen * 2);
+      if (Add(result, p3, kLen) != 0) throw new InvalidCalcException();
+      if (Add(p1, p2) != 0) throw new InvalidCalcException();
+      if (Sub(result, p1, kLen) != 0) throw new InvalidCalcException();
     }
 
     static unsafe void MulInternal(int* result, int* limbs1, int limbs1Len, int* limbs2, int limbs2Len)

@@ -78,6 +78,38 @@ namespace TaschenRechnerLib
     }
 
     /// <summary>
+    /// addiert zwei Zahlen-Arrays (und gibt ggf. ein Carry-Flag zurück)
+    /// </summary>
+    /// <param name="target">Zahlen-Array, worauf die Zahlen add-Zahlen addiert werden sollen</param>
+    /// <param name="add">Zahlen-Array, welche für die Addition verwendet werden soll</param>
+    /// <param name="addOffset">zusätzlicher Offset</param>
+    /// <returns></returns>
+    static int Add(int[] target, int[] add, int addOffset)
+    {
+      if (add.Length + addOffset > target.Length) throw new InvalidCalcException();
+
+      int carry = 0;
+
+      // --- normale Addition ---
+      for (int i = 0; i < add.Length; i++)
+      {
+        int r = target[i + addOffset] + add[i] + carry;
+        carry = (int)((uint)(r + (int)((1u << 31) - LimbSize)) >> 31);
+        target[i + addOffset] = r - carry * LimbSize;
+      }
+
+      // --- carry-flag auf die restlichen Zahlen addieren (sofern notwendig) ---
+      for (int i = add.Length + addOffset; carry != 0 && i < target.Length; i++)
+      {
+        var r = target[i] + carry;
+        if (r >= LimbSize) r -= LimbSize; else carry = 0;
+        target[i] = r;
+      }
+
+      return carry; // Ergebnis Carry-Flag (1 = wenn die Zahl zu lang war)
+    }
+
+    /// <summary>
     /// fügt ein Carry-Wert hinzu (nur wenn notwendig)
     /// </summary>
     /// <param name="val">Zahlen-Array, welches geprüft werden soll</param>
