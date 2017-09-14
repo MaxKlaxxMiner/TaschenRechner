@@ -10,8 +10,8 @@ using System.Collections.Generic;
 // ReSharper disable UnusedMember.Local
 #endregion
 
-using ui = TaschenRechnerLib.UIntSimple;
-//using ui = TaschenRechnerLib.UIntLimbs;
+//using ui = TaschenRechnerLib.UIntSimple;
+using ui = TaschenRechnerLib.UIntLimbs;
 
 namespace TaschenRechnerTest
 {
