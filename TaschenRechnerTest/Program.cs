@@ -198,7 +198,7 @@ namespace TaschenRechnerTest
 
       //SpeedDiv();
       //SpeedCheckStr();
-      SpeedCheckCalc();
+      SpeedCheckAdd();
     }
   }
 }

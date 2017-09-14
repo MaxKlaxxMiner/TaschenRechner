@@ -8,7 +8,7 @@ namespace TaschenRechnerTest
 {
   static partial class Program
   {
-    static void SpeedCheckCalc()
+    static void SpeedCheckAdd()
     {
       const int RetryCount = 5;
       const int TestCount = 100000;
