@@ -21,7 +21,7 @@ namespace TaschenRechnerLib
     /// <param name="val1">erster Wert, welcher verwendet werden soll</param>
     /// <param name="val2">zweiter Wert, welcher verwendet werden soll</param>
     /// <returns>fertiges Ergebnis</returns>
-    static UIntLimbs Mul(UIntLimbs val1, UIntLimbs val2)
+    static unsafe UIntLimbs Mul(UIntLimbs val1, UIntLimbs val2)
     {
       var limbs1 = val1.limbs;
       var limbs2 = val2.limbs;
@@ -39,24 +39,37 @@ namespace TaschenRechnerLib
 
       // --- multiplizieren nach Schulmethode ---
       var result = new int[limbs1.Length + limbs2.Length];
-      for (int y = 0; y < limbs2.Length; y++)
+      fixed (int* resultP = result, limbs1P = limbs1, limbs2P = limbs2)
       {
-        long carry = 0;
-        for (int x = 0; x < limbs1.Length; x++)
-        {
-          long r = result[x + y] + carry + limbs1[x] * (long)limbs2[y];
-          carry = r / LimbSize;
-          result[x + y] = (int)(r - carry * LimbSize);
-        }
-        for (int c = limbs1.Length + y; carry != 0; c++)
-        {
-          long r = result[c] + carry;
-          carry = r / LimbSize;
-          result[c] = (int)(r - carry * LimbSize);
-        }
+        MulInternal(resultP, limbs1P, limbs1.Length, limbs2P, limbs2.Length);
       }
 
       return new UIntLimbs(SubNormalize(result));
+    }
+
+    static unsafe void MulInternal(int* result, int* limbs1, int limbs1Len, int* limbs2, int limbs2Len)
+    {
+      for (int y = 0; y < limbs2Len; y++)
+      {
+        MulInternalLine(result + y, limbs1, limbs1Len, limbs2[y]);
+      }
+    }
+
+    static unsafe void MulInternalLine(int* result, int* limbs1, int limbs1Len, int limb2)
+    {
+      long carry = 0;
+      for (int x = 0; x < limbs1Len; x++)
+      {
+        long r = *result + carry + limbs1[x] * (long)limb2;
+        carry = r / LimbSize;
+        *result++ = (int)(r - carry * LimbSize);
+      }
+      for (; carry != 0; result++)
+      {
+        long r = *result + carry;
+        carry = r / LimbSize;
+        *result++ = (int)(r - carry * LimbSize);
+      }
     }
   }
 }
