@@ -222,10 +222,10 @@ namespace TaschenRechnerTest
     {
       var val01 = new ui(12345);
       Debug.Assert(val01.ToString() == "12345");
-      var val02 = new ui(5);
-      Debug.Assert(val02.ToString() == "5");
-      var val03 = val02 / val01;
-      Debug.Assert(val03.ToString() == "2469");
+      var val02 = new ui(15);
+      Debug.Assert(val02.ToString() == "15");
+      var val03 = val01 / val02;
+      Debug.Assert(val03.ToString() == "823");
     }
 
     static void Main(string[] args)

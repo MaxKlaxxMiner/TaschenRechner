@@ -50,7 +50,55 @@ namespace TaschenRechnerLib
     /// <param name="quo">Quotient, welcher als Ergebnis ausgegeben wird</param>
     static void DivModInternal(byte[] rem, byte[] div, byte[] quo)
     {
+      for (int digit = rem.Length - div.Length; digit >= 0; digit--)
+      {
+        int count = CountValue(rem, digit, div);
+        for (int i = 0; i < count; i++)
+        {
+          int sb = Sub(rem, div, digit);
+          if (sb != 0) throw new NotImplementedException();
+        }
+        quo[digit] = (byte)count;
+      }
+    }
 
+    /// <summary>
+    /// ermittelt, wie oft der Div-Wert von der gewünschten Stelle im Value-Werte abgezogen werden kann
+    /// </summary>
+    /// <param name="val">Value-Wert, welche benutzt werden soll</param>
+    /// <param name="valOfs">Startposition im Value-Wert</param>
+    /// <param name="div">Div-Wert, welcher abgezogen werden soll</param>
+    /// <returns>Häufigkeit, wie oft der Div-Wert abgezogen werden kann</returns>
+    static int CountValue(byte[] val, int valOfs, byte[] div)
+    {
+      for (int i = 0; i < 9; i++)
+      {
+        if (!SubCheck(val, valOfs, div, i + 1)) return i;
+      }
+      return 9;
+    }
+
+    /// <summary>
+    /// prüft, ob ein bestimmter Wert subtrahiert werden kann
+    /// </summary>
+    /// <param name="val">Wert, wovon subtrahiert werden soll</param>
+    /// <param name="valOfs">Offset innerhalb des Wertes</param>
+    /// <param name="sub">Wert, welcher subtrahiert werden soll</param>
+    /// <param name="subMul">Multiplikator des zu subtrahierenden Wertes</param>
+    /// <returns>true, wenn der Wert subtrahiert werden kann</returns>
+    static bool SubCheck(byte[] val, int valOfs, byte[] sub, int subMul)
+    {
+      int borrow = 0;
+
+      for (int i = 0; i < sub.Length; i++)
+      {
+        var r = val[i + valOfs] - sub[i] * subMul - borrow;
+        borrow = (9 - r) / 10;
+      }
+
+      if (sub.Length + valOfs < val.Length) borrow -= val[sub.Length + valOfs];
+
+      return borrow <= 0;
     }
   }
 }
