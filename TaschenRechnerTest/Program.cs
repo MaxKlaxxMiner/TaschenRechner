@@ -10,8 +10,8 @@ using System.Collections.Generic;
 // ReSharper disable UnusedMember.Local
 #endregion
 
-//using ui = TaschenRechnerLib.UIntSimple;
-using ui = TaschenRechnerLib.UIntLimbs;
+using ui = TaschenRechnerLib.UIntSimple;
+//using ui = TaschenRechnerLib.UIntLimbs;
 
 namespace TaschenRechnerTest
 {
@@ -218,13 +218,24 @@ namespace TaschenRechnerTest
       Debug.Assert(val11.ToString() == cmp11);
     }
 
+    static void Div()
+    {
+      var val01 = new ui(12345);
+      Debug.Assert(val01.ToString() == "12345");
+      var val02 = new ui(5);
+      Debug.Assert(val02.ToString() == "5");
+      var val03 = val02 / val01;
+      Debug.Assert(val03.ToString() == "2469");
+    }
+
     static void Main(string[] args)
     {
       //Constructor();
       //Add();
       //Compare();
       //Sub();
-      Mul();
+      //Mul();
+      Div();
 
       //SpeedDiv();
       //SpeedCheckStr();
