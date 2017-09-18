@@ -574,6 +574,24 @@ namespace TaschenRechnerLib.BigIntegerExtras
     }
 
     /// <summary>
+    /// führt ein direktes Modulo durch
+    /// </summary>
+    /// <param name="regNum">Wert, welcher berechnet werden soll</param>
+    /// <param name="uDen">der dividend</param>
+    /// <returns>fertiger rest</returns>
+    public static uint Mod(ref BigIntegerBuilder regNum, uint uDen)
+    {
+      if (uDen == 1) return 0;
+      if (regNum.iuLast == 0) return regNum.uSmall % uDen;
+      ulong r = 0;
+      for (int index = regNum.iuLast; index >= 0; --index)
+      {
+        r = (r << 32 | regNum.rgu[index]) % uDen;
+      }
+      return (uint)r;
+    }
+
+    /// <summary>
     /// führt die interne Division von großen Zahlen durch
     /// </summary>
     /// <param name="regNum">Dividend, welcher zum Rest wird</param>
@@ -708,6 +726,24 @@ namespace TaschenRechnerLib.BigIntegerExtras
         var bb = new BigIntegerBuilder();
         ModDivCore(ref this, ref dividend, true, ref bb);
         this = bb;
+      }
+    }
+
+    /// <summary>
+    /// führt einen Modulo-Berechnung durch
+    /// </summary>
+    /// <param name="regDen">der zu dividerende Wert</param>
+    public void Mod(ref BigIntegerBuilder regDen)
+    {
+      if (regDen.iuLast == 0)
+      {
+        this.Set(BigIntegerBuilder.Mod(ref this, regDen.uSmall));
+      }
+      else
+      {
+        if (iuLast == 0) return;
+        var regQuo = new BigIntegerBuilder();
+        ModDivCore(ref this, ref regDen, false, ref regQuo);
       }
     }
   }

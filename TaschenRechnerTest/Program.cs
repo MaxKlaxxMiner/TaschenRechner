@@ -244,6 +244,33 @@ namespace TaschenRechnerTest
       Debug.Assert(val07.ToString() == "17939093537");
     }
 
+    static void Mod()
+    {
+      var val01 = new ui(12345);
+      Debug.Assert(val01.ToString() == "12345");
+      var val02 = new ui(15);
+      Debug.Assert(val02.ToString() == "15");
+      var val03 = val01 % val02;
+      Debug.Assert(val03.ToString() == "0");
+      val03 = new ui(823);
+      var val04 = new ui(10000000000000000000ul);
+      Debug.Assert(val04.ToString() == "10000000000000000000");
+      var val05 = val04 % val03;
+      Debug.Assert(val05.ToString() == "467");
+      var val06 = val04 % val05;
+      Debug.Assert(val06.ToString() == "139");
+      var val07 = new ui(1793909353712311ul);
+      Debug.Assert(val07.ToString() == "1793909353712311");
+      var val08 = val04 % val07;
+      Debug.Assert(val08.ToString() == "749262407578486");
+      var val09 = val04 + new ui(1044646946133826ul);
+      Debug.Assert(val09.ToString() == "10001044646946133826");
+      var val10 = val09 / val07;
+      Debug.Assert(val10.ToString() == "5575");
+      var val11 = val09 % val07;
+      Debug.Assert(val11.ToString() == "1");
+    }
+
     static void Main(string[] args)
     {
       //Constructor();
@@ -251,7 +278,8 @@ namespace TaschenRechnerTest
       //Compare();
       //Sub();
       //Mul();
-      Div();
+      //Div();
+      Mod();
 
       //SpeedDiv();
       //SpeedCheckStr();
@@ -262,7 +290,7 @@ namespace TaschenRechnerTest
 
       var b = new BigInteger(ulong.MaxValue);
       var str = b.ToString();
-      b /= b;
+      b %= b;
       b++;
     }
   }

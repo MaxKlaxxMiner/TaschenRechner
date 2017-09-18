@@ -58,6 +58,7 @@
     <Compile Include="UIntBig\UIntBig.cs" />
     <Compile Include="UIntLimbs\Add.cs" />
     <Compile Include="UIntLimbs\Compare.cs" />
+    <Compile Include="UIntBig\Mod.cs" />
     <Compile Include="UIntLimbs\Div.cs" />
     <Compile Include="UIntLimbs\Mul.cs" />
     <Compile Include="UIntLimbs\Parse.cs" />
