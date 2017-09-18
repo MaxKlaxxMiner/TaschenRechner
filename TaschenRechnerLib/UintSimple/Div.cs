@@ -25,7 +25,7 @@ namespace TaschenRechnerLib
     {
       if (div.digits.Length == 1)
       {
-        switch(div.digits[0])
+        switch (div.digits[0])
         {
           case 0: throw new DivideByZeroException();
           case 1: return val; // x / 1 == x
@@ -71,11 +71,17 @@ namespace TaschenRechnerLib
     /// <returns>Häufigkeit, wie oft der Div-Wert abgezogen werden kann</returns>
     static int CountValue(byte[] val, int valOfs, byte[] div)
     {
-      for (int i = 0; i < 9; i++)
+      int counter = val[valOfs + div.Length - 1];
+      if (valOfs + div.Length < val.Length) counter += val[valOfs + div.Length] * 10;
+      counter /= div[div.Length - 1];
+      if (!SubCheck(val, valOfs, div, counter))
       {
-        if (!SubCheck(val, valOfs, div, i + 1)) return i;
+        counter--;
+        while (!SubCheck(val, valOfs, div, counter)) counter--;
+        return counter;
       }
-      return 9;
+      while (SubCheck(val, valOfs, div, counter + 1)) counter++;
+      return counter;
     }
 
     /// <summary>
