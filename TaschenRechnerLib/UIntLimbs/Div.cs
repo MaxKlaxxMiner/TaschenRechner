@@ -1,5 +1,7 @@
 ﻿#region # using *.*
 using System;
+using System.Diagnostics;
+
 // ReSharper disable TailRecursiveCall
 // ReSharper disable ConditionIsAlwaysTrueOrFalse
 // ReSharper disable HeuristicUnreachableCode
@@ -117,28 +119,33 @@ namespace TaschenRechnerLib
       long chk = val[valOfs + div.Length - 1];
       if (valOfs + div.Length < val.Length) chk += (long)val[valOfs + div.Length] * LimbSize;
       int counter = (int)(chk / div[div.Length - 1]);
+
       if (SubCheck(val, valOfs, div, counter))
       {
-        if (!SubCheck(val, valOfs, div, counter + 1)) return counter;
-        throw new NotImplementedException();
+        Debug.Assert(SubCheck(val, valOfs, div, counter + 1) == false);
+        return counter;
       }
       else
       {
-        int jump = 1;
-        for (; ; )
-        {
-          if (SubCheck(val, valOfs, div, counter - jump))
-          {
-            if (jump == 1) return counter - 1;
-            jump >>= 1;
-            continue;
-          }
-          counter -= jump;
-          jump <<= 1;
-        }
-      }
+        //int jump = 1;
+        //while (!SubCheck(val, valOfs, div, counter - jump))
+        //{
+        //  counter -= jump;
+        //  jump *= 20;
+        //}
 
-      return counter;
+        //int startPos = counter - jump;
+        int startPos = (int)(chk / (div[div.Length - 1] + 1));
+        int endePos = counter;
+        do
+        {
+          int mittePos = (startPos + endePos) >> 1;
+          if (!SubCheck(val, valOfs, div, mittePos)) endePos = mittePos; else startPos = mittePos;
+        } while (endePos - startPos > 1);
+
+        while (SubCheck(val, valOfs, div, startPos + 1)) startPos++;
+        return startPos;
+      }
     }
 
     /// <summary>
