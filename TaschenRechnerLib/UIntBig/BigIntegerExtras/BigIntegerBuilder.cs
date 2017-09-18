@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 // ReSharper disable MemberCanBePrivate.Global
 
 namespace TaschenRechnerLib.BigIntegerExtras
@@ -130,6 +129,36 @@ namespace TaschenRechnerLib.BigIntegerExtras
         {
           rgu = new uint[cu];
           fWritable = true;
+        }
+        iuLast = cu - 1;
+      }
+    }
+
+    /// <summary>
+    /// setzt die Größe des internen Buffers
+    /// </summary>
+    /// <param name="cu">Größe, welche eingestellt werden soll</param>
+    /// <param name="cuExtra">zusätzliche optionale Größe</param>
+    void SetSizeKeep(int cu, int cuExtra)
+    {
+      if (cu <= 1)
+      {
+        if (iuLast > 0) uSmall = rgu[0];
+        iuLast = 0;
+      }
+      else
+      {
+        if (!fWritable || rgu.Length < cu)
+        {
+          var numArray = new uint[cu + cuExtra];
+          if (iuLast == 0) numArray[0] = uSmall; else Array.Copy(rgu, numArray, Math.Min(cu, iuLast + 1));
+          rgu = numArray;
+          fWritable = true;
+        }
+        else if (iuLast + 1 < cu)
+        {
+          Array.Clear(rgu, iuLast + 1, cu - iuLast - 1);
+          if (iuLast == 0) rgu[0] = uSmall;
         }
         iuLast = cu - 1;
       }
@@ -380,6 +409,141 @@ namespace TaschenRechnerLib.BigIntegerExtras
         ApplyBorrow(cuSub);
       }
       Trim();
+    }
+
+    /// <summary>
+    /// Multipliziert und Addiert direkt einen Wert
+    /// </summary>
+    /// <param name="uAdd">Wert, welcher geändert werden soll</param>
+    /// <param name="uMul1">erster Faktor</param>
+    /// <param name="uMul2">zweiter Faktor</param>
+    /// <param name="uCarry">vorheriges Carry-Flag</param>
+    /// <returns>neues Carry-Flag</returns>
+    static uint AddMulCarry(ref uint uAdd, uint uMul1, uint uMul2, uint uCarry)
+    {
+      ulong num = (ulong)uMul1 * uMul2 + uAdd + uCarry;
+      uAdd = (uint)num;
+      return (uint)(num >> 32);
+    }
+
+    /// <summary>
+    /// setzt direkt einen bestimmten uint-Wert
+    /// </summary>
+    /// <param name="u">Wert, welcher gesetzt werden soll</param>
+    public void Set(uint u)
+    {
+      uSmall = u;
+      iuLast = 0;
+    }
+
+    /// <summary>
+    /// setzt direkt einen bestimmten ulong-Wert
+    /// </summary>
+    /// <param name="uu">Wert, welcher gesetzt werden soll</param>
+    public void Set(ulong uu)
+    {
+      uint hi = (uint)(uu >> 32);
+      if ((int)hi == 0)
+      {
+        uSmall = (uint)uu;
+        iuLast = 0;
+      }
+      else
+      {
+        SetSizeLazy(2);
+        rgu[0] = (uint)uu;
+        rgu[1] = hi;
+      }
+    }
+
+    /// <summary>
+    /// multipliziert einen direkten Wert inkl Carry-Flag
+    /// </summary>
+    /// <param name="u1">Wert, welcher geändert werden soll</param>
+    /// <param name="u2">der zu multipliziernde Faktor</param>
+    /// <param name="uCarry">zusätzliches Carry-Flag</param>
+    /// <returns>neues Carry-Flag</returns>
+    static uint MulCarry(ref uint u1, uint u2, uint uCarry)
+    {
+      ulong num = (ulong)u1 * u2 + uCarry;
+      u1 = (uint)num;
+      return (uint)(num >> 32);
+    }
+
+    /// <summary>
+    /// multipiziert einen direkten Wert
+    /// </summary>
+    /// <param name="u">Wert, welcher multipliziert werden soll</param>
+    public void Mul(uint u)
+    {
+      if (u == 0)
+      {
+        Set(0u);
+      }
+      else
+      {
+        if (u == 1) return;
+        if (iuLast == 0)
+        {
+          Set(uSmall * (ulong)u);
+        }
+        else
+        {
+          EnsureWritable(1);
+          uint uCarry = 0U;
+          for (int index = 0; index <= iuLast; ++index) uCarry = MulCarry(ref rgu[index], u, uCarry);
+          if ((int)uCarry == 0) return;
+          SetSizeKeep(iuLast + 2, 0);
+          rgu[iuLast] = uCarry;
+        }
+      }
+    }
+
+    /// <summary>
+    /// multipliziert diesen Wert
+    /// </summary>
+    /// <param name="regMul">Wert, welcher für die Multiplikation verwendet werden soll</param>
+    public void Mul(ref BigIntegerBuilder regMul)
+    {
+      if (regMul.iuLast == 0) Mul(regMul.uSmall);
+      else if (iuLast == 0)
+      {
+        uint u = uSmall;
+        switch (u)
+        {
+          case 1U: this = new BigIntegerBuilder(ref regMul); break;
+          case 0U: break;
+          default: Load(ref regMul, 1); Mul(u); break;
+        }
+      }
+      else
+      {
+        int num = iuLast + 1;
+        SetSizeKeep(num + regMul.iuLast, 1);
+        int index1 = num;
+        while (--index1 >= 0)
+        {
+          uint uMul2 = rgu[index1];
+          rgu[index1] = 0;
+          uint uCarry = 0U;
+          for (int index2 = 0; index2 <= regMul.iuLast; ++index2)
+          {
+            uCarry = AddMulCarry(ref rgu[index1 + index2], regMul.rgu[index2], uMul2, uCarry);
+          }
+          if ((int)uCarry != 0)
+          {
+            for (int index2 = index1 + regMul.iuLast + 1; (int)uCarry != 0 && index2 <= iuLast; ++index2)
+            {
+              uCarry = AddCarry(ref rgu[index2], 0U, uCarry);
+            }
+            if ((int)uCarry != 0)
+            {
+              SetSizeKeep(iuLast + 2, 0);
+              rgu[iuLast] = uCarry;
+            }
+          }
+        }
+      }
     }
   }
 }
