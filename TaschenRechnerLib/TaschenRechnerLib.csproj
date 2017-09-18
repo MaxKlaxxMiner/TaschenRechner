@@ -60,6 +60,7 @@
     <Compile Include="UIntLimbs\Compare.cs" />
     <Compile Include="UIntBig\Mod.cs" />
     <Compile Include="UIntLimbs\Div.cs" />
+    <Compile Include="UIntLimbs\Mod.cs" />
     <Compile Include="UIntLimbs\Mul.cs" />
     <Compile Include="UIntLimbs\Parse.cs" />
     <Compile Include="UIntLimbs\Const.cs" />

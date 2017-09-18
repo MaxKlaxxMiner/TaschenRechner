@@ -39,8 +39,8 @@ namespace TaschenRechnerLib
         switch (div.digits[0])
         {
           case 0: throw new DivideByZeroException();
-          case 1: return new UIntSimple(new[] { (byte)(val.digits[0] & 1) }); // x % 1 = x & 1
-          case 2: return new UIntSimple(new[] { (byte)(val.digits[0] & 2) }); // x % 2 = x & 2
+          case 1: return Zero; // x % 1 = 0
+          case 2: return new UIntSimple(new[] { (byte)(val.digits[0] & 1) }); // x % 2 = x & 1
           case 5: return new UIntSimple(new[] { (byte)(val.digits[0] % 5) }); // x % 5 = x % 5
         }
       }

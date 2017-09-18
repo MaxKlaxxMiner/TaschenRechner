@@ -737,7 +737,7 @@ namespace TaschenRechnerLib.BigIntegerExtras
     {
       if (regDen.iuLast == 0)
       {
-        this.Set(BigIntegerBuilder.Mod(ref this, regDen.uSmall));
+        Set(Mod(ref this, regDen.uSmall));
       }
       else
       {

@@ -34,11 +34,11 @@ namespace TaschenRechnerTest
       }
 
       Console.WriteLine();
-      Console.WriteLine("  - UIntSimple.Add() -");
+      Console.WriteLine("  - UIntLimbs.Add() -");
       Console.WriteLine();
       for (int r = 0; r < RetryCount; r++)
       {
-        var val = new UIntSimple(1);
+        var val = UIntLimbs.Parse(StartValue);
         var m = Stopwatch.StartNew();
         for (int i = 0; i < TestCount; i++)
         {
@@ -50,11 +50,11 @@ namespace TaschenRechnerTest
       }
 
       Console.WriteLine();
-      Console.WriteLine("  - UIntLimbs.Add() -");
+      Console.WriteLine("  - UIntBig.Add() -");
       Console.WriteLine();
       for (int r = 0; r < RetryCount; r++)
       {
-        var val = UIntLimbs.Parse(StartValue);
+        var val = UIntBig.Parse(StartValue);
         var m = Stopwatch.StartNew();
         for (int i = 0; i < TestCount; i++)
         {
