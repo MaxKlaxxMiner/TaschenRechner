@@ -320,11 +320,10 @@ namespace TaschenRechnerLib.BigIntegerExtras
       ulong r = 0;
       for (long i = 0; i < count; i++)
       {
-        r += (ulong)target[i] + src[i];
+        r = (ulong)target[i] + src[i] + (r >> 32);
         target[i] = (uint)r;
-        r = r >> 32;
       }
-      return (uint)r;
+      return (uint)(r >> 32);
     }
 
     /// <summary>
