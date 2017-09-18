@@ -254,6 +254,7 @@ namespace TaschenRechnerTest
       //SpeedCheckDiv();
 
       var b = new BigInteger(ulong.MaxValue);
+      var str = b.ToString();
     }
   }
 }
