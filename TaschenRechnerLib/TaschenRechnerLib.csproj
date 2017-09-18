@@ -44,8 +44,12 @@
   <ItemGroup>
     <Compile Include="InvalidCalcException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UIntBig\BigIntegerExtras\BigIntegerBuilder.cs" />
+    <Compile Include="UIntBig\BigIntegerProperties.cs" />
+    <Compile Include="UIntBig\Add.cs" />
+    <Compile Include="UIntBig\Const.cs" />
     <Compile Include="UIntBig\Parse.cs" />
-    <Compile Include="UIntBig\BigIntegerHelpers.cs" />
+    <Compile Include="UIntBig\BigIntegerExtras\BigIntegerHelpers.cs" />
     <Compile Include="UIntBig\ToString.cs" />
     <Compile Include="UIntBig\UIntBig.cs" />
     <Compile Include="UIntLimbs\Add.cs" />

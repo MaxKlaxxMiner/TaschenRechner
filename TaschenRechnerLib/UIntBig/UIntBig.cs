@@ -8,7 +8,7 @@ namespace TaschenRechnerLib
     /// <summary>
     /// merkt sich die eigentlichen Daten der Zahl
     /// </summary>
-    readonly uint[] bits;
+    internal readonly uint[] bits;
 
     /// <summary>
     /// Konstruktor mit einem signierten 8-Bit Wert
@@ -81,7 +81,7 @@ namespace TaschenRechnerLib
     /// direkter Konstruktor mit den einzelnen Zahlen
     /// </summary>
     /// <param name="bits">Bit-Kette, welche direkt verwendet werden soll</param>
-    UIntBig(uint[] bits)
+    internal UIntBig(uint[] bits)
     {
       if (bits == null) throw new ArgumentNullException("bits");
       this.bits = bits;

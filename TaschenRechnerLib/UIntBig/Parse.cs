@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Numerics;
+using TaschenRechnerLib.BigIntegerExtras;
 
 namespace TaschenRechnerLib
 {
@@ -27,7 +28,7 @@ namespace TaschenRechnerLib
       var chars = number.Where(char.IsDigit).ToArray();
       if (chars.Length == 0 || number.Any(c => !char.IsDigit(c) && !char.IsWhiteSpace(c))) throw new FormatException();
 
-      return GetBitsFromOld(BigInteger.Parse(number));
+      return BigIntegerHelpers.GetBitsFromOld(BigInteger.Parse(number));
     }
   }
 }

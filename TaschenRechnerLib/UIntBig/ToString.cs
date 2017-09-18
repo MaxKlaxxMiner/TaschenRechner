@@ -1,4 +1,5 @@
-﻿// ReSharper disable UnusedMember.Global
+﻿using TaschenRechnerLib.BigIntegerExtras;
+// ReSharper disable UnusedMember.Global
 
 namespace TaschenRechnerLib
 {
@@ -10,7 +11,7 @@ namespace TaschenRechnerLib
     /// <returns>lesbare Zeichenkette</returns>
     public override string ToString()
     {
-      return GetOldFromBits(bits).ToString(); // todo -> langsam
+      return BigIntegerHelpers.GetOldFromBits(bits).ToString(); // todo -> langsam
     }
 
     /// <summary>
