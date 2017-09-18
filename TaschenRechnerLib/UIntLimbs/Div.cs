@@ -79,11 +79,17 @@ namespace TaschenRechnerLib
     /// <returns>Häufigkeit, wie oft der Div-Wert abgezogen werden kann</returns>
     static int CountValue(int[] val, int valOfs, int[] div)
     {
-      for (int i = 0; i < int.MaxValue; i++)
+      long chk = val[valOfs + div.Length - 1];
+      if (valOfs + div.Length < val.Length) chk += (long)val[valOfs + div.Length] * LimbSize;
+      int counter = (int)(chk / div[div.Length - 1]);
+      if (!SubCheck(val, valOfs, div, counter))
       {
-        if (!SubCheck(val, valOfs, div, i + 1)) return i;
+        counter--;
+        while (!SubCheck(val, valOfs, div, counter)) counter--;
+        return counter;
       }
-      return int.MaxValue;
+      while (SubCheck(val, valOfs, div, counter + 1)) counter++;
+      return counter;
     }
 
     /// <summary>

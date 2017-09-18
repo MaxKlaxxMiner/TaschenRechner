@@ -54,6 +54,24 @@ namespace TaschenRechnerTest
         Console.WriteLine("    " + sum.ToString("N0") + ": " + (m.ElapsedTicks * 1000 / (double)Stopwatch.Frequency).ToString("N2") + " ms");
       }
 
+      //Console.WriteLine();
+      //Console.WriteLine("  - UIntLimbs.Div() -");
+      //Console.WriteLine();
+      //for (int r = 0; r < RetryCount; r++)
+      //{
+      //  var val = UIntLimbs.Parse(StartValue);
+      //  var div = UIntLimbs.Parse(TestValue);
+      //  var res = val;
+      //  var m = Stopwatch.StartNew();
+      //  for (int i = 0; i < TestCount; i++)
+      //  {
+      //    res = val / div;
+      //  }
+      //  m.Stop();
+      //  long sum = res.ToString().Sum(c => (long)(c - '/'));
+      //  Console.WriteLine("    " + sum.ToString("N0") + ": " + (m.ElapsedTicks * 1000 / (double)Stopwatch.Frequency).ToString("N2") + " ms");
+      //}
+
       Console.WriteLine();
     }
   }

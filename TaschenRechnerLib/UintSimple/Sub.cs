@@ -94,7 +94,7 @@ namespace TaschenRechnerLib
     }
 
     /// <summary>
-    /// subtrahiert zwei Zahlen-Arrays und ein eventuell vorhandenen Borrow-Wert zurück
+    /// subtrahiert zwei Zahlen-Arrays und gibt ein eventuell vorhandenen Borrow-Wert zurück
     /// </summary>
     /// <param name="target">Basis-Wert, wovon der zweite Wert subtrahiert werden soll</param>
     /// <param name="sub">zweite Wert, welcher subtrahiert werden soll</param>
