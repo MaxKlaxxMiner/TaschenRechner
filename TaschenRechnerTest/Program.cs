@@ -137,40 +137,40 @@ namespace TaschenRechnerTest
 
     static void Compare()
     {
-      //var val01 = new ui(123);
-      //var val02 = new ui(123);
-      //Debug.Assert(val01.CompareTo(val02) == 0);
-      //Debug.Assert(val02.CompareTo(val01) == 0);
-      //var val03 = new ui(ulong.MaxValue);
-      //var val04 = new ui(ulong.MaxValue);
-      //Debug.Assert(val03.CompareTo(val04) == 0);
-      //Debug.Assert(val04.CompareTo(val03) == 0);
-      //Debug.Assert(val01.CompareTo(val03) < 0);
-      //Debug.Assert(val03.CompareTo(val01) > 0);
-      //val02++;
-      //Debug.Assert(val01.CompareTo(val02) < 0);
-      //Debug.Assert(val02.CompareTo(val01) > 0);
+      var val01 = new ui(123);
+      var val02 = new ui(123);
+      Debug.Assert(val01.CompareTo(val02) == 0);
+      Debug.Assert(val02.CompareTo(val01) == 0);
+      var val03 = new ui(ulong.MaxValue);
+      var val04 = new ui(ulong.MaxValue);
+      Debug.Assert(val03.CompareTo(val04) == 0);
+      Debug.Assert(val04.CompareTo(val03) == 0);
+      Debug.Assert(val01.CompareTo(val03) < 0);
+      Debug.Assert(val03.CompareTo(val01) > 0);
+      val02++;
+      Debug.Assert(val01.CompareTo(val02) < 0);
+      Debug.Assert(val02.CompareTo(val01) > 0);
 
-      //var list = new List<ui> { val04, val03, val02, val01 };
-      //list.Sort();
-      //Debug.Assert(list[0] == val01);
-      //Debug.Assert(list[1] == val02);
-      //Debug.Assert(list[2] == val03);
-      //Debug.Assert(list[3] == val04);
-      //Debug.Assert(val01 < val02);
-      //Debug.Assert(val02 < val03);
-      //Debug.Assert(val03 == val04);
-      //Debug.Assert(val04 > val01);
+      var list = new List<ui> { val04, val03, val02, val01 };
+      list.Sort();
+      Debug.Assert(list[0] == val01);
+      Debug.Assert(list[1] == val02);
+      Debug.Assert(list[2] == val03);
+      Debug.Assert(list[3] == val04);
+      Debug.Assert(val01 < val02);
+      Debug.Assert(val02 < val03);
+      Debug.Assert(val03 == val04);
+      Debug.Assert(val04 > val01);
 
-      //int hash01 = val01.GetHashCode();
-      //int hash02 = val02.GetHashCode();
-      //Debug.Assert(hash01 != hash02);
+      int hash01 = val01.GetHashCode();
+      int hash02 = val02.GetHashCode();
+      Debug.Assert(hash01 != hash02);
 
-      //int hash03 = val03.GetHashCode();
-      //int hash04 = val04.GetHashCode();
-      //Debug.Assert(hash03 == hash04);
-      //Debug.Assert(val03.Equals((object)val04));
-      //Debug.Assert(!val03.Equals((object)val02));
+      int hash03 = val03.GetHashCode();
+      int hash04 = val04.GetHashCode();
+      Debug.Assert(hash03 == hash04);
+      Debug.Assert(val03.Equals((object)val04));
+      Debug.Assert(!val03.Equals((object)val02));
     }
 
     static void Sub()
@@ -247,8 +247,8 @@ namespace TaschenRechnerTest
     static void Main(string[] args)
     {
       //Constructor();
-      Add();
-      //Compare();
+      //Add();
+      Compare();
       //Sub();
       //Mul();
       //Div();

@@ -29,7 +29,7 @@ namespace TaschenRechnerLib.BigIntegerExtras
       var val = number.ToByteArray();
       var tmp = new uint[(val.Length + sizeof(uint) - 1) / sizeof(uint)];
       Buffer.BlockCopy(val, 0, tmp, 0, val.Length);
-      // while (tmp.Length > 1 && tmp[tmp.Length - 1] == 0) Array.Resize(ref tmp, tmp.Length - 1); // normalisieren (optional)
+      while (tmp.Length > 1 && tmp[tmp.Length - 1] == 0) Array.Resize(ref tmp, tmp.Length - 1); // normalisieren
       return tmp;
     }
   }

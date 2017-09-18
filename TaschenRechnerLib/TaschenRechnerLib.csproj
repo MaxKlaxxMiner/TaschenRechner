@@ -47,6 +47,7 @@
     <Compile Include="UIntBig\BigIntegerExtras\BigIntegerBuilder.cs" />
     <Compile Include="UIntBig\BigIntegerProperties.cs" />
     <Compile Include="UIntBig\Add.cs" />
+    <Compile Include="UIntBig\Compare.cs" />
     <Compile Include="UIntBig\Const.cs" />
     <Compile Include="UIntBig\Parse.cs" />
     <Compile Include="UIntBig\BigIntegerExtras\BigIntegerHelpers.cs" />
