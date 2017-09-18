@@ -6,6 +6,11 @@ namespace TaschenRechnerLib
   public partial struct UIntBig
   {
     /// <summary>
+    /// merkt sich die eigentlichen Daten der Zahl
+    /// </summary>
+    readonly uint[] bits;
+
+    /// <summary>
     /// Konstruktor mit einem signierten 8-Bit Wert
     /// </summary>
     /// <param name="val">Wert, welcher verwendet werden soll (darf nicht kleiner als 0 sein)</param>
@@ -45,7 +50,10 @@ namespace TaschenRechnerLib
     /// Konstruktor mit einem unsignierten 32-Bit Wert
     /// </summary>
     /// <param name="val">Wert, welcher verwendet werden soll</param>
-    public UIntBig(uint val) : this((ulong)val) { }
+    public UIntBig(uint val) : this((ulong)val)
+    {
+      bits = new[] { val };
+    }
 
     /// <summary>
     /// Konstruktor mit einem unsignierten 64-Bit Wert
@@ -53,7 +61,14 @@ namespace TaschenRechnerLib
     /// <param name="val">Wert, welcher verwendet werden soll</param>
     public UIntBig(ulong val)
     {
-      // todo
+      if (val <= uint.MaxValue)
+      {
+        bits = new[] { (uint)val };
+      }
+      else
+      {
+        bits = new[] { (uint)val, (uint)(val >> 32) };
+      }
     }
   }
 }
