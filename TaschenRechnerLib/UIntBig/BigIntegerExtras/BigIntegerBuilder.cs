@@ -1,5 +1,6 @@
 ﻿using System;
 // ReSharper disable MemberCanBePrivate.Global
+// ReSharper disable UnusedMethodReturnValue.Global
 
 namespace TaschenRechnerLib.BigIntegerExtras
 {
@@ -543,6 +544,170 @@ namespace TaschenRechnerLib.BigIntegerExtras
             }
           }
         }
+      }
+    }
+
+    /// <summary>
+    /// führt eine direkte Division mit Rest durch
+    /// </summary>
+    /// <param name="uDen">divisor</param>
+    /// <returns>Rest</returns>
+    public uint DivMod(uint uDen)
+    {
+      if (uDen == 1) return 0;
+      if (iuLast == 0)
+      {
+        uint r = uSmall;
+        uSmall = r / uDen;
+        return r % uDen;
+      }
+      EnsureWritable();
+      ulong carry = 0UL;
+      for (int i = iuLast; i >= 0; i--)
+      {
+        ulong r = carry << 32 | rgu[i];
+        rgu[i] = (uint)(r / uDen);
+        carry = r % uDen;
+      }
+      Trim();
+      return (uint)carry;
+    }
+
+    /// <summary>
+    /// führt die interne Division von großen Zahlen durch
+    /// </summary>
+    /// <param name="regNum">Dividend, welcher zum Rest wird</param>
+    /// <param name="regDen">Divisor</param>
+    /// <param name="fQuo"></param>
+    /// <param name="regQuo"></param>
+    static void ModDivCore(ref BigIntegerBuilder regNum, ref BigIntegerBuilder regDen, bool fQuo, ref BigIntegerBuilder regQuo)
+    {
+      regQuo.Set(0);
+      if (regNum.iuLast < regDen.iuLast) return;
+
+      int cuDen = regDen.iuLast + 1;
+      int cuDiff = regNum.iuLast - regDen.iuLast;
+
+      // Determine whether the result will have cuDiff "digits" or cuDiff+1 "digits".
+      int cuQuo = cuDiff;
+      for (int iu = regNum.iuLast; ; iu--)
+      {
+        if (iu < cuDiff)
+        {
+          cuQuo++;
+          break;
+        }
+        if (regDen.rgu[iu - cuDiff] != regNum.rgu[iu])
+        {
+          if (regDen.rgu[iu - cuDiff] < regNum.rgu[iu]) cuQuo++;
+          break;
+        }
+      }
+
+      if (cuQuo == 0) return;
+
+      if (fQuo) regQuo.SetSizeLazy(cuQuo);
+
+      // Get the uint to use for the trial divisions. We normalize so the high bit is set.
+      uint uDen = regDen.rgu[cuDen - 1];
+      uint uDenNext = regDen.rgu[cuDen - 2];
+      int cbitShiftLeft = BigIntegerHelpers.CbitHighZero(uDen);
+      int cbitShiftRight = 32 - cbitShiftLeft;
+      if (cbitShiftLeft > 0)
+      {
+        uDen = (uDen << cbitShiftLeft) | (uDenNext >> cbitShiftRight);
+        uDenNext <<= cbitShiftLeft;
+        if (cuDen > 2) uDenNext |= regDen.rgu[cuDen - 3] >> cbitShiftRight;
+      }
+
+      // Allocate and initialize working space.
+      regNum.EnsureWritable();
+
+      for (int iu = cuQuo; --iu >= 0; )
+      {
+        // Get the high (normalized) bits of regNum.
+        uint uNumHi = (iu + cuDen <= regNum.iuLast) ? regNum.rgu[iu + cuDen] : 0;
+
+        ulong uuNum = (ulong)uNumHi << 32 | regNum.rgu[iu + cuDen - 1];
+        uint uNumNext = regNum.rgu[iu + cuDen - 2];
+        if (cbitShiftLeft > 0)
+        {
+          uuNum = (uuNum << cbitShiftLeft) | (uNumNext >> cbitShiftRight);
+          uNumNext <<= cbitShiftLeft;
+          if (iu + cuDen >= 3) uNumNext |= regNum.rgu[iu + cuDen - 3] >> cbitShiftRight;
+        }
+
+        // Divide to get the quotient digit.
+        ulong uuQuo = uuNum / uDen;
+        ulong uuRem = (uint)(uuNum % uDen);
+        if (uuQuo > uint.MaxValue)
+        {
+          uuRem += uDen * (uuQuo - uint.MaxValue);
+          uuQuo = uint.MaxValue;
+        }
+        while (uuRem <= uint.MaxValue && uuQuo * uDenNext > (uuRem << 32 | uNumNext))
+        {
+          uuQuo--;
+          uuRem += uDen;
+        }
+
+        // Multiply and subtract. Note that uuQuo may be 1 too large. If we have a borrow
+        // at the end, we'll add the denominator back on and decrement uuQuo.
+        if (uuQuo > 0)
+        {
+          ulong uuBorrow = 0;
+          for (int iu2 = 0; iu2 < cuDen; iu2++)
+          {
+            uuBorrow += regDen.rgu[iu2] * uuQuo;
+            uint uSub = (uint)uuBorrow;
+            uuBorrow >>= 32;
+            if (regNum.rgu[iu + iu2] < uSub) uuBorrow++;
+            regNum.rgu[iu + iu2] -= uSub;
+          }
+
+          if (uNumHi < uuBorrow)
+          {
+            // Add, tracking carry.
+            uint uCarry = 0;
+            for (int iu2 = 0; iu2 < cuDen; iu2++)
+            {
+              uCarry = AddCarry(ref regNum.rgu[iu + iu2], regDen.rgu[iu2], uCarry);
+            }
+            uuQuo--;
+          }
+          regNum.iuLast = iu + cuDen - 1;
+        }
+
+        if (fQuo)
+        {
+          if (cuQuo == 1) regQuo.uSmall = (uint)uuQuo;
+          else regQuo.rgu[iu] = (uint)uuQuo;
+        }
+      }
+
+      regNum.iuLast = cuDen - 1;
+      regNum.Trim();
+    }
+
+    /// <summary>
+    /// führt eine Division durch
+    /// </summary>
+    /// <param name="dividend">der zu dividiernde Wert</param>
+    public void Div(ref BigIntegerBuilder dividend)
+    {
+      if (dividend.iuLast == 0)
+      {
+        DivMod(dividend.uSmall);
+      }
+      else if (iuLast == 0)
+      {
+        uSmall = 0;
+      }
+      else
+      {
+        var bb = new BigIntegerBuilder();
+        ModDivCore(ref this, ref dividend, true, ref bb);
+        this = bb;
       }
     }
   }

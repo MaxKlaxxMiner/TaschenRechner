@@ -48,5 +48,38 @@ namespace TaschenRechnerLib.BigIntegerExtras
       }
       return 0;
     }
+
+    /// <summary>
+    /// gibt die Anzahl der freien 0-Bits zurück
+    /// </summary>
+    /// <param name="u">Wert, welcher berechnet werden soll</param>
+    /// <returns>Anzahl der 0-Bits</returns>
+    public static int CbitHighZero(uint u)
+    {
+      if ((int)u == 0) return 32;
+      int num = 0;
+      if (((int)u & -65536) == 0)
+      {
+        num += 16;
+        u <<= 16;
+      }
+      if (((int)u & -16777216) == 0)
+      {
+        num += 8;
+        u <<= 8;
+      }
+      if (((int)u & -268435456) == 0)
+      {
+        num += 4;
+        u <<= 4;
+      }
+      if (((int)u & -1073741824) == 0)
+      {
+        num += 2;
+        u <<= 2;
+      }
+      if (((int)u & int.MinValue) == 0) ++num;
+      return num;
+    }
   }
 }

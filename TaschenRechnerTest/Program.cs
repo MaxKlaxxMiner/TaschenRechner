@@ -228,20 +228,20 @@ namespace TaschenRechnerTest
 
     static void Div()
     {
-      //var val01 = new ui(12345);
-      //Debug.Assert(val01.ToString() == "12345");
-      //var val02 = new ui(15);
-      //Debug.Assert(val02.ToString() == "15");
-      //var val03 = val01 / val02;
-      //Debug.Assert(val03.ToString() == "823");
-      //var val04 = new ui(10000000000000000000ul);
-      //Debug.Assert(val04.ToString() == "10000000000000000000");
-      //var val05 = val04 / val03;
-      //Debug.Assert(val05.ToString() == "12150668286755771");
-      //var val06 = val05 / val03;
-      //Debug.Assert(val06.ToString() == "14763873981477");
-      //var val07 = val06 / val03;
-      //Debug.Assert(val07.ToString() == "17939093537");
+      var val01 = new ui(12345);
+      Debug.Assert(val01.ToString() == "12345");
+      var val02 = new ui(15);
+      Debug.Assert(val02.ToString() == "15");
+      var val03 = val01 / val02;
+      Debug.Assert(val03.ToString() == "823");
+      var val04 = new ui(10000000000000000000ul);
+      Debug.Assert(val04.ToString() == "10000000000000000000");
+      var val05 = val04 / val03;
+      Debug.Assert(val05.ToString() == "12150668286755771");
+      var val06 = val05 / val03;
+      Debug.Assert(val06.ToString() == "14763873981477");
+      var val07 = val06 / val03;
+      Debug.Assert(val07.ToString() == "17939093537");
     }
 
     static void Main(string[] args)
@@ -250,8 +250,8 @@ namespace TaschenRechnerTest
       //Add();
       //Compare();
       //Sub();
-      Mul();
-      //Div();
+      //Mul();
+      Div();
 
       //SpeedDiv();
       //SpeedCheckStr();
@@ -262,7 +262,7 @@ namespace TaschenRechnerTest
 
       var b = new BigInteger(ulong.MaxValue);
       var str = b.ToString();
-      b *= b;
+      b /= b;
       b++;
     }
   }
