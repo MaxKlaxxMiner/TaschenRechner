@@ -7,7 +7,7 @@ namespace TaschenRechnerLib.BigIntegerExtras
   /// <summary>
   /// weitgehender Clone vom original BitInteger (interne Klasse)
   /// </summary>
-  internal struct BigIntegerBuilder
+  internal unsafe struct BigIntegerBuilder
   {
     int iuLast;
     uint uSmall;
@@ -305,23 +305,26 @@ namespace TaschenRechnerLib.BigIntegerExtras
         uint uCarry = 0U;
 
         // slow: for (int i = 0; i < iu; i++) uCarry = AddCarry(ref rgu[i], reg.rgu[i], uCarry);
-        uCarry = XtrAddCarry(rgu, reg.rgu, iu, uCarry);
+        fixed (uint* targetP = rgu, srcP = reg.rgu)
+        {
+          uCarry = XtrAddCarry(targetP, srcP, iu);
+        }
 
-        if ((int)uCarry == 0) return;
+        if (uCarry == 0) return;
         ApplyCarry(iu);
       }
     }
 
-    static uint XtrAddCarry(uint[] target, uint[] src, int iu, uint uCarry)
+    static uint XtrAddCarry(uint* target, uint* src, int count)
     {
-      if (iu > src.Length || iu > target.Length) throw new InvalidCalcException();
-      for (int i = 0; i < iu; i++)
+      ulong carry = 0;
+      for (int i = 0; i < count; i++)
       {
-        ulong r = (ulong)target[i] + src[i] + uCarry;
+        ulong r = (ulong)target[i] + src[i] + carry;
         target[i] = (uint)r;
-        uCarry = (uint)(r >> 32);
+        carry = r >> 32;
       }
-      return uCarry;
+      return (uint)carry;
     }
 
     /// <summary>
