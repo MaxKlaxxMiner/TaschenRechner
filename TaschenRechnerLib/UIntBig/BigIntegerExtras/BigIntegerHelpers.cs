@@ -32,5 +32,21 @@ namespace TaschenRechnerLib.BigIntegerExtras
       while (tmp.Length > 1 && tmp[tmp.Length - 1] == 0) Array.Resize(ref tmp, tmp.Length - 1); // normalisieren
       return tmp;
     }
+
+    /// <summary>
+    /// gibt die Position von zwei Bit-Ketten zurück, wo die sich unterscheiden (-1 = beide sind gleich)
+    /// </summary>
+    /// <param name="rgu1">erste Bit-Kette</param>
+    /// <param name="rgu2">zweite Bit-Kette</param>
+    /// <param name="cu">Start-Position</param>
+    /// <returns></returns>
+    public static int GetDiffLength(uint[] rgu1, uint[] rgu2, int cu)
+    {
+      for (int iv = cu; --iv >= 0; )
+      {
+        if (rgu1[iv] != rgu2[iv]) return iv + 1;
+      }
+      return 0;
+    }
   }
 }

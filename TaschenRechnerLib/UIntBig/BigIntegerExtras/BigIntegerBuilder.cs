@@ -51,8 +51,8 @@ namespace TaschenRechnerLib.BigIntegerExtras
     /// lädt einen direkten Wert
     /// </summary>
     /// <param name="reg">BigIntegerBuilder, wovon der Wert kopiert werden soll</param>
-    /// <param name="cuExtra">gewünschte Extra-Größe</param>
-    public void Load(ref BigIntegerBuilder reg, int cuExtra)
+    /// <param name="cuExtra">optional gewünschte Extra-Größe</param>
+    public void Load(ref BigIntegerBuilder reg, int cuExtra = 0)
     {
       if (reg.iuLast == 0)
       {
@@ -167,6 +167,17 @@ namespace TaschenRechnerLib.BigIntegerExtras
     }
 
     /// <summary>
+    /// kürz automatisch 0-Stellen weg
+    /// </summary>
+    void Trim()
+    {
+      if (iuLast > 0 && rgu[iuLast] == 0)
+      {
+        uSmall = rgu[0];
+        while (--iuLast > 0 && rgu[iuLast] == 0) { }
+      }
+    }
+    /// <summary>
     /// fügt ein Carry-Flag hinzu
     /// </summary>
     /// <param name="iu">Carryflag, welches hinzugefügt werden soll</param>
@@ -266,6 +277,109 @@ namespace TaschenRechnerLib.BigIntegerExtras
         if ((int)uCarry == 0) return;
         ApplyCarry(iu);
       }
+    }
+
+    /// <summary>
+    /// zieht ein Borrow-Flag an einer bestimmten Position ab
+    /// </summary>
+    /// <param name="iuMin">Position, wo das Borrow-Flag abgezogen werden soll</param>
+    void ApplyBorrow(int iuMin)
+    {
+      for (int iu = iuMin; iu <= iuLast; iu++)
+      {
+        uint u = rgu[iu]--;
+        if (u > 0) return;
+      }
+    }
+
+    /// <summary>
+    /// subtrahiert einen bestimmten Wert
+    /// </summary>
+    /// <param name="u">Wert, welcher subtrahiert werden soll</param>
+    public void Sub(uint u)
+    {
+      if (iuLast == 0)
+      {
+        if (u <= uSmall) uSmall -= u;
+        else throw new InvalidCalcException();
+      }
+
+      if (u == 0) return;
+
+      EnsureWritable();
+
+      uint uTmp = rgu[0];
+      rgu[0] = uTmp - u;
+      if (uTmp < u)
+      {
+        ApplyBorrow(1);
+        Trim();
+      }
+    }
+
+    /// <summary>
+    /// subtrahiert einen bestimmten Wert inkl. Borrow-Flag
+    /// </summary>
+    /// <param name="u1">erster Wert, wovon subtrahiert werden soll</param>
+    /// <param name="u2">der Wert, welcher subtrahiert werden soll</param>
+    /// <param name="uBorrow">zusätzliches Borrow-Flag</param>
+    /// <returns>neues Borrow-Flag</returns>
+    static uint SubBorrow(ref uint u1, uint u2, uint uBorrow)
+    {
+      ulong uu = (ulong)u1 - u2 - uBorrow;
+      u1 = (uint)uu;
+      return (uint)-(int)(uu >> 32);
+    }
+
+    /// <summary>
+    /// subtrahiert einen bestimmten Wert
+    /// </summary>
+    /// <param name="reg">Wert, welcher subtrahiert werden soll</param>
+    public void Sub(ref BigIntegerBuilder reg)
+    {
+      if (reg.iuLast == 0)
+      {
+        Sub(reg.uSmall);
+        return;
+      }
+      if (iuLast < reg.iuLast) throw new InvalidCalcException();
+
+      int cuSub = reg.iuLast + 1;
+      if (iuLast == reg.iuLast)
+      {
+        // Determine which is larger.
+        iuLast = BigIntegerHelpers.GetDiffLength(rgu, reg.rgu, iuLast + 1) - 1;
+        if (iuLast < 0)
+        {
+          iuLast = 0;
+          uSmall = 0;
+          return;
+        }
+        uint u1 = rgu[iuLast];
+        uint u2 = reg.rgu[iuLast];
+        if (u1 < u2) throw new InvalidCalcException();
+        if (iuLast == 0)
+        {
+          uSmall = u1 - u2;
+          return;
+        }
+
+        cuSub = iuLast + 1;
+      }
+
+      EnsureWritable();
+
+      // Subtract, tracking borrow.
+      uint uBorrow = 0;
+      for (int iu = 0; iu < cuSub; iu++)
+      {
+        uBorrow = SubBorrow(ref rgu[iu], reg.rgu[iu], uBorrow);
+      }
+      if (uBorrow != 0)
+      {
+        ApplyBorrow(cuSub);
+      }
+      Trim();
     }
   }
 }

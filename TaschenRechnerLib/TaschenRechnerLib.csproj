@@ -51,6 +51,7 @@
     <Compile Include="UIntBig\Const.cs" />
     <Compile Include="UIntBig\Parse.cs" />
     <Compile Include="UIntBig\BigIntegerExtras\BigIntegerHelpers.cs" />
+    <Compile Include="UIntBig\Sub.cs" />
     <Compile Include="UIntBig\ToString.cs" />
     <Compile Include="UIntBig\UIntBig.cs" />
     <Compile Include="UIntLimbs\Add.cs" />
