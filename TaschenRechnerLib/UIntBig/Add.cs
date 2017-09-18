@@ -34,16 +34,5 @@ namespace TaschenRechnerLib
       bb.Add(1);
       return bb.GetInteger();
     }
-
-    /// <summary>
-    /// Methode zum addieren zweier Zahlen
-    /// </summary>
-    /// <param name="val1">erster Wert, welcher verwendet werden soll</param>
-    /// <param name="val2">zweiter Wert, welcher verwendet werden soll</param>
-    /// <returns>fertiges Ergebnis</returns>
-    static UIntBig Add(UIntBig val1, UIntBig val2)
-    {
-      throw new NotImplementedException();
-    }
   }
 }

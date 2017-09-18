@@ -302,7 +302,7 @@ namespace TaschenRechnerLib.BigIntegerExtras
           Array.Copy(reg.rgu, iuLast + 1, rgu, iuLast + 1, reg.iuLast - iuLast);
           iuLast = reg.iuLast;
         }
-        uint uCarry = 0U;
+        uint uCarry;
 
         // slow: for (int i = 0; i < iu; i++) uCarry = AddCarry(ref rgu[i], reg.rgu[i], uCarry);
         fixed (uint* targetP = rgu, srcP = reg.rgu)
@@ -315,16 +315,16 @@ namespace TaschenRechnerLib.BigIntegerExtras
       }
     }
 
-    static uint XtrAddCarry(uint* target, uint* src, int count)
+    static uint XtrAddCarry(uint* target, uint* src, long count)
     {
-      ulong carry = 0;
-      for (int i = 0; i < count; i++)
+      ulong r = 0;
+      for (long i = 0; i < count; i++)
       {
-        ulong r = (ulong)target[i] + src[i] + carry;
+        r += (ulong)target[i] + src[i];
         target[i] = (uint)r;
-        carry = r >> 32;
+        r = r >> 32;
       }
-      return (uint)carry;
+      return (uint)r;
     }
 
     /// <summary>
