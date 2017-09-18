@@ -318,7 +318,17 @@ namespace TaschenRechnerLib.BigIntegerExtras
     static uint XtrAddCarry(uint* target, uint* src, long count)
     {
       ulong r = 0;
-      for (long i = 0; i < count; i++)
+      long i;
+      for (i = 0; i < count - 1; i += 2)
+      {
+        ulong s = *(ulong*)(src + i);
+        ulong t = *(ulong*)(target + i);
+        r = (ulong)(uint)t + (uint)s + (r >> 32);
+        target[i] = (uint)r;
+        r = (t >> 32) + (s >> 32) + (r >> 32);
+        target[i + 1] = (uint)r;
+      }
+      for (; i < count; i++)
       {
         r = (ulong)target[i] + src[i] + (r >> 32);
         target[i] = (uint)r;
