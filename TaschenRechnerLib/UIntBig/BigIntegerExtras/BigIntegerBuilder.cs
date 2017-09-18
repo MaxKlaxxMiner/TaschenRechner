@@ -303,10 +303,25 @@ namespace TaschenRechnerLib.BigIntegerExtras
           iuLast = reg.iuLast;
         }
         uint uCarry = 0U;
-        for (int index = 0; index < iu; ++index) uCarry = AddCarry(ref rgu[index], reg.rgu[index], uCarry);
+
+        // slow: for (int i = 0; i < iu; i++) uCarry = AddCarry(ref rgu[i], reg.rgu[i], uCarry);
+        uCarry = XtrAddCarry(rgu, reg.rgu, iu, uCarry);
+
         if ((int)uCarry == 0) return;
         ApplyCarry(iu);
       }
+    }
+
+    static uint XtrAddCarry(uint[] target, uint[] src, int iu, uint uCarry)
+    {
+      if (iu > src.Length || iu > target.Length) throw new InvalidCalcException();
+      for (int i = 0; i < iu; i++)
+      {
+        ulong r = (ulong)target[i] + src[i] + uCarry;
+        target[i] = (uint)r;
+        uCarry = (uint)(r >> 32);
+      }
+      return uCarry;
     }
 
     /// <summary>
