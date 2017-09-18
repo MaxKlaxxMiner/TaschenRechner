@@ -304,36 +304,66 @@ namespace TaschenRechnerLib.BigIntegerExtras
         }
         uint uCarry;
 
-        // slow: for (int i = 0; i < iu; i++) uCarry = AddCarry(ref rgu[i], reg.rgu[i], uCarry);
-        fixed (uint* targetP = rgu, srcP = reg.rgu)
-        {
-          uCarry = XtrAddCarry(targetP, srcP, iu);
-        }
+        // --- default ---
+        //for (int i = 0; i < iu; i++) uCarry = AddCarry(ref rgu[i], reg.rgu[i], 0);
+
+        // --- Referenz zum Debuggen -> 66% schneller als default ---
+        //uCarry = XtrAddCarryRef(rgu, reg.rgu, iu, 0);
+
+        // --- Highspeed -> 119% schneller als default ---
+        fixed (uint* targetP = rgu, srcP = reg.rgu) uCarry = XtrAddCarry(targetP, srcP, iu, 0);
 
         if (uCarry == 0) return;
         ApplyCarry(iu);
       }
     }
 
-    static uint XtrAddCarry(uint* target, uint* src, long count)
+    /// <summary>
+    /// Referenz-Funktion zum Debuggen von <see cref="XtrAddCarry"/> (30% langsamer)
+    /// </summary>
+    /// <param name="target">Ziel-Adresse, wo das Ergebnis gespeichert werden soll</param>
+    /// <param name="src">Quell-Adresse des zweiten Wertes</param>
+    /// <param name="count">Anzahl der Berechnungen</param>
+    /// <param name="carry">(optional) Carry-Flag, welches am Start verwendet werden soll</param>
+    /// <returns>Carry-Flag</returns>
+    static uint XtrAddCarryRef(uint[] target, uint[] src, long count, ulong carry)
     {
-      ulong r = 0;
+      if (count > target.Length || count > src.Length) throw new IndexOutOfRangeException();
+      for (long i = 0; i < count; i++)
+      {
+        ulong r = (ulong)target[i] + src[i] + carry;
+        target[i] = (uint)r;
+        carry = r >> 32;
+      }
+      return (uint)carry;
+    }
+
+    /// <summary>
+    /// Hochgeschwindigkeitsfunktion zum addieren von zwei Langen Bit-Ketten
+    /// </summary>
+    /// <param name="target">Ziel-Adresse, wo das Ergebnis gespeichert werden soll</param>
+    /// <param name="src">Quell-Adresse des zweiten Wertes</param>
+    /// <param name="count">Anzahl der Berechnungen</param>
+    /// <param name="carry">(optional) Carry-Flag, welches am Start verwendet werden soll</param>
+    /// <returns>Carry-Flag</returns>
+    static uint XtrAddCarry(uint* target, uint* src, long count, ulong carry)
+    {
       long i;
       for (i = 0; i < count - 1; i += 2)
       {
         ulong s = *(ulong*)(src + i);
         ulong t = *(ulong*)(target + i);
-        r = (ulong)(uint)t + (uint)s + (r >> 32);
-        target[i] = (uint)r;
-        r = (t >> 32) + (s >> 32) + (r >> 32);
-        target[i + 1] = (uint)r;
+        carry = (ulong)(uint)t + (uint)s + (carry >> 32);
+        target[i] = (uint)carry;
+        carry = (t >> 32) + (s >> 32) + (carry >> 32);
+        target[i + 1] = (uint)carry;
       }
       for (; i < count; i++)
       {
-        r = (ulong)target[i] + src[i] + (r >> 32);
-        target[i] = (uint)r;
+        carry = (ulong)target[i] + src[i] + (carry >> 32);
+        target[i] = (uint)carry;
       }
-      return (uint)(r >> 32);
+      return (uint)(carry >> 32);
     }
 
     /// <summary>
