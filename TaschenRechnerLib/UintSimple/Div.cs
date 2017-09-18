@@ -43,6 +43,44 @@ namespace TaschenRechnerLib
     }
 
     /// <summary>
+    /// subtrahiert zwei Zahlen-Arrays mit Multiplikator und gibt ein eventuell vorhandenen Borrow-Wert zurück
+    /// </summary>
+    /// <param name="target">Basis-Wert, wovon der zweite Wert subtrahiert werden soll</param>
+    /// <param name="sub">zweite Wert, welcher subtrahiert werden soll</param>
+    /// <param name="subOffset">zusätzlicher Offset</param>
+    /// <param name="mul">Multiplikator, welcher beim subtrahieren zusätzlich verwendet werden soll</param>
+    /// <returns>1 = wenn Borrow-Flag gesetzt</returns>
+    static int SubMul(byte[] target, byte[] sub, int subOffset, int mul)
+    {
+      if (sub.Length + subOffset > target.Length) throw new InvalidCalcException();
+      switch (mul)
+      {
+        case 0: return 0;
+        case 1: return Sub(target, sub, subOffset);
+      }
+
+      int borrow = 0;
+
+      // --- normale Subtraction ---
+      for (int i = 0; i < sub.Length; i++)
+      {
+        var r = target[i + subOffset] - sub[i] * mul - borrow;
+        borrow = UnsafeHelper.Div10(9 - r);
+        target[i + subOffset] = (byte)(r + borrow * 10);
+      }
+
+      // --- borrow-flag von den restlichen Zahlen subtrahieren (sofern notwendig) ---
+      for (int i = sub.Length + subOffset; borrow != 0 && i < target.Length; i++)
+      {
+        var r = target[i] - borrow;
+        borrow = UnsafeHelper.Div10(9 - r);
+        target[i] = (byte)(r + borrow * 10);
+      }
+
+      return borrow;
+    }
+
+    /// <summary>
     /// berechnet eine Division mit Rest anhand der Schulmethode
     /// </summary>
     /// <param name="rem">Dividend, welcher zum Rest wird</param>
@@ -53,11 +91,8 @@ namespace TaschenRechnerLib
       for (int digit = rem.Length - div.Length; digit >= 0; digit--)
       {
         int count = CountValue(rem, digit, div);
-        for (int i = 0; i < count; i++)
-        {
-          int sb = Sub(rem, div, digit);
-          if (sb != 0) throw new NotImplementedException();
-        }
+        int sb = SubMul(rem, div, digit, count);
+        if (sb != 0) throw new NotImplementedException();
         quo[digit] = (byte)count;
       }
     }
