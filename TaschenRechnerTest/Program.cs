@@ -50,22 +50,22 @@ namespace TaschenRechnerTest
       Debug.Assert(val14.ToString() == long.MaxValue.ToString());
       var val15 = new ui(ulong.MaxValue);
       Debug.Assert(val15.ToString() == ulong.MaxValue.ToString());
-      //var val16 = ui.Parse("0");
-      //Debug.Assert(val16.ToString() == "0");
-      //var val17 = ui.Parse("1");
-      //Debug.Assert(val17.ToString() == "1");
-      //var val18 = ui.Parse("100");
-      //Debug.Assert(val18.ToString() == "100");
-      //var val19 = ui.Parse("12345678901234567890");
-      //Debug.Assert(val19.ToString() == "12345678901234567890");
-      //var val20 = ui.Parse(new string('9', 1000000));
-      //Debug.Assert(val20.ToString() == new string('9', 1000000));
-      //for (int i = 1; i < 100; i++)
-      //{
-      //  string num = string.Concat(Enumerable.Range(1, i));
-      //  var val21 = ui.Parse("        " + num + "       ");
-      //  Debug.Assert(val21.ToString() == num);
-      //}
+      var val16 = ui.Parse("0");
+      Debug.Assert(val16.ToString() == "0");
+      var val17 = ui.Parse("1");
+      Debug.Assert(val17.ToString() == "1");
+      var val18 = ui.Parse("100");
+      Debug.Assert(val18.ToString() == "100");
+      var val19 = ui.Parse("12345678901234567890");
+      Debug.Assert(val19.ToString() == "12345678901234567890");
+      var val20 = ui.Parse(new string('9', 100000));
+      Debug.Assert(val20.ToString() == new string('9', 100000));
+      for (int i = 1; i < 100; i++)
+      {
+        string num = string.Concat(Enumerable.Range(1, i));
+        var val21 = ui.Parse("        " + num + "       ");
+        Debug.Assert(val21.ToString() == num);
+      }
     }
 
     static void Add()

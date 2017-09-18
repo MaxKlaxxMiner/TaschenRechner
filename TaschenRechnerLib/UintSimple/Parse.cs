@@ -16,7 +16,7 @@ namespace TaschenRechnerLib
     }
 
     /// <summary>
-    /// parst intern eine Zeichenkette al Zahl
+    /// parst intern eine Zeichenkette als Zahl
     /// </summary>
     /// <param name="number">Zeichenkette, welche als Zahl eingelesen werden soll</param>
     /// <returns>fertig eingelesene Nummern (Rückwärts gespeichert)</returns>

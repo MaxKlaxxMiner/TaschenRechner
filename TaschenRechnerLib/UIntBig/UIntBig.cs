@@ -70,5 +70,21 @@ namespace TaschenRechnerLib
         bits = new[] { (uint)val, (uint)(val >> 32) };
       }
     }
+
+    /// <summary>
+    /// Konstruktor mit einer Zeichenkette, welche aus einer unsignierten Integer-Zahl besteht
+    /// </summary>
+    /// <param name="val">Wert, welcher verwendet werden soll</param>
+    public UIntBig(string val) : this(ParseInternal(val)) { }
+
+    /// <summary>
+    /// direkter Konstruktor mit den einzelnen Zahlen
+    /// </summary>
+    /// <param name="bits">Bit-Kette, welche direkt verwendet werden soll</param>
+    UIntBig(uint[] bits)
+    {
+      if (bits == null) throw new ArgumentNullException("bits");
+      this.bits = bits;
+    }
   }
 }
