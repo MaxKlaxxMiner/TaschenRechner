@@ -388,7 +388,16 @@ namespace TaschenRechnerLib.BigIntegerExtras
       if (iuLast == reg.iuLast)
       {
         // Determine which is larger.
-        iuLast = BigIntegerHelpers.GetDiffLength(rgu, reg.rgu, iuLast + 1) - 1;
+
+        // --- default ---
+        //iuLast = BigIntegerHelpers.GetDiffLength(rgu, reg.rgu, iuLast + 1) - 1;
+
+        // --- Referenz zum Debuggen -> 79% schneller als default ---
+        //fixed (uint* val1 = rgu, val2 = reg.rgu) iuLast = XtrFast.GetLastDiffRef(val1, val2, iuLast);
+
+        // --- Highspeed -> 323% schneller als default ---
+        fixed (uint* val1 = rgu, val2 = reg.rgu) iuLast = XtrFast.GetLastDiff(val1, val2, iuLast);
+
         if (iuLast < 0)
         {
           iuLast = 0;

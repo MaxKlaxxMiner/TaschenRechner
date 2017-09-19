@@ -106,5 +106,18 @@ namespace TaschenRechnerLib.BigIntegerExtras
       return (uint)borrow;
     }
     #endregion
+
+    public static int GetLastDiffRef(uint* val1, uint* val2, long last)
+    {
+      while (last >= 0 && val1[last] == val2[last]) last--;
+      return (int)last;
+    }
+
+    public static int GetLastDiff(uint* val1, uint* val2, long last)
+    {
+      while (last > 2 && *(ulong*)(val1 + last - 3) == *(ulong*)(val2 + last - 3) && *(ulong*)(val1 + last - 1) == *(ulong*)(val2 + last - 1)) last -= 4;
+      while (last >= 0 && val1[last] == val2[last]) last--;
+      return (int)last;
+    }
   }
 }
