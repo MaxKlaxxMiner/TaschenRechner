@@ -45,6 +45,7 @@
     <Compile Include="InvalidCalcException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UIntBig\BigIntegerExtras\BigIntegerBuilder.cs" />
+    <Compile Include="UIntBig\BigIntegerExtras\XtrFast.cs" />
     <Compile Include="UIntBig\BigIntegerProperties.cs" />
     <Compile Include="UIntBig\Add.cs" />
     <Compile Include="UIntBig\Compare.cs" />
