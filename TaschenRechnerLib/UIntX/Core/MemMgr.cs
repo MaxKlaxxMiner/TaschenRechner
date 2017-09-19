@@ -12,9 +12,24 @@ namespace TaschenRechnerLib.UIntX.Core
   public static unsafe class MemMgr
   {
     /// <summary>
-    /// Mindestgröße eines Elementes
+    /// Mindestgröße eines Elementes (2er Potenz, sinnvolle Werte: 8-256, default: 32)
     /// </summary>
     const int MinElementSize = 32;
+
+    /// <summary>
+    /// Mindestgröße eines initialen Blockes (2er Potenz, sinnvolle Werte: 1024-65536, default: 4096)
+    /// </summary>
+    const int MinBlockBytes = 4096;
+
+    /// <summary>
+    /// minimale Anzahl der Elemente pro Block (sinnvolle Werte: 2-10, default: 5)
+    /// </summary>
+    const int MinElementsCount = 5;
+
+    /// <summary>
+    /// maximale Anzahl der Blöcke pro Level (sinnvolle Werte: 8-24, default: 16)
+    /// </summary>
+    const int MaxBlocksPerLevel = 16;
 
     #region # class MemBlock // Klasse zur Handhabung mehrere kleineren Speicherbereiche
     /// <summary>
@@ -201,7 +216,7 @@ namespace TaschenRechnerLib.UIntX.Core
     /// <summary>
     /// merkt sich alle erstellten Memory-Blöcke
     /// </summary>
-    static readonly MemBlock[] MemBlocks = new MemBlock[16 * 16];
+    static readonly MemBlock[] MemBlocks = new MemBlock[MaxBlocksPerLevel * MaxBlocksPerLevel];
 
     /// <summary>
     /// merkt sich die Memory-Blöcke sortiert nach Speicher-Adressen
@@ -222,11 +237,11 @@ namespace TaschenRechnerLib.UIntX.Core
     static MemBlock GetMemBlockFree(int bytes)
     {
       // --- echte Größe ermitteln und passenden Index Suchen ---
-      int targetSize = 32;
+      int targetSize = MinElementSize;
       int targetIndex = 0;
       while (targetSize < bytes)
       {
-        targetIndex += 16;
+        targetIndex += MaxBlocksPerLevel;
         targetSize <<= 1;
       }
 
@@ -235,7 +250,7 @@ namespace TaschenRechnerLib.UIntX.Core
 
       if (MemBlocks[targetIndex] == null) // neuen Block erstellen?
       {
-        int newCount = targetIndex > 0 && MemBlocks[targetIndex - 1] != null ? MemBlocks[targetIndex - 1].MaxElements * 2 : 256;
+        int newCount = targetIndex > 0 && MemBlocks[targetIndex - 1] != null ? MemBlocks[targetIndex - 1].MaxElements * 2 : Math.Max(MinElementsCount, MinBlockBytes / targetSize);
         MemBlocks[targetIndex] = new MemBlock(targetSize, newCount);
 
         // --- neuen Block in die Pointer-Liste einsortieren ---
