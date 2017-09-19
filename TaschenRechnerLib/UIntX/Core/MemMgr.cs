@@ -21,7 +21,7 @@ namespace TaschenRechnerLib.UIntX.Core
     /// <summary>
     /// Klasse zur Handhabung mehrere kleineren Speicherbereiche
     /// </summary>
-    class MemBlock
+    sealed class MemBlock
     {
       #region # // --- Werte ---
       /// <summary>
@@ -37,13 +37,17 @@ namespace TaschenRechnerLib.UIntX.Core
       /// </summary>
       readonly byte* data;
       /// <summary>
-      /// Anzahl der freien Elemente
-      /// </summary>
-      readonly long elementsFree;
-      /// <summary>
-      /// Größe der Element in Bytes
+      /// Größe der Elemente in Bytes
       /// </summary>
       readonly int elementSize;
+      /// <summary>
+      /// Maximale Anzahl der Elemente
+      /// </summary>
+      readonly int elementsMax;
+      /// <summary>
+      /// Anzahl der freien Elemente
+      /// </summary>
+      readonly int elementsFree;
       /// <summary>
       /// Bitgröße der Elemente (0 = 1, 1 = 2, 2 = 4, 3 = 8, 4 = 16 usw.)
       /// </summary>
@@ -52,6 +56,23 @@ namespace TaschenRechnerLib.UIntX.Core
       /// nächste Suchposition in der Bitmap zum finden des nächsten freien Platzes
       /// </summary>
       byte* freeSearch;
+      #endregion
+
+      #region # // --- Properties ---
+      /// <summary>
+      /// gibt den freien Speicherplatz in Bytes an
+      /// </summary>
+      public long FreeBytes { get { return elementsFree << elementBits; } }
+
+      /// <summary>
+      /// gibt die maximale Anzahl der speicherbaren Elemente an
+      /// </summary>
+      public int MaxElements { get { return elementsMax; } }
+
+      /// <summary>
+      /// gibt die Speicheradresse der Daten zurück
+      /// </summary>
+      public byte* DataPointer { get { return data; } }
       #endregion
 
       #region # // --- Konstruktor ---
@@ -105,9 +126,9 @@ namespace TaschenRechnerLib.UIntX.Core
         pointer = (byte*)Marshal.AllocHGlobal((IntPtr)bytes);
         data = pointer + elementCount / 8;
         freeSearch = pointer;
+        elementsMax = elementCount;
         elementsFree = elementCount;
       }
-      #endregion
 
       /// <summary>
       /// Destructor zum freigeben des Speichers
@@ -125,8 +146,63 @@ namespace TaschenRechnerLib.UIntX.Core
       {
         return (new { size = bytes, elementSize, elementsFree }).ToString();
       }
+      #endregion
     }
     #endregion
+
+    /// <summary>
+    /// merkt sich alle erstellten Memory-Blöcke
+    /// </summary>
+    static readonly MemBlock[] MemBlocks = new MemBlock[16 * 16];
+
+    /// <summary>
+    /// merkt sich die Memory-Blöcke sortiert nach Speicher-Adressen
+    /// </summary>
+    static readonly KeyValuePair<long, MemBlock>[] MemBlocksPointer = new KeyValuePair<long, MemBlock>[MemBlocks.Length];
+
+    /// <summary>
+    /// Anzahl der bereits erstellten Memory-Blöcke
+    /// </summary>
+    static int memBlocksCount;
+
+    /// <summary>
+    /// gibt einen MemoryBlock zurück, welcher genug freien Speicher besitzt
+    /// </summary>
+    /// <param name="bytes">Größe des Speicherbereiches, welcher reserviert werden soll</param>
+    /// <returns>Memoryblock mit genügend freien Speicherplatz</returns>
+    static MemBlock GetMemBlockFree(int bytes)
+    {
+      // --- echte Größe ermitteln und passenden Index Suchen ---
+      int targetSize = 32;
+      int targetIndex = 0;
+      while (targetSize < bytes)
+      {
+        targetIndex += 16;
+        targetSize <<= 1;
+      }
+
+      // --- bekannte Blöcke mit zu wenig freien Platz überspringen ---
+      while (MemBlocks[targetIndex] != null && MemBlocks[targetIndex].FreeBytes < targetSize) targetIndex++;
+
+      if (MemBlocks[targetIndex] == null) // neuen Block erstellen?
+      {
+        int newCount = targetIndex > 0 && MemBlocks[targetIndex - 1] != null ? MemBlocks[targetIndex - 1].MaxElements * 2 : 256;
+        MemBlocks[targetIndex] = new MemBlock(targetSize, newCount);
+
+        // --- neuen Block in die Pointer-Liste einsortieren ---
+        var p = new KeyValuePair<long, MemBlock>((long)MemBlocks[targetIndex].DataPointer, MemBlocks[targetIndex]);;
+        int pIdx = memBlocksCount;
+        while (pIdx > 0 && MemBlocksPointer[pIdx - 1].Key > p.Key)
+        {
+          MemBlocksPointer[pIdx] = MemBlocksPointer[pIdx - 1];
+          pIdx--;
+        }
+        MemBlocksPointer[pIdx] = p;
+        memBlocksCount++;
+      }
+
+      return MemBlocks[targetIndex];
+    }
 
     /// <summary>
     /// reserviert einen neuen Speicherbereich (der Inhalt ist undefiniert)
@@ -135,6 +211,8 @@ namespace TaschenRechnerLib.UIntX.Core
     /// <returns>Zeiger auf den Speicherbereich</returns>
     public static byte* AllocUnsafe(int bytes)
     {
+      var block = GetMemBlockFree(bytes);
+
       return null;
     }
 
