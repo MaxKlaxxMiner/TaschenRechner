@@ -158,6 +158,30 @@ namespace TaschenRechnerLib.UIntX.Core
 
         return (pointer[elementPos >> 3] & 1 << (int)(elementPos & 3)) != 0; // ist das entsprechende Reserviert-Bit gesetzt?
       }
+
+      /// <summary>
+      /// löscht die Reservierung eines bestimmten Elementes und gibt true, wenn erfolgreich
+      /// </summary>
+      /// <param name="p">Zeiger auf die absolute Speicheradresse des Elementes</param>
+      /// <returns>true, wenn die Freigabe erfolgreich war</returns>
+      public bool FreeElement(byte* p)
+      {
+        Debug.Assert(p >= DataPointer);
+        Debug.Assert(p + elementSize <= DataPointerEnd);
+
+        long elementPos = p - data >> elementBits;
+        Debug.Assert(elementPos >= 0 && elementPos < elementsMax);
+
+        if (data + (elementPos << elementBits) != p) return false; // ungültige Adresse innerhalb eines Elementes
+
+        int bits = pointer[elementPos >> 3];
+        int marker = bits & 1 << (int)(elementPos & 3);
+        if (marker == 0) return false; // Element war bereits gelöscht
+
+        pointer[elementPos >> 3] = (byte)(bits ^ marker); // Bit wieder löschen
+        elementsFree++;
+        return true;
+      }
       #endregion
 
       #region # // --- Konstruktor ---
@@ -206,11 +230,10 @@ namespace TaschenRechnerLib.UIntX.Core
         if (elementCount < 1 || elementCount > 1000000000) throw new ArgumentException("elementCount");
 
         this.elementSize = elementSize;
-        elementCount = (elementCount + 63) / 64 * 64;
-        totalBytes = elementCount / 8 + (long)elementSize * elementCount;
+        totalBytes = (elementCount + 7) / 8 + (long)elementSize * elementCount;
         pointer = (byte*)Marshal.AllocHGlobal((IntPtr)totalBytes);
-        Zero(pointer, elementCount / 8); // Bitmap leeren
-        data = pointer + elementCount / 8;
+        Zero(pointer, (elementCount + 7) / 8); // Bitmap leeren
+        data = pointer + (elementCount + 7) / 8; // Zeiger auf den Datenbereich setzen (direkt nach der Bitmap)
         freeSearch = pointer;
         elementsMax = elementCount;
         elementsFree = elementCount;
@@ -279,7 +302,7 @@ namespace TaschenRechnerLib.UIntX.Core
         MemBlocks[targetIndex] = new MemBlock(targetSize, newCount);
 
         // --- neuen Block in die Pointer-Liste einsortieren ---
-        var p = new KeyValuePair<long, MemBlock>((long)MemBlocks[targetIndex].DataPointer, MemBlocks[targetIndex]);;
+        var p = new KeyValuePair<long, MemBlock>((long)MemBlocks[targetIndex].DataPointer, MemBlocks[targetIndex]); ;
         int pIdx = memBlocksCount;
         while (pIdx > 0 && MemBlocksPointer[pIdx - 1].Key > p.Key)
         {
@@ -309,7 +332,7 @@ namespace TaschenRechnerLib.UIntX.Core
         if (MemBlocksPointer[midPos].Key > searchPointer) endPos = midPos; else startPos = midPos;
       } while (endPos - startPos > 1);
 
-      if (MemBlocksPointer[startPos].Key <= searchPointer && MemBlocksPointer[startPos].Value != null && startPos < (long)MemBlocksPointer[startPos].Value.DataPointerEnd)
+      if (MemBlocksPointer[startPos].Key <= searchPointer && MemBlocksPointer[startPos].Value != null && searchPointer < (long)MemBlocksPointer[startPos].Value.DataPointerEnd)
       {
         return MemBlocksPointer[startPos].Value;
       }
@@ -368,7 +391,10 @@ namespace TaschenRechnerLib.UIntX.Core
     /// <returns>true, wenn die Freigabe des Speichers erfolgreich war</returns>
     public static bool Free(byte* p)
     {
-      return false;
+      var block = GetMemBlockPtr(p);
+      if (block == null) return false; // passenden Memory-Block nicht gefunden (wird nicht von MemMgr verwaltet)
+
+      return block.FreeElement(p);
     }
 
     /// <summary>
