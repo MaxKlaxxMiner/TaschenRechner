@@ -458,15 +458,38 @@ namespace TaschenRechnerLib.BigIntegerExtras
 
       // Subtract, tracking borrow.
       uint uBorrow = 0;
-      for (int iu = 0; iu < cuSub; iu++)
-      {
-        uBorrow = SubBorrow(ref rgu[iu], reg.rgu[iu], uBorrow);
-      }
+
+      // --- default ---
+      for (int iu = 0; iu < cuSub; iu++) uBorrow = SubBorrow(ref rgu[iu], reg.rgu[iu], 0);
+
+      // --- Referenz zum Debuggen -> --% schneller als default ---
+      //uBorrow = XtrSubBorrowRef(rgu, reg.rgu, cuSub, 0);
+
       if (uBorrow != 0)
       {
         ApplyBorrow(cuSub);
       }
       Trim();
+    }
+
+    /// <summary>
+    /// Referenz-Funktion zum Debuggen von <see cref="XtrSubBorrow"/>
+    /// </summary>
+    /// <param name="target">Ziel-Adresse, wo das Ergebnis gespeichert werden soll</param>
+    /// <param name="src">Quell-Adresse des zweiten Wertes</param>
+    /// <param name="count">Anzahl der Berechnungen</param>
+    /// <param name="borrow">(optional) Borrow-Flag, welches am Start verwendet werden soll</param>
+    /// <returns>Borrow-Flag</returns>
+    static uint XtrSubBorrowRef(uint[] target, uint[] src, long count, ulong borrow)
+    {
+      if (count > target.Length || count > src.Length) throw new IndexOutOfRangeException();
+      for (long i = 0; i < count; i++)
+      {
+        ulong r = (ulong)target[i] - src[i] - borrow;
+        target[i] = (uint)r;
+        borrow = (ulong)-(long)(r >> 32);
+      }
+      return (uint)borrow;
     }
 
     /// <summary>
