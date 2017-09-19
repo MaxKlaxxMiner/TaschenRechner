@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+// ReSharper disable MemberCanBePrivate.Global
 
 namespace TaschenRechnerLib.UIntX.Core
 {
@@ -29,7 +30,7 @@ namespace TaschenRechnerLib.UIntX.Core
       /// <summary>
       /// merkt sich merkt sich die Länge des reservierten Speichers in Bytes
       /// </summary>
-      readonly long bytes;
+      readonly long totalBytes;
       /// <summary>
       /// merkt sich den Zeiger auf die eigentlichen Daten (zwischen pointer und data befindet sich die FreeBitmap)
       /// </summary>
@@ -39,17 +40,17 @@ namespace TaschenRechnerLib.UIntX.Core
       /// </summary>
       readonly int elementSize;
       /// <summary>
+      /// Bitgröße der Elemente (0 = 1, 1 = 2, 2 = 4, 3 = 8, 4 = 16 usw.)
+      /// </summary>
+      readonly int elementBits;
+      /// <summary>
       /// Maximale Anzahl der Elemente
       /// </summary>
       readonly int elementsMax;
       /// <summary>
       /// Anzahl der freien Elemente
       /// </summary>
-      readonly int elementsFree;
-      /// <summary>
-      /// Bitgröße der Elemente (0 = 1, 1 = 2, 2 = 4, 3 = 8, 4 = 16 usw.)
-      /// </summary>
-      readonly int elementBits;
+      int elementsFree;
       /// <summary>
       /// nächste Suchposition in der Bitmap zum finden des nächsten freien Platzes
       /// </summary>
@@ -76,6 +77,49 @@ namespace TaschenRechnerLib.UIntX.Core
       /// gibt die Speicheradresse der Daten zurück
       /// </summary>
       public byte* DataPointer { get { return data; } }
+      #endregion
+
+      #region # // --- Methoden ---
+      /// <summary>
+      /// reserviert ein neues Element und gibt den entsprechenden Zeiger zurück (Größe des benutzbaren Speichers siehe <see cref="ElementSize"/>
+      /// </summary>
+      /// <returns>Zeiger auf die entsprechende Speicherposition</returns>
+      public byte* AllocElement()
+      {
+        if (elementsFree == 0) throw new OutOfMemoryException(); // keine freien Plätze vorhanden
+
+        // --- freies Element in der Bitmap suchen ---
+        while (freeSearch < data && *freeSearch == 0xff) freeSearch++;
+        if (freeSearch == data)
+        {
+          freeSearch = pointer;
+          while (freeSearch < data && *freeSearch == 0xff) freeSearch++;
+          if (freeSearch == data) throw new OutOfMemoryException(); // keinen freien Platz gefunden?!? -> sollte nicht auftreten
+        }
+
+        // --- freies Bit Suchen und absolute Speicherposition berechnen ---
+        byte b = *freeSearch;
+        for (int bit = 0; bit < 8; bit++)
+        {
+          if ((b & 1 << bit) == 0) // freies Bit gefunden
+          {
+            *freeSearch = (byte)(b | 1 << bit); // Bit als belegt markieren
+
+            Debug.Assert((*freeSearch & 1 << bit) != 0);
+
+            elementsFree--;
+            long elementOffset = (freeSearch - pointer << 8) + bit;
+            var result = data + (elementOffset << elementBits);
+
+            Debug.Assert(result >= data);
+            Debug.Assert(result <= pointer + totalBytes - elementSize);
+
+            return result;
+          }
+        }
+
+        throw new OutOfMemoryException(); // kein freies Bit gefunden?!? -> sollte nicht auftreten
+      }
       #endregion
 
       #region # // --- Konstruktor ---
@@ -125,8 +169,9 @@ namespace TaschenRechnerLib.UIntX.Core
 
         this.elementSize = elementSize;
         elementCount = (elementCount + 63) / 64 * 64;
-        bytes = elementCount / 8 + (long)elementSize * elementCount;
-        pointer = (byte*)Marshal.AllocHGlobal((IntPtr)bytes);
+        totalBytes = elementCount / 8 + (long)elementSize * elementCount;
+        pointer = (byte*)Marshal.AllocHGlobal((IntPtr)totalBytes);
+        Zero(pointer, elementCount / 8); // Bitmap leeren
         data = pointer + elementCount / 8;
         freeSearch = pointer;
         elementsMax = elementCount;
@@ -147,7 +192,7 @@ namespace TaschenRechnerLib.UIntX.Core
       /// <returns>lesbare Zeichenkette</returns>
       public override string ToString()
       {
-        return (new { size = bytes, elementSize, elementsFree }).ToString();
+        return (new { size = totalBytes, elementSize, elementsFree }).ToString();
       }
       #endregion
     }
@@ -212,7 +257,7 @@ namespace TaschenRechnerLib.UIntX.Core
     /// <summary>
     /// reserviert einen neuen Speicherbereich (Inhalt ist undefiniert)
     /// </summary>
-    /// <param name="bytes">Mindestgröße in Bytes, welche reserviert werden sollen</param>
+    /// <param name="bytes">Größe in Bytes, welche reserviert werden soll</param>
     /// <returns>Zeiger auf den Speicherbereich</returns>
     public static byte* AllocUnsafe(int bytes)
     {
@@ -221,8 +266,19 @@ namespace TaschenRechnerLib.UIntX.Core
       Debug.Assert(block.FreeBytes >= bytes);
       Debug.Assert(block.ElementSize >= bytes);
 
+      return block.AllocElement();
+    }
 
-      return null;
+    /// <summary>
+    /// reserviert einen neuen Speicherbereich (gefüllt mit Nullen)
+    /// </summary>
+    /// <param name="bytes">Größe in Bytes, welche reserviert werden soll</param>
+    /// <returns>Zeiger auf den Speicherbereich</returns>
+    public static byte* Alloc(int bytes)
+    {
+      var p = AllocUnsafe(bytes);
+      Zero(p, bytes);
+      return p;
     }
 
     /// <summary>
@@ -233,6 +289,27 @@ namespace TaschenRechnerLib.UIntX.Core
     public static bool Free(byte* p)
     {
       return false;
+    }
+
+    /// <summary>
+    /// füllt einen bestimmten Speicherbereich mit Nullen
+    /// </summary>
+    /// <param name="p">Zeiger auf den Speicherbereich</param>
+    /// <param name="bytes">Anzahl der Bytes, welche befüllt werden sollen</param>
+    public static void Zero(byte* p, int bytes)
+    {
+      while (bytes >= sizeof(ulong)) // 8-Byte Schritte
+      {
+        *(ulong*)p = 0;
+        p += sizeof(ulong);
+        bytes -= sizeof(ulong);
+      }
+
+      while (bytes != 0) // restliche Bytes einzeln setzen
+      {
+        *p++ = 0;
+        bytes--;
+      }
     }
   }
 }

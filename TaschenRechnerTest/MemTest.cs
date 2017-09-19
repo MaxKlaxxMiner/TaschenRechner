@@ -9,10 +9,7 @@ namespace TaschenRechnerTest
   {
     static void MemTest()
     {
-      var p1 = MemMgr.AllocUnsafe(11);
-
-
-
+      var p1 = MemMgr.Alloc(11);
     }
   }
 }
