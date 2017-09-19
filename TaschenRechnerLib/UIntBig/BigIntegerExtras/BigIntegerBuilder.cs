@@ -305,7 +305,8 @@ namespace TaschenRechnerLib.BigIntegerExtras
         uint uCarry;
 
         // --- default ---
-        //for (int i = 0; i < iu; i++) uCarry = AddCarry(ref rgu[i], reg.rgu[i], 0);
+        //uCarry = 0;
+        //for (int i = 0; i < iu; i++) uCarry = AddCarry(ref rgu[i], reg.rgu[i], uCarry);
 
         // --- Referenz zum Debuggen -> 66% schneller als default ---
         //uCarry = XtrAddCarryRef(rgu, reg.rgu, iu, 0);
@@ -457,15 +458,16 @@ namespace TaschenRechnerLib.BigIntegerExtras
       EnsureWritable();
 
       // Subtract, tracking borrow.
-      uint uBorrow = 0;
+      uint uBorrow;
 
       // --- default ---
+      //uBorrow = 0;
       //for (int iu = 0; iu < cuSub; iu++) uBorrow = SubBorrow(ref rgu[iu], reg.rgu[iu], uBorrow);
 
       // --- Referenz zum Debuggen -> 40% schneller als default ---
       //uBorrow = XtrSubBorrowRef(rgu, reg.rgu, cuSub, 0);
 
-      // --- Highspeed -> ---% schneller als default ---
+      // --- Highspeed -> 104% schneller als default ---
       fixed (uint* targetP = rgu, srcP = reg.rgu) uBorrow = XtrSubBorrow(targetP, srcP, cuSub, 0);
 
       if (uBorrow != 0)
@@ -505,7 +507,7 @@ namespace TaschenRechnerLib.BigIntegerExtras
     /// <returns>Borrow-Flag</returns>
     static uint XtrSubBorrow(uint* target, uint* src, long count, ulong borrow)
     {
-      long i = 0;
+      long i;
       for (i = 0; i < count - 1; i += 2)
       {
         ulong s = *(ulong*)(src + i);
