@@ -283,22 +283,12 @@ namespace TaschenRechnerTest
 
       //SpeedDiv();
       //SpeedCheckStr();
-      SpeedCheckAdd();
+      //SpeedCheckAdd();
       //SpeedCheckSub();
       //SpeedCheckMul();
       //SpeedCheckDiv();
 
-      //ulong b1 = 0;
-      //ulong r1a = (ulong)uint.MaxValue - (ulong)-(int)(b1 >> 32);
-      //ulong r1b = 0UL - (ulong)-(int)(b1 >> 32);
-      //ulong b2 = ulong.MaxValue;
-      //ulong r2a = (ulong)uint.MaxValue - (ulong)-(int)(b2 >> 32);
-      //ulong r2b = 0UL - (ulong)-(int)(b2 >> 32);
-
-      var b = new BigInteger(ulong.MaxValue);
-      var str = b.ToString();
-      b %= b;
-      b++;
+      MemTest();
     }
   }
 }

@@ -1,16 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TaschenRechnerLib.UIntX.Core
 {
   /// <summary>
   /// Klasse zum verwalten von Arbeitsspeicher
   /// </summary>
-  internal unsafe static class MemMgr
+  public static unsafe class MemMgr
   {
     /// <summary>
     /// Mindestgröße eines Elementes
@@ -68,6 +66,11 @@ namespace TaschenRechnerLib.UIntX.Core
       /// gibt die maximale Anzahl der speicherbaren Elemente an
       /// </summary>
       public int MaxElements { get { return elementsMax; } }
+
+      /// <summary>
+      /// gibt die Größe der Elemente zurück
+      /// </summary>
+      public int ElementSize { get { return elementSize; } }
 
       /// <summary>
       /// gibt die Speicheradresse der Daten zurück
@@ -165,6 +168,7 @@ namespace TaschenRechnerLib.UIntX.Core
     /// </summary>
     static int memBlocksCount;
 
+    #region # // --- private Methoden ---
     /// <summary>
     /// gibt einen MemoryBlock zurück, welcher genug freien Speicher besitzt
     /// </summary>
@@ -203,15 +207,20 @@ namespace TaschenRechnerLib.UIntX.Core
 
       return MemBlocks[targetIndex];
     }
+    #endregion
 
     /// <summary>
-    /// reserviert einen neuen Speicherbereich (der Inhalt ist undefiniert)
+    /// reserviert einen neuen Speicherbereich (Inhalt ist undefiniert)
     /// </summary>
     /// <param name="bytes">Mindestgröße in Bytes, welche reserviert werden sollen</param>
     /// <returns>Zeiger auf den Speicherbereich</returns>
     public static byte* AllocUnsafe(int bytes)
     {
       var block = GetMemBlockFree(bytes);
+
+      Debug.Assert(block.FreeBytes >= bytes);
+      Debug.Assert(block.ElementSize >= bytes);
+
 
       return null;
     }
@@ -220,7 +229,7 @@ namespace TaschenRechnerLib.UIntX.Core
     /// gibt einen reservierten Speicherbereich wieder frei
     /// </summary>
     /// <param name="p">Zeiger auf den resevierten Speicherbereich</param>
-    /// <returns></returns>
+    /// <returns>true, wenn die Freigabe des Speichers erfolgreich war</returns>
     public static bool Free(byte* p)
     {
       return false;

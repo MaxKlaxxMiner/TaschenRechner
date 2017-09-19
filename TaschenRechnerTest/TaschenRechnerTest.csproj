@@ -54,6 +54,7 @@
     <Compile Include="SpeedCheckSub.cs" />
     <Compile Include="SpeedCheckAdd.cs" />
     <Compile Include="SpeedCheckStr.cs" />
+    <Compile Include="MemTest.cs" />
     <Compile Include="SpeedDiv.cs" />
   </ItemGroup>
   <ItemGroup>
