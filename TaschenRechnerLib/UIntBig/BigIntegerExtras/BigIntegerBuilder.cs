@@ -460,10 +460,10 @@ namespace TaschenRechnerLib.BigIntegerExtras
       uint uBorrow = 0;
 
       // --- default ---
-      for (int iu = 0; iu < cuSub; iu++) uBorrow = SubBorrow(ref rgu[iu], reg.rgu[iu], 0);
+      //for (int iu = 0; iu < cuSub; iu++) uBorrow = SubBorrow(ref rgu[iu], reg.rgu[iu], uBorrow);
 
       // --- Referenz zum Debuggen -> --% schneller als default ---
-      //uBorrow = XtrSubBorrowRef(rgu, reg.rgu, cuSub, 0);
+      uBorrow = XtrSubBorrowRef(rgu, reg.rgu, cuSub, 0);
 
       if (uBorrow != 0)
       {
@@ -487,7 +487,7 @@ namespace TaschenRechnerLib.BigIntegerExtras
       {
         ulong r = (ulong)target[i] - src[i] - borrow;
         target[i] = (uint)r;
-        borrow = (ulong)-(long)(r >> 32);
+        borrow = (uint)-(int)(r >> 32);
       }
       return (uint)borrow;
     }
