@@ -462,8 +462,11 @@ namespace TaschenRechnerLib.BigIntegerExtras
       // --- default ---
       //for (int iu = 0; iu < cuSub; iu++) uBorrow = SubBorrow(ref rgu[iu], reg.rgu[iu], uBorrow);
 
-      // --- Referenz zum Debuggen -> --% schneller als default ---
-      uBorrow = XtrSubBorrowRef(rgu, reg.rgu, cuSub, 0);
+      // --- Referenz zum Debuggen -> 40% schneller als default ---
+      //uBorrow = XtrSubBorrowRef(rgu, reg.rgu, cuSub, 0);
+
+      // --- Highspeed -> ---% schneller als default ---
+      fixed (uint* targetP = rgu, srcP = reg.rgu) uBorrow = XtrSubBorrow(targetP, srcP, cuSub, 0);
 
       if (uBorrow != 0)
       {
@@ -487,9 +490,37 @@ namespace TaschenRechnerLib.BigIntegerExtras
       {
         ulong r = (ulong)target[i] - src[i] - borrow;
         target[i] = (uint)r;
-        borrow = (uint)-(int)(r >> 32);
+        borrow = (ulong)-(int)(r >> 32);
       }
       return (uint)borrow;
+    }
+
+    /// <summary>
+    /// Hochgeschwindigkeitsfunktion zum subtrahieren von zwei Langen Bit-Ketten
+    /// </summary>
+    /// <param name="target">Ziel-Adresse, wo das Ergebnis gespeichert werden soll</param>
+    /// <param name="src">Quell-Adresse des zweiten Wertes</param>
+    /// <param name="count">Anzahl der Berechnungen</param>
+    /// <param name="borrow">(optional) Borrow-Flag, welches am Start verwendet werden soll</param>
+    /// <returns>Borrow-Flag</returns>
+    static uint XtrSubBorrow(uint* target, uint* src, long count, ulong borrow)
+    {
+      long i = 0;
+      for (i = 0; i < count - 1; i += 2)
+      {
+        ulong s = *(ulong*)(src + i);
+        ulong t = *(ulong*)(target + i);
+        borrow = (ulong)(uint)t - (uint)s - (borrow >> 63);
+        target[i] = (uint)borrow;
+        borrow = (t >> 32) - (s >> 32) - (borrow >> 63);
+        target[i + 1] = (uint)borrow;
+      }
+      for (; i < count; i++)
+      {
+        borrow = (ulong)target[i] - src[i] - (borrow >> 63);
+        target[i] = (uint)borrow;
+      }
+      return (uint)-(int)(borrow >> 32);
     }
 
     /// <summary>
