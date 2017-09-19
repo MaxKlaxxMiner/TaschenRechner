@@ -78,6 +78,7 @@
     <Compile Include="UIntSimple\ToString.cs" />
     <Compile Include="UIntSimple\Compare.cs" />
     <Compile Include="UIntSimple\UIntSimple.cs" />
+    <Compile Include="UIntX\Core\MemMgr.cs" />
     <Compile Include="UnsafeHelper.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
