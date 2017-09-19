@@ -92,6 +92,11 @@ namespace TaschenRechnerLib.UIntX.Core
       /// gibt die Speicheradresse der Daten zurück
       /// </summary>
       public byte* DataPointer { get { return data; } }
+
+      /// <summary>
+      /// zeigt auf das Ende des Speicherbereiches
+      /// </summary>
+      public byte* DataPointerEnd { get { return pointer + totalBytes; } }
       #endregion
 
       #region # // --- Methoden ---
@@ -127,13 +132,31 @@ namespace TaschenRechnerLib.UIntX.Core
             var result = data + (elementOffset << elementBits);
 
             Debug.Assert(result >= data);
-            Debug.Assert(result <= pointer + totalBytes - elementSize);
+            Debug.Assert(result + elementSize <= DataPointerEnd);
 
             return result;
           }
         }
 
         throw new OutOfMemoryException(); // kein freies Bit gefunden?!? -> sollte nicht auftreten
+      }
+
+      /// <summary>
+      /// prüft, ob die Speicheradresse zu einem benutzbaren Speicherbereich gehört
+      /// </summary>
+      /// <param name="p">Zeiger auf die absolute Speicheradresse</param>
+      /// <returns>true, wenn die Speicheradresse gültig ist</returns>
+      public bool ValidPtr(byte* p)
+      {
+        Debug.Assert(p >= DataPointer);
+        Debug.Assert(p + elementSize <= DataPointerEnd);
+
+        long elementPos = p - data >> elementBits;
+        Debug.Assert(elementPos >= 0 && elementPos < elementsMax);
+
+        if (data + (elementPos << elementBits) != p) return false; // ungültige Adresse innerhalb eines Elementes
+
+        return (pointer[elementPos >> 3] & 1 << (int)(elementPos & 3)) != 0; // ist das entsprechende Reserviert-Bit gesetzt?
       }
       #endregion
 
@@ -213,6 +236,7 @@ namespace TaschenRechnerLib.UIntX.Core
     }
     #endregion
 
+    #region # // --- statische Variablen ---
     /// <summary>
     /// merkt sich alle erstellten Memory-Blöcke
     /// </summary>
@@ -227,6 +251,7 @@ namespace TaschenRechnerLib.UIntX.Core
     /// Anzahl der bereits erstellten Memory-Blöcke
     /// </summary>
     static int memBlocksCount;
+    #endregion
 
     #region # // --- private Methoden ---
     /// <summary>
@@ -267,6 +292,30 @@ namespace TaschenRechnerLib.UIntX.Core
 
       return MemBlocks[targetIndex];
     }
+
+    /// <summary>
+    /// gibt den zugehörigen Memory-Block anhand eines absolute Speicher-Zeigers zurück (oder null, wenn nicht gefunden)
+    /// </summary>
+    /// <param name="p">Speicher-Adresse, welche gesucht werden soll</param>
+    /// <returns>gefundener Memory-Block oder null, wenn nicht gefunden</returns>
+    static MemBlock GetMemBlockPtr(byte* p)
+    {
+      int startPos = 0;
+      int endPos = memBlocksCount;
+      long searchPointer = (long)p;
+      do
+      {
+        int midPos = (startPos + endPos) >> 1;
+        if (MemBlocksPointer[midPos].Key > searchPointer) endPos = midPos; else startPos = midPos;
+      } while (endPos - startPos > 1);
+
+      if (MemBlocksPointer[startPos].Key <= searchPointer && MemBlocksPointer[startPos].Value != null && startPos < (long)MemBlocksPointer[startPos].Value.DataPointerEnd)
+      {
+        return MemBlocksPointer[startPos].Value;
+      }
+
+      return null; // Memoryblock nicht gefunden
+    }
     #endregion
 
     /// <summary>
@@ -294,6 +343,22 @@ namespace TaschenRechnerLib.UIntX.Core
       var p = AllocUnsafe(bytes);
       Zero(p, bytes);
       return p;
+    }
+
+    /// <summary>
+    /// gibt die maximal erlaubte Größe des reservierte Speicherbereiches zurück
+    /// (gibt 0 zurück, wenn der Bereich bereits mit <see cref="Free"/> gelöscht wurde oder nicht vom Speichermanager <see cref="MemMgr"/> verwaltet wird)
+    /// </summary>
+    /// <param name="p">Zeiger auf den reservierten Speicherbereich</param>
+    /// <returns>Größe des nutzbaren Speicherbereiches in Bytes, oder 0 wenn ungültig</returns>
+    public static int GetSize(byte* p)
+    {
+      var block = GetMemBlockPtr(p);
+      if (block == null) return 0; // passenden Memory-Block nicht gefunden (wird nicht von MemMgr verwaltet)
+
+      if (!block.ValidPtr(p)) return 0; // Speicheradresse ungültig oder Bereich wurde bereits freigegeben
+
+      return block.ElementSize;
     }
 
     /// <summary>
