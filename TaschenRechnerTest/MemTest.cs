@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using TaschenRechnerLib;
 using TaschenRechnerLib.UIntX.Core;
+// ReSharper disable UnusedMember.Local
 
 namespace TaschenRechnerTest
 {
@@ -98,10 +99,25 @@ namespace TaschenRechnerTest
       MemTestMulti(1000000000, 5);
     }
 
+    static void MemTestMaxElements()
+    {
+      MemTestMulti(32, 20);
+      MemTestMulti(32, 200);
+      MemTestMulti(32, 2000);
+      MemTestMulti(32, 20000);
+      MemTestMulti(32, 200000);
+      MemTestMulti(32, 2000000);
+      // --- x64 4 GB ---
+      MemTestMulti(32, 20000000);
+      // --- x64 12 GB ---
+      MemTestMulti(32, 200000000);
+    }
+
     static void MemTest()
     {
       // MemTestSingles();
-      MemTestMaxMem();
+      // MemTestMaxMem();
+      MemTestMaxElements();
     }
   }
 }
