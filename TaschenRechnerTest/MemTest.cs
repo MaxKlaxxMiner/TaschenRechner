@@ -61,15 +61,15 @@ namespace TaschenRechnerTest
       Debug.Assert(MemMgr.Free(p7));
     }
 
-    static void MemTestMulti(int len)
+    static void MemTestMulti(int len, int count = 1000)
     {
-      var ps = new byte*[1000];
+      var ps = new byte*[count];
 
       // --- 1000 Elemente reservieren ---
       for (int i = 0; i < ps.Length; i++) ps[i] = MemMgr.AllocUnsafe(len);
 
       // --- alle Elemente prüfen ---
-      foreach (var p in ps) if (MemMgr.GetSize(p) != 32) throw new Exception();
+      foreach (var p in ps) if (MemMgr.GetSize(p) == 0) throw new Exception();
 
       // --- jedes neunte Element freigeben ---
       for (int i = 0; i < ps.Length; i += 9) if (!MemMgr.Free(ps[i])) throw new Exception();
@@ -81,10 +81,27 @@ namespace TaschenRechnerTest
       foreach (var p in ps) if (!MemMgr.Free(p)) throw new Exception();
     }
 
+    static void MemTestMaxMem()
+    {
+      MemTestMulti(10);
+      MemTestMulti(100);
+      MemTestMulti(1000);
+      MemTestMulti(10000);
+      MemTestMulti(100000);
+      // --- x64 4 GB ---
+      MemTestMulti(1000000);
+      // --- x64 6 GB ---
+      MemTestMulti(10000000, 100);
+      // --- x64 8 GB ---
+      MemTestMulti(100000000, 10);
+      // --- x64 12 GB ---
+      MemTestMulti(1000000000, 5);
+    }
+
     static void MemTest()
     {
-      MemTestSingles();
-      MemTestMulti(20);
+      // MemTestSingles();
+      MemTestMaxMem();
     }
   }
 }

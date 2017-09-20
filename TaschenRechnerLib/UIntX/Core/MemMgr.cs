@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 // ReSharper disable MemberCanBePrivate.Global
+// ReSharper disable UnusedMember.Global
 
 namespace TaschenRechnerLib.UIntX.Core
 {
@@ -30,6 +31,11 @@ namespace TaschenRechnerLib.UIntX.Core
     /// maximale Anzahl der Blöcke pro Level (sinnvolle Werte: 8-24, default: 16)
     /// </summary>
     const int MaxBlocksPerLevel = 16;
+
+    /// <summary>
+    /// maximale Anzahl der möglichen Levels (sibbvolle Werte: 16-32, default: 26)
+    /// </summary>
+    const int MaxLevels = 26;
 
     #region # class MemBlock // Klasse zur Handhabung mehrere kleineren Speicherbereiche
     /// <summary>
@@ -76,7 +82,17 @@ namespace TaschenRechnerLib.UIntX.Core
       /// <summary>
       /// gibt den freien Speicherplatz in Bytes an
       /// </summary>
-      public long FreeBytes { get { return elementsFree << elementBits; } }
+      public long FreeBytes { get { return (long)elementsFree << elementBits; } }
+
+      /// <summary>
+      /// gibt die Größe des gesamten reservierten Speichers ingesamt an
+      /// </summary>
+      public long TotalBytes { get { return totalBytes; } }
+
+      /// <summary>
+      /// gibt die Größe des reinen Daten-Speichers an
+      /// </summary>
+      public long DataBytes { get { return totalBytes + pointer - data; } }
 
       /// <summary>
       /// gibt die maximale Anzahl der speicherbaren Elemente an
@@ -233,6 +249,13 @@ namespace TaschenRechnerLib.UIntX.Core
         totalBytes = (elementCount + 7) / 8 + (long)elementSize * elementCount;
         pointer = (byte*)Marshal.AllocHGlobal((IntPtr)totalBytes);
         Zero(pointer, (elementCount + 7) / 8); // Bitmap leeren
+        if ((elementCount & 7) != 0)
+        {
+          for (int nx = elementCount; nx < elementCount + 8; nx++) // restlichen Bits als belegt markieren (welche außerhalb des gültigen Bereiches liegen)
+          {
+            pointer[nx >> 3] = (byte)(pointer[nx >> 3] | 1 << (nx & 7));
+          }
+        }
         data = pointer + (elementCount + 7) / 8; // Zeiger auf den Datenbereich setzen (direkt nach der Bitmap)
         freeSearch = pointer;
         elementsMax = elementCount;
@@ -263,7 +286,7 @@ namespace TaschenRechnerLib.UIntX.Core
     /// <summary>
     /// merkt sich alle erstellten Memory-Blöcke
     /// </summary>
-    static readonly MemBlock[] MemBlocks = new MemBlock[MaxBlocksPerLevel * MaxBlocksPerLevel];
+    static readonly MemBlock[] MemBlocks = new MemBlock[MaxBlocksPerLevel * MaxLevels];
 
     /// <summary>
     /// merkt sich die Memory-Blöcke sortiert nach Speicher-Adressen
@@ -348,6 +371,8 @@ namespace TaschenRechnerLib.UIntX.Core
     /// <returns>Zeiger auf den Speicherbereich</returns>
     public static byte* AllocUnsafe(int bytes)
     {
+      if (bytes < 0 || bytes > 1024 * 1024 * 1024) throw new OutOfMemoryException();
+
       var block = GetMemBlockFree(bytes);
 
       Debug.Assert(block.FreeBytes >= bytes);
@@ -395,6 +420,63 @@ namespace TaschenRechnerLib.UIntX.Core
       if (block == null) return false; // passenden Memory-Block nicht gefunden (wird nicht von MemMgr verwaltet)
 
       return block.FreeElement(p);
+    }
+
+    /// <summary>
+    /// gibt in Bytes an, wieviel Arbeitsspeicher insgesamt vom Manager reserviert wurde
+    /// </summary>
+    public static long AllocatedTotal
+    {
+      get
+      {
+        long total = 0;
+
+        foreach (var b in MemBlocks)
+        {
+          if (b == null) continue;
+          total += b.TotalBytes;
+        }
+
+        return total;
+      }
+    }
+
+    /// <summary>
+    /// gibt in Bytes an, wieviel Arbeitsspeicher momentan in Benutzung ist (inkl. BitMaps)
+    /// </summary>
+    public static long UsedTotal
+    {
+      get
+      {
+        long total = 0;
+
+        foreach (var b in MemBlocks)
+        {
+          if (b == null) continue;
+          total += b.TotalBytes - b.FreeBytes;
+        }
+
+        return total;
+      }
+    }
+
+    /// <summary>
+    /// gibt in Bytes an, wieviel Arbeitsspeicher momentan von reinen Daten in Benutzung ist
+    /// </summary>
+    public static long UsedData
+    {
+      get
+      {
+        long total = 0;
+
+        foreach (var b in MemBlocks)
+        {
+          if (b == null) continue;
+          total += b.DataBytes - b.FreeBytes;
+        }
+
+        return total;
+      }
     }
 
     /// <summary>
