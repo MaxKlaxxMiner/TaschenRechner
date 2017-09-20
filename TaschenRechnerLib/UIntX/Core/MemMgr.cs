@@ -318,12 +318,23 @@ namespace TaschenRechnerLib.UIntX.Core
 
       var targetBlock = MemBlocks[targetIndex];
 
-      // --- passenden Block schon gefunden? ---
-      if (targetBlock != null && targetBlock.FreeBytes >= targetSize)
+      // --- passenden Block noch nicht gefunden? ---
+      if (targetBlock == null || targetBlock.FreeBytes < targetSize)
       {
-        return targetBlock;
+        targetBlock = SearchTargetBlock(targetIndex, targetSize);
       }
 
+      return targetBlock;
+    }
+
+    /// <summary>
+    /// sucht nach einem Block, bzw. erstellt ein neuen
+    /// </summary>
+    /// <param name="targetIndex">Start-Position, wo gesucht werden soll</param>
+    /// <param name="targetSize">gewünschte Größe</param>
+    /// <returns>fertiger Block, welcher benutzt werden kann</returns>
+    static MemBlock SearchTargetBlock(int targetIndex, int targetSize)
+    {
       // --- bekannte Blöcke mit zu wenig freien Platz überspringen ---
       while (MemBlocks[targetIndex] != null && MemBlocks[targetIndex].FreeBytes < targetSize) targetIndex++;
 
@@ -350,21 +361,20 @@ namespace TaschenRechnerLib.UIntX.Core
         }
         MemBlocksPointer[pIdx] = p;
         memBlocksCount++;
-        targetBlock = MemBlocks[targetIndex];
+        return MemBlocks[targetIndex];
       }
       else
       {
         // --- gerade benutzten Block nach vorne verschieben ---
-        targetBlock = MemBlocks[targetIndex];
+        var tmp = MemBlocks[targetIndex];
         while (targetIndex > targetFirst)
         {
           MemBlocks[targetIndex] = MemBlocks[targetIndex - 1];
           targetIndex--;
         }
-        MemBlocks[targetFirst] = targetBlock;
+        MemBlocks[targetFirst] = tmp;
+        return tmp;
       }
-
-      return targetBlock;
     }
 
     /// <summary>
