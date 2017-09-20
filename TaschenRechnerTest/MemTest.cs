@@ -113,11 +113,27 @@ namespace TaschenRechnerTest
       MemTestMulti(32, 200000000);
     }
 
+    static void MemTestSpeed()
+    {
+      var m = new Stopwatch();
+      m.Start();
+      MemTestMulti(32, 20);
+      MemTestMulti(32, 200);
+      MemTestMulti(32, 2000);
+      MemTestMulti(32, 20000);
+      MemTestMulti(32, 200000);
+      MemTestMulti(32, 2000000);
+      MemTestMulti(32, 20000000);
+      m.Stop();
+      Console.WriteLine("Time: " + m.ElapsedMilliseconds.ToString("N0"));
+    }
+
     static void MemTest()
     {
       // MemTestSingles();
       // MemTestMaxMem();
-      MemTestMaxElements();
+      // MemTestMaxElements();
+      for (int r = 0; r < 5; r++) MemTestSpeed();
     }
   }
 }

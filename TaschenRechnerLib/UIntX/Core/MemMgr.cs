@@ -321,7 +321,13 @@ namespace TaschenRechnerLib.UIntX.Core
 
       if (MemBlocks[targetIndex] == null) // neuen Block erstellen?
       {
-        int newCount = targetIndex > 0 && MemBlocks[targetIndex - 1] != null ? MemBlocks[targetIndex - 1].MaxElements * 2 : Math.Max(MinElementsCount, MinBlockBytes / targetSize);
+        int targetFirst = targetIndex / MaxBlocksPerLevel * MaxBlocksPerLevel;
+        int newCount = MemBlocks[targetFirst] != null ? MemBlocks[targetFirst].MaxElements * 2 : Math.Max(MinElementsCount, MinBlockBytes / targetSize);
+        while (targetIndex > targetFirst)
+        {
+          MemBlocks[targetIndex] = MemBlocks[targetIndex - 1];
+          targetIndex--;
+        }
         MemBlocks[targetIndex] = new MemBlock(targetSize, newCount);
 
         // --- neuen Block in die Pointer-Liste einsortieren ---
