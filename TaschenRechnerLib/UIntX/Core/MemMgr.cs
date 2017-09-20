@@ -28,9 +28,9 @@ namespace TaschenRechnerLib.UIntX.Core
     const int MinElementsCount = 5;
 
     /// <summary>
-    /// maximale Anzahl der Blöcke pro Level (sinnvolle Werte: 8-24, default: 16)
+    /// maximale Anzahl der Blöcke pro Level (sinnvolle Werte: 8-30, default: 18)
     /// </summary>
-    const int MaxBlocksPerLevel = 16;
+    const int MaxBlocksPerLevel = 18;
 
     /// <summary>
     /// maximale Anzahl der möglichen Levels (sibbvolle Werte: 16-32, default: 26)
@@ -316,16 +316,26 @@ namespace TaschenRechnerLib.UIntX.Core
         targetSize <<= 1;
       }
 
+      var targetBlock = MemBlocks[targetIndex];
+
+      // --- passenden Block schon gefunden? ---
+      if (targetBlock != null && targetBlock.FreeBytes >= targetSize)
+      {
+        return targetBlock;
+      }
+
       // --- bekannte Blöcke mit zu wenig freien Platz überspringen ---
       while (MemBlocks[targetIndex] != null && MemBlocks[targetIndex].FreeBytes < targetSize) targetIndex++;
 
+      int targetFirst = targetIndex / MaxBlocksPerLevel * MaxBlocksPerLevel;
+
       if (MemBlocks[targetIndex] == null) // neuen Block erstellen?
       {
-        int targetFirst = targetIndex / MaxBlocksPerLevel * MaxBlocksPerLevel;
-        int newCount = MemBlocks[targetFirst] != null ? MemBlocks[targetFirst].MaxElements * 2 : Math.Max(MinElementsCount, MinBlockBytes / targetSize);
+        int newCount = Math.Max(MinElementsCount, MinBlockBytes / targetSize);
         while (targetIndex > targetFirst)
         {
           MemBlocks[targetIndex] = MemBlocks[targetIndex - 1];
+          if (MemBlocks[targetIndex].MaxElements * 2 > newCount) newCount = MemBlocks[targetIndex].MaxElements * 2;
           targetIndex--;
         }
         MemBlocks[targetIndex] = new MemBlock(targetSize, newCount);
@@ -340,9 +350,21 @@ namespace TaschenRechnerLib.UIntX.Core
         }
         MemBlocksPointer[pIdx] = p;
         memBlocksCount++;
+        targetBlock = MemBlocks[targetIndex];
+      }
+      else
+      {
+        // --- gerade benutzten Block nach vorne verschieben ---
+        targetBlock = MemBlocks[targetIndex];
+        while (targetIndex > targetFirst)
+        {
+          MemBlocks[targetIndex] = MemBlocks[targetIndex - 1];
+          targetIndex--;
+        }
+        MemBlocks[targetFirst] = targetBlock;
       }
 
-      return MemBlocks[targetIndex];
+      return targetBlock;
     }
 
     /// <summary>
