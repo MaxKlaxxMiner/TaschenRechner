@@ -7,7 +7,7 @@ namespace TaschenRechnerTest
 {
   static unsafe partial class Program
   {
-    static void MemTest()
+    static void MemTestSingles()
     {
       var p1 = MemMgr.Alloc(11);
       Debug.Assert(MemMgr.GetSize(p1) == 32);
@@ -51,6 +51,40 @@ namespace TaschenRechnerTest
       Debug.Assert(MemMgr.GetSize(p3) == 32);
       Debug.Assert(MemMgr.GetSize(p4) == 64);
       Debug.Assert(MemMgr.GetSize(p5) == 32);
+
+      Debug.Assert(MemMgr.Free(p1));
+      Debug.Assert(!MemMgr.Free(p2));
+      Debug.Assert(MemMgr.Free(p3));
+      Debug.Assert(MemMgr.Free(p4));
+      Debug.Assert(MemMgr.Free(p5));
+      Debug.Assert(!MemMgr.Free(p6));
+      Debug.Assert(MemMgr.Free(p7));
+    }
+
+    static void MemTestMulti(int len)
+    {
+      var ps = new byte*[1000];
+
+      // --- 1000 Elemente reservieren ---
+      for (int i = 0; i < ps.Length; i++) ps[i] = MemMgr.AllocUnsafe(len);
+
+      // --- alle Elemente prüfen ---
+      foreach (var p in ps) if (MemMgr.GetSize(p) != 32) throw new Exception();
+
+      // --- jedes neunte Element freigeben ---
+      for (int i = 0; i < ps.Length; i += 9) if (!MemMgr.Free(ps[i])) throw new Exception();
+
+      // --- jedes neunte Element neu reservieren ---
+      for (int i = 0; i < ps.Length; i += 9) ps[i] = MemMgr.AllocUnsafe(len);
+
+      // --- alle Elemente wieder frei geben ---
+      foreach (var p in ps) if (!MemMgr.Free(p)) throw new Exception();
+    }
+
+    static void MemTest()
+    {
+      MemTestSingles();
+      MemTestMulti(20);
     }
   }
 }

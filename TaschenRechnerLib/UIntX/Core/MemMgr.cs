@@ -128,7 +128,7 @@ namespace TaschenRechnerLib.UIntX.Core
             Debug.Assert((*freeSearch & 1 << bit) != 0);
 
             elementsFree--;
-            long elementOffset = (freeSearch - pointer << 8) + bit;
+            long elementOffset = (freeSearch - pointer << 3) + bit;
             var result = data + (elementOffset << elementBits);
 
             Debug.Assert(result >= data);
@@ -156,7 +156,7 @@ namespace TaschenRechnerLib.UIntX.Core
 
         if (data + (elementPos << elementBits) != p) return false; // ungültige Adresse innerhalb eines Elementes
 
-        return (pointer[elementPos >> 3] & 1 << (int)(elementPos & 3)) != 0; // ist das entsprechende Reserviert-Bit gesetzt?
+        return (pointer[elementPos >> 3] & 1 << (int)(elementPos & 7)) != 0; // ist das entsprechende Reserviert-Bit gesetzt?
       }
 
       /// <summary>
@@ -175,7 +175,7 @@ namespace TaschenRechnerLib.UIntX.Core
         if (data + (elementPos << elementBits) != p) return false; // ungültige Adresse innerhalb eines Elementes
 
         int bits = pointer[elementPos >> 3];
-        int marker = bits & 1 << (int)(elementPos & 3);
+        int marker = bits & 1 << (int)(elementPos & 7);
         if (marker == 0) return false; // Element war bereits gelöscht
 
         pointer[elementPos >> 3] = (byte)(bits ^ marker); // Bit wieder löschen
@@ -302,7 +302,7 @@ namespace TaschenRechnerLib.UIntX.Core
         MemBlocks[targetIndex] = new MemBlock(targetSize, newCount);
 
         // --- neuen Block in die Pointer-Liste einsortieren ---
-        var p = new KeyValuePair<long, MemBlock>((long)MemBlocks[targetIndex].DataPointer, MemBlocks[targetIndex]); ;
+        var p = new KeyValuePair<long, MemBlock>((long)MemBlocks[targetIndex].DataPointer, MemBlocks[targetIndex]);
         int pIdx = memBlocksCount;
         while (pIdx > 0 && MemBlocksPointer[pIdx - 1].Key > p.Key)
         {
