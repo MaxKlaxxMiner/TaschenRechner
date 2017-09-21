@@ -3,7 +3,7 @@ using TaschenRechnerLib.BigIntegerExtras;
 
 namespace TaschenRechnerLib
 {
-  public partial struct UIntBig
+  public partial struct UIntXb
   {
     /// <summary>
     /// Operator zum addieren zweier Zahlen
@@ -11,7 +11,7 @@ namespace TaschenRechnerLib
     /// <param name="val1">erster Wert, welcher verwendet werden soll</param>
     /// <param name="val2">zweiter Wert, welcher verwendet werden soll</param>
     /// <returns>fertiges Ergebnis</returns>
-    public static UIntBig operator +(UIntBig val1, UIntBig val2)
+    public static UIntXb operator +(UIntXb val1, UIntXb val2)
     {
       if (val2.IsZero) return val1;
       if (val1.IsZero) return val2;
@@ -20,7 +20,7 @@ namespace TaschenRechnerLib
       var reg = new BigIntegerBuilder(val2);
       bb.Add(ref reg);
 
-      return bb.GetUIntBig();
+      return bb.GetUIntXb();
     }
 
     /// <summary>
@@ -28,11 +28,11 @@ namespace TaschenRechnerLib
     /// </summary>
     /// <param name="val">Zahl, welche inkrementiert werden soll</param>
     /// <returns>fertig inkrementierte Zahl</returns>
-    public static UIntBig operator ++(UIntBig val)
+    public static UIntXb operator ++(UIntXb val)
     {
       var bb = new BigIntegerBuilder(val);
       bb.Add(1);
-      return bb.GetUIntBig();
+      return bb.GetUIntXb();
     }
   }
 }

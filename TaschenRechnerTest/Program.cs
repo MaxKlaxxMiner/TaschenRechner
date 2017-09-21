@@ -13,7 +13,8 @@ using System.Collections.Generic;
 //using ui = TaschenRechnerLib.UIntSimple;
 //using ui = TaschenRechnerLib.UIntLimbs;
 //using ui = TaschenRechnerLib.UIntBig;
-using ui = TaschenRechnerLib.UIntX;
+//using ui = TaschenRechnerLib.UIntX;
+using ui = TaschenRechnerLib.UIntXb;
 
 namespace TaschenRechnerTest
 {

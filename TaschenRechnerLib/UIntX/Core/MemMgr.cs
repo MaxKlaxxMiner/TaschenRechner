@@ -200,12 +200,14 @@ namespace TaschenRechnerLib.Core
 
         if (data + (elementPos << elementBits) != p) return false; // ungültige Adresse innerhalb eines Elementes
 
-        int bits = pointer[elementPos >> 3];
+        var pp = pointer + (elementPos >> 3);
+        int bits = *pp;
         int marker = bits & 1 << (int)(elementPos & 7);
         if (marker == 0) return false; // Element war bereits gelöscht
 
-        pointer[elementPos >> 3] = (byte)(bits ^ marker); // Bit wieder löschen
+        *pp = (byte)(bits ^ marker); // Bit wieder löschen
         elementsFree++;
+        //freeSearch = pp;
 
         if (DoAssertFull) AssertFull();
 

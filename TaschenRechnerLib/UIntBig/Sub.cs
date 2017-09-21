@@ -17,7 +17,7 @@ namespace TaschenRechnerLib
       var bb = new BigIntegerBuilder(val1);
       var reg = new BigIntegerBuilder(val2);
       bb.Sub(ref reg);
-      return bb.GetInteger();
+      return bb.GetUIntBig();
     }
 
     /// <summary>
@@ -30,7 +30,7 @@ namespace TaschenRechnerLib
       if (val.IsZero) throw new InvalidCalcException();
       var bb = new BigIntegerBuilder(val);
       bb.Sub(1);
-      return bb.GetInteger();
+      return bb.GetUIntBig();
     }
   }
 }

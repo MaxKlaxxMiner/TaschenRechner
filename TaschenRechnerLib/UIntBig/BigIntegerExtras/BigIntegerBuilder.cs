@@ -31,6 +31,20 @@ namespace TaschenRechnerLib.BigIntegerExtras
     /// <summary>
     /// Konstruktor
     /// </summary>
+    /// <param name="bn">BitInteger mit Bit-Kette, welche verwendet werden soll</param>
+    public BigIntegerBuilder(UIntXb bn)
+    {
+      fWritable = false;
+      rgu = bn.limbs;
+      int last = rgu.Length - 1;
+      uSmall = rgu[0];
+      while (last > 0 && rgu[last] == 0) last--;
+      iuLast = last;
+    }
+
+    /// <summary>
+    /// Konstruktor
+    /// </summary>
     /// <param name="reg">Referenz auf einen weiteren BigIntegerBuilder</param>
     public BigIntegerBuilder(ref BigIntegerBuilder reg)
     {
@@ -109,9 +123,18 @@ namespace TaschenRechnerLib.BigIntegerExtras
     /// gibt den Wert wieder als neu erstelltes UBigInt zurück
     /// </summary>
     /// <returns></returns>
-    public UIntBig GetInteger()
+    public UIntBig GetUIntBig()
     {
       return new UIntBig(GetIntegerParts());
+    }
+
+    /// <summary>
+    /// gibt den Wert wieder als neu erstelltes UIntXb zurück
+    /// </summary>
+    /// <returns></returns>
+    public UIntXb GetUIntXb()
+    {
+      return new UIntXb(GetIntegerParts());
     }
 
     /// <summary>

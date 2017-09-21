@@ -26,7 +26,7 @@ namespace TaschenRechnerLib
       var bb = new BigIntegerBuilder(val1);
       var regDen = new BigIntegerBuilder(val2);
       bb.Mod(ref regDen);
-      return bb.GetInteger();
+      return bb.GetUIntBig();
     }
   }
 }
