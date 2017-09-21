@@ -71,11 +71,11 @@ namespace TaschenRechnerLib
       limbsCount = val <= uint.MaxValue ? 1 : 2;
     }
 
-    ///// <summary>
-    ///// Konstruktor mit einer Zeichenkette, welche aus einer unsignierten Integer-Zahl besteht
-    ///// </summary>
-    ///// <param name="val">Wert, welcher verwendet werden soll</param>
-    //public UIntBig(string val) : this(ParseInternal(val)) { }
+    /// <summary>
+    /// Konstruktor mit einer Zeichenkette, welche aus einer unsignierten Integer-Zahl besteht
+    /// </summary>
+    /// <param name="val">Wert, welcher verwendet werden soll</param>
+    public UIntX(string val) : this(ParseInternal(val)) { }
 
     /// <summary>
     /// direkter Konstruktor mit direkter Speicheradresse
@@ -86,6 +86,17 @@ namespace TaschenRechnerLib
     {
       this.limbs = limbs;
       this.limbsCount = limbsCount;
+    }
+
+    /// <summary>
+    /// Konstruktor mit Limbs, welche direkt verwendet werden sollen
+    /// </summary>
+    /// <param name="limbs">Array mit den Limbs, welche verwendet werden sollen</param>
+    internal UIntX(uint[] limbs)
+    {
+      this.limbs = AllocLimbs(limbs.Length);
+      limbsCount = limbs.Length;
+      CopyLimbs(limbs, this.limbs, limbsCount);
     }
 
     /// <summary>
