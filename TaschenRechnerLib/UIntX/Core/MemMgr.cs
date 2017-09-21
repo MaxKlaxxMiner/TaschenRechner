@@ -4,6 +4,9 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable UnusedMember.Global
+// ReSharper disable ConditionIsAlwaysTrueOrFalse
+// ReSharper disable HeuristicUnreachableCode
+#pragma warning disable 162
 
 namespace TaschenRechnerLib.Core
 {
@@ -36,6 +39,11 @@ namespace TaschenRechnerLib.Core
     /// maximale Anzahl der möglichen Levels (sibbvolle Werte: 16-32, default: 26)
     /// </summary>
     const int MaxLevels = 26;
+
+    /// <summary>
+    /// gibt an, ob im Debug-Modus eine zusätzliche ausführliche Prüfung gemacht werden soll
+    /// </summary>
+    const bool DoAssertFull = false;
 
     #region # class MemBlock // Klasse zur Handhabung mehrere kleineren Speicherbereiche
     /// <summary>
@@ -150,7 +158,7 @@ namespace TaschenRechnerLib.Core
             Debug.Assert(result >= data);
             Debug.Assert(result + elementSize <= DataPointerEnd);
 
-            AssertFull();
+            if(DoAssertFull)AssertFull();
 
             return result;
           }
@@ -199,7 +207,7 @@ namespace TaschenRechnerLib.Core
         pointer[elementPos >> 3] = (byte)(bits ^ marker); // Bit wieder löschen
         elementsFree++;
 
-        AssertFull();
+        if (DoAssertFull) AssertFull();
 
         return true;
       }
@@ -281,7 +289,7 @@ namespace TaschenRechnerLib.Core
         elementsMax = elementCount;
         elementsFree = elementCount;
 
-        AssertFull();
+        if (DoAssertFull) AssertFull();
       }
 
       /// <summary>

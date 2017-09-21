@@ -79,6 +79,7 @@
     <Compile Include="UIntSimple\Compare.cs" />
     <Compile Include="UIntSimple\UIntSimple.cs" />
     <Compile Include="UIntX\Add.cs" />
+    <Compile Include="UIntX\Core\Xtr.cs" />
     <Compile Include="UIntX\Properties.cs" />
     <Compile Include="UIntX\Const.cs" />
     <Compile Include="UIntX\Core\MemMgr.cs" />

@@ -1,5 +1,5 @@
 ﻿using System;
-using TaschenRechnerLib.BigIntegerExtras;
+using TaschenRechnerLib.Core;
 
 namespace TaschenRechnerLib
 {
@@ -23,37 +23,30 @@ namespace TaschenRechnerLib
       var target = AllocLimbs(val1.limbsCount + 1);
 
       long addLen = val2.limbsCount;
-      var carry = Add(target, val1.limbs, val2.limbs, addLen);
-      while (carry != 0 && addLen < val1.limbsCount)
+      var carry = Xtr.Add(target, val1.limbs, val2.limbs, addLen);
+      if (carry == 0)
       {
-        carry = (ulong)val1.limbs[addLen] + val2.limbs[addLen] + carry;
-        target[addLen++] = (uint)carry;
-        carry = carry >> 32;
+        CopyLimbs(val1.limbs + addLen, target + addLen, val1.limbsCount - addLen);
+        addLen = val1.limbsCount;
       }
-      if (carry == 0) addLen = val1.limbsCount; else target[addLen++] = (uint)carry;
+      else
+      {
+        addLen += AddCarry(target + addLen, val1.limbs + addLen, val1.limbsCount - addLen, carry);
+      }
 
       return new UIntX(target, addLen);
     }
 
-    static ulong Add(uint* target, uint* val1, uint* val2, long count)
+    static long AddCarry(uint* target, uint* val, long minlen, ulong carry)
     {
-      long i = 0;
-      ulong carry = 0;
-      for (i = 0; i < count - 1; i += 2)
+      for (long count = 0; count < minlen; count++)
       {
-        ulong v1 = *(ulong*)(val1 + i);
-        ulong v2 = *(ulong*)(val2 + i);
-        carry = (ulong)(uint)v1 + (uint)v2 + (carry >> 32);
-        target[i] = (uint)carry;
-        carry = (v1 >> 32) + (v2 >> 32) + (carry >> 32);
-        target[i + 1] = (uint)carry;
+        carry = val[count] + carry;
+        target[count] = (uint)carry;
+        carry >>= 32;
       }
-      for (; i < count; i++)
-      {
-        carry = (ulong)val1[i] + val2[i] + (carry >> 32);
-        target[i] = (uint)carry;
-      }
-      return (uint)(carry >> 32);
+      target[minlen] = (uint)carry;
+      return minlen + (long)carry;
     }
 
     /// <summary>
