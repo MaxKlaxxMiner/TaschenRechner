@@ -276,7 +276,7 @@ namespace TaschenRechnerTest
     static void Main(string[] args)
     {
       //Constructor();
-      Add();
+      //Add();
       //Compare();
       //Sub();
       //Mul();
@@ -285,7 +285,7 @@ namespace TaschenRechnerTest
 
       //SpeedDiv();
       //SpeedCheckStr();
-      //SpeedCheckAdd();
+      SpeedCheckAdd();
       //SpeedCheckSub();
       //SpeedCheckMul();
       //SpeedCheckDiv();

@@ -39,15 +39,15 @@ namespace TaschenRechnerLib
     {
       long i = 0;
       ulong carry = 0;
-      //for (i = 0; i < count - 1; i += 2)
-      //{
-      //  ulong v1 = *(ulong*)(val1 + i);
-      //  ulong t = *(ulong*)(target + i);
-      //  carry = (ulong)(uint)t + (uint)s + (carry >> 32);
-      //  target[i] = (uint)carry;
-      //  carry = (t >> 32) + (s >> 32) + (carry >> 32);
-      //  target[i + 1] = (uint)carry;
-      //}
+      for (i = 0; i < count - 1; i += 2)
+      {
+        ulong v1 = *(ulong*)(val1 + i);
+        ulong v2 = *(ulong*)(val2 + i);
+        carry = (ulong)(uint)v1 + (uint)v2 + (carry >> 32);
+        target[i] = (uint)carry;
+        carry = (v1 >> 32) + (v2 >> 32) + (carry >> 32);
+        target[i + 1] = (uint)carry;
+      }
       for (; i < count; i++)
       {
         carry = (ulong)val1[i] + val2[i] + (carry >> 32);

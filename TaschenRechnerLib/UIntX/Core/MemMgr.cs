@@ -150,6 +150,8 @@ namespace TaschenRechnerLib.Core
             Debug.Assert(result >= data);
             Debug.Assert(result + elementSize <= DataPointerEnd);
 
+            AssertFull();
+
             return result;
           }
         }
@@ -196,7 +198,25 @@ namespace TaschenRechnerLib.Core
 
         pointer[elementPos >> 3] = (byte)(bits ^ marker); // Bit wieder löschen
         elementsFree++;
+
+        AssertFull();
+
         return true;
+      }
+
+      [Conditional("DEBUG")]
+      void AssertFull()
+      {
+        if ((data - pointer) * 8 < MaxElements) throw new Exception("Map to small");
+        if ((data - pointer) * 8 - 7 > MaxElements) throw new Exception("Map to large");
+        if (freeSearch < pointer || freeSearch >= data) throw new Exception("invalid freeSearch-pointer");
+        int freeCount = 0;
+        for (var p = pointer; p < data; p++)
+        {
+          byte b = *p;
+          for (int bit = 0; bit < 8; bit++) if ((b & 1 << bit) == 0) freeCount++;
+        }
+        if (freeCount != elementsFree) throw new Exception("freeCount != elementsFree, " + freeCount + " != " + elementsFree);
       }
       #endregion
 
@@ -260,6 +280,8 @@ namespace TaschenRechnerLib.Core
         freeSearch = pointer;
         elementsMax = elementCount;
         elementsFree = elementCount;
+
+        AssertFull();
       }
 
       /// <summary>
@@ -403,23 +425,6 @@ namespace TaschenRechnerLib.Core
     #endregion
 
     /// <summary>
-    /// reserviert einen neuen Speicherbereich (Inhalt ist undefiniert)
-    /// </summary>
-    /// <param name="bytes">Größe in Bytes, welche reserviert werden soll</param>
-    /// <returns>Zeiger auf den Speicherbereich</returns>
-    public static byte* AllocUnsafe(int bytes)
-    {
-      if (bytes < 0 || bytes > 1024 * 1024 * 1024) throw new OutOfMemoryException();
-
-      var block = GetMemBlockFree(bytes);
-
-      Debug.Assert(block.FreeBytes >= bytes);
-      Debug.Assert(block.ElementSize >= bytes);
-
-      return block.AllocElement();
-    }
-
-    /// <summary>
     /// reserviert einen neuen Speicherbereich (gefüllt mit Nullen)
     /// </summary>
     /// <param name="bytes">Größe in Bytes, welche reserviert werden soll</param>
@@ -429,6 +434,42 @@ namespace TaschenRechnerLib.Core
       var p = AllocUnsafe(bytes);
       Zero(p, bytes);
       return p;
+    }
+
+    /// <summary>
+    /// reserviert einen neuen Speicherbereich (Inhalt ist undefiniert)
+    /// </summary>
+    /// <param name="bytes">Größe in Bytes, welche reserviert werden soll</param>
+    /// <returns>Zeiger auf den Speicherbereich</returns>
+    public static byte* AllocUnsafe(int bytes)
+    {
+      if (bytes < 0 || bytes > 1024 * 1024 * 1024) throw new OutOfMemoryException();
+
+      lock (MemBlocks)
+      {
+        var block = GetMemBlockFree(bytes);
+
+        Debug.Assert(block.FreeBytes >= bytes);
+        Debug.Assert(block.ElementSize >= bytes);
+
+        return block.AllocElement();
+      }
+    }
+
+    /// <summary>
+    /// gibt einen reservierten Speicherbereich wieder frei
+    /// </summary>
+    /// <param name="p">Zeiger auf den resevierten Speicherbereich</param>
+    /// <returns>true, wenn die Freigabe des Speichers erfolgreich war</returns>
+    public static bool Free(byte* p)
+    {
+      lock (MemBlocks)
+      {
+        var block = GetMemBlockPtr(p);
+        if (block == null) return false; // passenden Memory-Block nicht gefunden (wird nicht von MemMgr verwaltet)
+
+        return block.FreeElement(p);
+      }
     }
 
     /// <summary>
@@ -445,19 +486,6 @@ namespace TaschenRechnerLib.Core
       if (!block.ValidPtr(p)) return 0; // Speicheradresse ungültig oder Bereich wurde bereits freigegeben
 
       return block.ElementSize;
-    }
-
-    /// <summary>
-    /// gibt einen reservierten Speicherbereich wieder frei
-    /// </summary>
-    /// <param name="p">Zeiger auf den resevierten Speicherbereich</param>
-    /// <returns>true, wenn die Freigabe des Speichers erfolgreich war</returns>
-    public static bool Free(byte* p)
-    {
-      var block = GetMemBlockPtr(p);
-      if (block == null) return false; // passenden Memory-Block nicht gefunden (wird nicht von MemMgr verwaltet)
-
-      return block.FreeElement(p);
     }
 
     /// <summary>
