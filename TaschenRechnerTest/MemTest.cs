@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
 using TaschenRechnerLib;
-using TaschenRechnerLib.UIntX.Core;
+using TaschenRechnerLib.Core;
+
 // ReSharper disable UnusedMember.Local
 
 namespace TaschenRechnerTest

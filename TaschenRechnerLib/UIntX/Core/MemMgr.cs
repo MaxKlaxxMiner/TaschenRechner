@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable UnusedMember.Global
 
-namespace TaschenRechnerLib.UIntX.Core
+namespace TaschenRechnerLib.Core
 {
   /// <summary>
   /// Klasse zum verwalten von Arbeitsspeicher
@@ -41,7 +41,7 @@ namespace TaschenRechnerLib.UIntX.Core
     /// <summary>
     /// Klasse zur Handhabung mehrere kleineren Speicherbereiche
     /// </summary>
-    sealed class MemBlock
+    sealed class MemBlock : IDisposable
     {
       #region # // --- Werte ---
       /// <summary>
@@ -263,9 +263,9 @@ namespace TaschenRechnerLib.UIntX.Core
       }
 
       /// <summary>
-      /// Destructor zum freigeben des Speichers
+      /// freigeben des Speichers
       /// </summary>
-      ~MemBlock()
+      public void Dispose()
       {
         Marshal.FreeHGlobal((IntPtr)pointer);
       }
