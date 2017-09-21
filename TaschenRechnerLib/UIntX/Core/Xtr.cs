@@ -41,19 +41,36 @@ namespace TaschenRechnerLib.Core
     /// <param name="src">Quell-Adresse, der Limbs, welche kopiert werden sollen</param>
     /// <param name="dst">Ziel-Adresse, wohin die Limbs geschriebene werden sollen</param>
     /// <param name="count">Anzahl der Limbs, welche kopiert werden sollen</param>
-    public static void CopyLimbs(uint* src, uint* dst, long count)
+    public static long CopyLimbs(uint* src, uint* dst, long count)
     {
       long i;
-      // --- Limbs Blöcke-Weise übertragen (4 Limbs / 32 Bytes pro Schritt) ---
-      for (i = 0; i < count - 3; i += 4)
+
+      // --- Limbs Blöcke-Weise übertragen (16 Limbs / 128 Bytes pro Schritt kopieren) ---
+      for (i = 0; i < count - 15; i += 16)
       {
         ulong t1 = *(ulong*)(src + i);
         ulong t2 = *(ulong*)(src + i + 2);
         *(ulong*)(dst + i) = t1;
         *(ulong*)(dst + i + 2) = t2;
+        t1 = *(ulong*)(src + i + 4);
+        t2 = *(ulong*)(src + i + 6);
+        *(ulong*)(dst + i + 4) = t1;
+        *(ulong*)(dst + i + 6) = t2;
+        t1 = *(ulong*)(src + i + 8);
+        t2 = *(ulong*)(src + i + 10);
+        *(ulong*)(dst + i + 8) = t1;
+        *(ulong*)(dst + i + 10) = t2;
+        t1 = *(ulong*)(src + i + 12);
+        t2 = *(ulong*)(src + i + 14);
+        *(ulong*)(dst + i + 12) = t1;
+        *(ulong*)(dst + i + 14) = t2;
       }
-      // --- restlichen Limbs übertragen (sofern notwendig) ---
-      for (; i < count; i++) dst[i] = src[i];
+
+      // --- restlichen Limbs übertragen (0-15 Limbs) ---
+      for (; i < count - 1; i += 2) *(ulong*)(dst + i) = *(ulong*)(src + i);
+      for (; i < count; i ++) dst[i] = src[i];
+
+      return i;
     }
 
     /// <summary>
@@ -64,7 +81,7 @@ namespace TaschenRechnerLib.Core
     /// <param name="count">Anzahl der Limbs, welche kopiert werden sollen</param>
     public static void CopyLimbs(uint* src, uint[] dst, long count)
     {
-      fixed (uint* dstP = dst) Xtr.CopyLimbs(src, dstP, count);
+      fixed (uint* dstP = dst) CopyLimbs(src, dstP, count);
     }
 
     /// <summary>
@@ -75,7 +92,7 @@ namespace TaschenRechnerLib.Core
     /// <param name="count">Anzahl der Limbs, welche kopiert werden sollen</param>
     public static void CopyLimbs(uint[] src, uint* dst, long count)
     {
-      fixed (uint* srcP = src) Xtr.CopyLimbs(srcP, dst, count);
+      fixed (uint* srcP = src) CopyLimbs(srcP, dst, count);
     }
   }
 }

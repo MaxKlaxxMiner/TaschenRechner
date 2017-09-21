@@ -10,7 +10,7 @@ namespace TaschenRechnerTest
   {
     static void SpeedCheckAdd()
     {
-      const int RetryCount = 5;
+      const int RetryCount = 25;
       const int TestCount = 100000;
       const string StartValue = "1";
 
@@ -49,21 +49,21 @@ namespace TaschenRechnerTest
       //  Console.WriteLine("    " + sum.ToString("N0") + ": " + (m.ElapsedTicks * 1000 / (double)Stopwatch.Frequency).ToString("N2") + " ms");
       //}
 
-      Console.WriteLine();
-      Console.WriteLine("  - UIntXb.Add() -");
-      Console.WriteLine();
-      for (int r = 0; r < RetryCount; r++)
-      {
-        var val = UIntXb.Parse(StartValue);
-        var m = Stopwatch.StartNew();
-        for (int i = 0; i < TestCount; i++)
-        {
-          val += val;
-        }
-        m.Stop();
-        long sum = val.ToString().Sum(c => (long)(c - '0'));
-        Console.WriteLine("    " + sum.ToString("N0") + ": " + (m.ElapsedTicks * 1000 / (double)Stopwatch.Frequency).ToString("N2") + " ms");
-      }
+      //Console.WriteLine();
+      //Console.WriteLine("  - UIntXb.Add() -");
+      //Console.WriteLine();
+      //for (int r = 0; r < RetryCount; r++)
+      //{
+      //  var val = UIntXb.Parse(StartValue);
+      //  var m = Stopwatch.StartNew();
+      //  for (int i = 0; i < TestCount; i++)
+      //  {
+      //    val += val;
+      //  }
+      //  m.Stop();
+      //  long sum = val.ToString().Sum(c => (long)(c - '0'));
+      //  Console.WriteLine("    " + sum.ToString("N0") + ": " + (m.ElapsedTicks * 1000 / (double)Stopwatch.Frequency).ToString("N2") + " ms");
+      //}
 
       //Console.WriteLine();
       //Console.WriteLine("  - BigInteger.Add() - +Append x100 -");
@@ -72,27 +72,6 @@ namespace TaschenRechnerTest
       //{
       //  var val = BigInteger.Parse(StartValue);
       //  var append = BigInteger.Parse(StartValue + new string('0', 100));
-      //  var m = Stopwatch.StartNew();
-      //  for (int i = 0; i < TestCount / 5; i++)
-      //  {
-      //    val += val;
-      //    for (int a = 0; a < 100; a++)
-      //    {
-      //      val += append;
-      //    }
-      //  }
-      //  m.Stop();
-      //  long sum = val.ToString().Sum(c => (long)(c - '0'));
-      //  Console.WriteLine("    " + sum.ToString("N0") + ": " + (m.ElapsedTicks * 1000 / (double)Stopwatch.Frequency).ToString("N2") + " ms");
-      //}
-
-      //Console.WriteLine();
-      //Console.WriteLine("  - UIntSimple.Add() - +Append x100 -");
-      //Console.WriteLine();
-      //for (int r = 0; r < RetryCount; r++)
-      //{
-      //  var val = UIntLimbs.Parse(StartValue);
-      //  var append = UIntLimbs.Parse(StartValue + new string('0', 100));
       //  var m = Stopwatch.StartNew();
       //  for (int i = 0; i < TestCount / 5; i++)
       //  {
@@ -149,26 +128,26 @@ namespace TaschenRechnerTest
       //  Console.WriteLine("    " + sum.ToString("N0") + ": " + (m.ElapsedTicks * 1000 / (double)Stopwatch.Frequency).ToString("N2") + " ms");
       //}
 
-      //Console.WriteLine();
-      //Console.WriteLine("  - UIntXb.Add() - +Append x100 -");
-      //Console.WriteLine();
-      //for (int r = 0; r < RetryCount; r++)
-      //{
-      //  var val = UIntXb.Parse(StartValue);
-      //  var append = UIntXb.Parse(StartValue + new string('0', 100));
-      //  var m = Stopwatch.StartNew();
-      //  for (int i = 0; i < TestCount / 5; i++)
-      //  {
-      //    val += val;
-      //    for (int a = 0; a < 100; a++)
-      //    {
-      //      val += append;
-      //    }
-      //  }
-      //  m.Stop();
-      //  long sum = val.ToString().Sum(c => (long)(c - '0'));
-      //  Console.WriteLine("    " + sum.ToString("N0") + ": " + (m.ElapsedTicks * 1000 / (double)Stopwatch.Frequency).ToString("N2") + " ms");
-      //}
+      Console.WriteLine();
+      Console.WriteLine("  - UIntXb.Add() - +Append x100 -");
+      Console.WriteLine();
+      for (int r = 0; r < RetryCount; r++)
+      {
+        var val = UIntXb.Parse(StartValue);
+        var append = UIntXb.Parse(StartValue + new string('0', 100));
+        var m = Stopwatch.StartNew();
+        for (int i = 0; i < TestCount / 5; i++)
+        {
+          val += val;
+          for (int a = 0; a < 100; a++)
+          {
+            val += append;
+          }
+        }
+        m.Stop();
+        long sum = val.ToString().Sum(c => (long)(c - '0'));
+        Console.WriteLine("    " + sum.ToString("N0") + ": " + (m.ElapsedTicks * 1000 / (double)Stopwatch.Frequency).ToString("N2") + " ms");
+      }
 
       Console.WriteLine();
     }
