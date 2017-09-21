@@ -80,6 +80,7 @@
     <Compile Include="UIntSimple\UIntSimple.cs" />
     <Compile Include="UIntX\Core\MemMgr.cs" />
     <Compile Include="UIntX\Extras.cs" />
+    <Compile Include="UIntX\ToString.cs" />
     <Compile Include="UIntX\UIntX.cs" />
     <Compile Include="UnsafeHelper.cs" />
   </ItemGroup>
