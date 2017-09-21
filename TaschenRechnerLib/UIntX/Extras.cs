@@ -11,9 +11,9 @@ namespace TaschenRechnerLib
     /// </summary>
     /// <param name="limbs">minimale Anzahl der Limbs, welche reserviert werden sollen</param>
     /// <returns>Zeiger auf den Speicherbereich</returns>
-    static uint* AllocLimbs(int limbs)
+    static uint* AllocLimbs(long limbs)
     {
-      return (uint*)MemMgr.AllocUnsafe(limbs << 2);
+      return (uint*)MemMgr.AllocUnsafe((int)(limbs << 2));
     }
 
     /// <summary>
