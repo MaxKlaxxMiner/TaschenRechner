@@ -26,7 +26,7 @@ namespace TaschenRechnerLib
       var carry = Xtr.Add(target, val1.limbs, val2.limbs, addLen);
       if (carry == 0)
       {
-        CopyLimbs(val1.limbs + addLen, target + addLen, val1.limbsCount - addLen);
+        Xtr.CopyLimbs(val1.limbs + addLen, target + addLen, val1.limbsCount - addLen);
         addLen = val1.limbsCount;
       }
       else

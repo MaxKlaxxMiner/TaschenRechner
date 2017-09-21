@@ -34,5 +34,48 @@ namespace TaschenRechnerLib.Core
       }
       return (uint)(carry >> 32);
     }
+
+    /// <summary>
+    /// kopiert eine bestimmte Anzahl von Limbs
+    /// </summary>
+    /// <param name="src">Quell-Adresse, der Limbs, welche kopiert werden sollen</param>
+    /// <param name="dst">Ziel-Adresse, wohin die Limbs geschriebene werden sollen</param>
+    /// <param name="count">Anzahl der Limbs, welche kopiert werden sollen</param>
+    public static void CopyLimbs(uint* src, uint* dst, long count)
+    {
+      long i;
+      // --- Limbs Blöcke-Weise übertragen (4 Limbs / 32 Bytes pro Schritt) ---
+      for (i = 0; i < count - 3; i += 4)
+      {
+        ulong t1 = *(ulong*)(src + i);
+        ulong t2 = *(ulong*)(src + i + 2);
+        *(ulong*)(dst + i) = t1;
+        *(ulong*)(dst + i + 2) = t2;
+      }
+      // --- restlichen Limbs übertragen (sofern notwendig) ---
+      for (; i < count; i++) dst[i] = src[i];
+    }
+
+    /// <summary>
+    /// kopiert eine bestimmte Anzahl von Limbs
+    /// </summary>
+    /// <param name="src">Quell-Adresse, der Limbs, welche kopiert werden sollen</param>
+    /// <param name="dst">Ziel-Array, wohin die Limbs geschriebene werden sollen</param>
+    /// <param name="count">Anzahl der Limbs, welche kopiert werden sollen</param>
+    public static void CopyLimbs(uint* src, uint[] dst, long count)
+    {
+      fixed (uint* dstP = dst) Xtr.CopyLimbs(src, dstP, count);
+    }
+
+    /// <summary>
+    /// kopiert eine bestimmte Anzahl von Limbs
+    /// </summary>
+    /// <param name="src">Quell-Array, der Limbs, welche kopiert werden sollen</param>
+    /// <param name="dst">Ziel-Adresse, wohin die Limbs geschriebene werden sollen</param>
+    /// <param name="count">Anzahl der Limbs, welche kopiert werden sollen</param>
+    public static void CopyLimbs(uint[] src, uint* dst, long count)
+    {
+      fixed (uint* srcP = src) Xtr.CopyLimbs(srcP, dst, count);
+    }
   }
 }

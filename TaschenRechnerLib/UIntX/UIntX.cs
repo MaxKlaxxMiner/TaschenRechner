@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
+using TaschenRechnerLib.Core;
+
 // ReSharper disable NotAccessedField.Local
 // ReSharper disable UnusedMember.Global
 // ReSharper disable MemberCanBePrivate.Global
@@ -96,7 +98,7 @@ namespace TaschenRechnerLib
     {
       this.limbs = AllocLimbs(limbs.Length);
       limbsCount = limbs.Length;
-      CopyLimbs(limbs, this.limbs, limbsCount);
+      Xtr.CopyLimbs(limbs, this.limbs, limbsCount);
     }
 
     /// <summary>

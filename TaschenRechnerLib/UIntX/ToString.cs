@@ -1,4 +1,6 @@
 ﻿using TaschenRechnerLib.BigIntegerExtras;
+using TaschenRechnerLib.Core;
+
 // ReSharper disable UnusedMember.Global
 
 namespace TaschenRechnerLib
@@ -12,7 +14,7 @@ namespace TaschenRechnerLib
     public override string ToString()
     {
       var bits = new uint[limbsCount];
-      CopyLimbs(limbs, bits, limbsCount);
+      Xtr.CopyLimbs(limbs, bits, limbsCount);
       return BigIntegerHelpers.GetOldFromBits(bits).ToString(); // todo -> langsam
     }
 

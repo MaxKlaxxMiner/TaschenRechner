@@ -94,5 +94,17 @@ namespace TaschenRechnerLib
       this.limbs = limbs;
       limbCount = limbs.Length;
     }
+
+    /// <summary>
+    /// direkter Konstruktor mit den einzelnen Zahlen
+    /// </summary>
+    /// <param name="limbs">Bit-Kette, welche direkt verwendet werden soll</param>
+    /// <param name="limbCount">Anzahl der gesetzten Limbs</param>
+    internal UIntXb(uint[] limbs, long limbCount)
+    {
+      if (limbs == null) throw new ArgumentNullException("limbs");
+      this.limbs = limbs;
+      this.limbCount = limbCount;
+    }
   }
 }
