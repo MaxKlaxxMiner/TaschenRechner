@@ -49,6 +49,7 @@
     <Compile Include="BigInt.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SpeedCheckInc.cs" />
     <Compile Include="SpeedCheckMul.cs" />
     <Compile Include="SpeedCheckDiv.cs" />
     <Compile Include="SpeedCheckSub.cs" />

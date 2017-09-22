@@ -287,7 +287,8 @@ namespace TaschenRechnerTest
       //SpeedDiv();
       //SpeedCheckStr();
       //SpeedCheckAdd();
-      SpeedCheckSub();
+      SpeedCheckInc();
+      //SpeedCheckSub();
       //SpeedCheckMul();
       //SpeedCheckDiv();
 

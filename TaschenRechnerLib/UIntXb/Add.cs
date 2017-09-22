@@ -1,4 +1,5 @@
-﻿using TaschenRechnerLib.BigIntegerExtras;
+﻿using System;
+using TaschenRechnerLib.BigIntegerExtras;
 using TaschenRechnerLib.Core;
 
 namespace TaschenRechnerLib
@@ -45,9 +46,21 @@ namespace TaschenRechnerLib
     /// <returns>fertig inkrementierte Zahl</returns>
     public static UIntXb operator ++(UIntXb val)
     {
-      var bb = new BigIntegerBuilder(val);
-      bb.Add(1);
-      return bb.GetUIntXb();
+      var result = new uint[val.limbCount + 1];
+      fixed (uint* target = result, src = val.limbs)
+      {
+        Xtr.CopyLimbs(src, target, val.limbCount);
+        ulong carry = 1;
+        long len = 0;
+        while (carry != 0)
+        {
+          carry = target[len] + carry;
+          target[len] = (uint)carry;
+          len++;
+          carry >>= 32;
+        }
+        return new UIntXb(result, val.limbCount + target[val.limbCount]);
+      }
     }
   }
 }
