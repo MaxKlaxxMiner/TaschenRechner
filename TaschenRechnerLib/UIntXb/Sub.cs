@@ -67,10 +67,32 @@ namespace TaschenRechnerLib
     /// <returns>fertig dekrementierte Zahl</returns>
     public static UIntXb operator --(UIntXb val)
     {
-      if (val.limbs[0] == 0 && val.limbCount == 1) throw new InvalidCalcException();
-      var bb = new BigIntegerBuilder(val);
-      bb.Sub(1);
-      return bb.GetUIntXb();
+      //if (val.limbs[0] == 0 && val.limbCount == 1) throw new InvalidCalcException();
+      //var bb = new BigIntegerBuilder(val);
+      //bb.Sub(1);
+      //return bb.GetUIntXb();
+
+      var result = new uint[val.limbCount];
+      fixed (uint* target = result, src = val.limbs)
+      {
+        Xtr.CopyLimbs(src, target, val.limbCount);
+
+        ulong borrow = 1;
+        long len = 0;
+        while (borrow != 0)
+        {
+          borrow = target[len] - borrow;
+          target[len] = (uint)borrow;
+          len++;
+          borrow >>= 63;
+          if (len == val.limbCount)
+          {
+            if (borrow != 0) throw new InvalidCalcException();
+            return new UIntXb(result, Math.Max(1, val.limbCount - 1));
+          }
+        }
+        return new UIntXb(result, val.limbCount);
+      }
     }
   }
 }
