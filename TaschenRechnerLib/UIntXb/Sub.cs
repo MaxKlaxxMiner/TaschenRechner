@@ -1,8 +1,10 @@
-﻿using TaschenRechnerLib.BigIntegerExtras;
+﻿using System;
+using TaschenRechnerLib.BigIntegerExtras;
+using TaschenRechnerLib.Core;
 
 namespace TaschenRechnerLib
 {
-  public partial struct UIntXb
+  public unsafe partial struct UIntXb
   {
     /// <summary>
     /// Operator zum subtrahieren zweier Zahlen
@@ -16,11 +18,46 @@ namespace TaschenRechnerLib
       if (val1.limbCount < val2.limbCount) throw new InvalidCalcException();
       if (val1.limbs[0] == 0 && val1.limbCount == 1) throw new InvalidCalcException();
 
-      var bb = new BigIntegerBuilder(val1);
-      var reg = new BigIntegerBuilder(val2);
-      bb.Sub(ref reg);
+      fixed (uint* l1 = val1.limbs, l2 = val2.limbs)
+      {
+        if (val1.limbCount == val2.limbCount)
+        {
+          long len = Xtr.DiffLen(l1, l2, val1.limbCount);
+          if (len == 0) return Zero;
 
-      return bb.GetUIntXb();
+          var result = new uint[len];
+
+          fixed (uint* target = result)
+          {
+            var borrow = Xtr.Sub(target, l1, l2, len);
+            if (borrow != 0) throw new InvalidCalcException();
+          }
+
+          return new UIntXb(result, len);
+        }
+        else
+        {
+          var result = new uint[val1.limbCount];
+          fixed (uint* target = result)
+          {
+            long subLen = val2.limbCount;
+            var borrow = Xtr.Sub(target, l1, l2, subLen);
+            while (borrow != 0)
+            {
+              borrow = l1[subLen] - borrow;
+              target[subLen] = (uint)borrow;
+              subLen++;
+              borrow >>= 63;
+            }
+            if (val1.limbCount - subLen > 0)
+            {
+              subLen += Xtr.CopyLimbs(l1 + subLen, target + subLen, val1.limbCount - subLen);
+            }
+            else while (subLen > 1 && target[subLen - 1] == 0) subLen--;
+            return new UIntXb(result, subLen);
+          }
+        }
+      }
     }
 
     /// <summary>

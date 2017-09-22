@@ -32,7 +32,36 @@ namespace TaschenRechnerLib.Core
         carry = (ulong)val1[i] + val2[i] + (carry >> 32);
         target[i] = (uint)carry;
       }
-      return (uint)(carry >> 32);
+      return carry >> 32;
+    }
+
+    /// <summary>
+    /// führt eine schnelle Subtraktion durch und gibt das Borrow-Flag zurück
+    /// </summary>
+    /// <param name="target">Zieladresse, wo das Ergebnis gespeichert werden soll</param>
+    /// <param name="val1">Adresse auf den ersten Wert</param>
+    /// <param name="val2">Adresse auf den zweiten Wert</param>
+    /// <param name="count">Anzahl der Limbs, welche subtrahiert werden sollen</param>
+    /// <returns>Borrow-Flag</returns>
+    public static ulong Sub(uint* target, uint* val1, uint* val2, long count)
+    {
+      long i;
+      ulong borrow = 0;
+      for (i = 0; i < count - 1; i += 2)
+      {
+        ulong v1 = *(ulong*)(val1 + i);
+        ulong v2 = *(ulong*)(val2 + i);
+        borrow = (ulong)(uint)v1 - (uint)v2 - (borrow >> 63);
+        target[i] = (uint)borrow;
+        borrow = (v1 >> 32) - (v2 >> 32) - (borrow >> 63);
+        target[i + 1] = (uint)borrow;
+      }
+      for (; i < count; i++)
+      {
+        borrow = (ulong)val1[i] - val2[i] - (borrow >> 63);
+        target[i] = (uint)borrow;
+      }
+      return borrow >> 63;
     }
 
     /// <summary>
@@ -68,7 +97,7 @@ namespace TaschenRechnerLib.Core
 
       // --- restlichen Limbs übertragen (0-15 Limbs) ---
       for (; i < count - 1; i += 2) *(ulong*)(dst + i) = *(ulong*)(src + i);
-      for (; i < count; i ++) dst[i] = src[i];
+      for (; i < count; i++) dst[i] = src[i];
 
       return i;
     }
@@ -93,6 +122,26 @@ namespace TaschenRechnerLib.Core
     public static void CopyLimbs(uint[] src, uint* dst, long count)
     {
       fixed (uint* srcP = src) CopyLimbs(srcP, dst, count);
+    }
+
+    /// <summary>
+    /// vergleicht zwei Limb-Ketten und gibt die Länge der unterschiedlichen Limbs zurück (0 = keine Unterschiede gefunden)
+    /// </summary>
+    /// <param name="val1">Zeiger auf die erste Limb-Kette</param>
+    /// <param name="val2">zeiger auf die zweite Limb-Kette</param>
+    /// <param name="len">Länge der beiden Limb-Ketten</param>
+    /// <returns>Länge der unterschiedlichen Limb-Elemente (0 = keine Unterschiede gefunden)</returns>
+    public static long DiffLen(uint* val1, uint* val2, long len)
+    {
+      while (len > 7
+        && *(ulong*)(val1 + len - 8) == *(ulong*)(val2 + len - 8)
+        && *(ulong*)(val1 + len - 6) == *(ulong*)(val2 + len - 6)
+        && *(ulong*)(val1 + len - 4) == *(ulong*)(val2 + len - 4)
+        && *(ulong*)(val1 + len - 2) == *(ulong*)(val2 + len - 2)) len -= 8;
+
+      while (len > 0 && val1[len - 1] == val2[len - 1]) len--;
+
+      return len;
     }
   }
 }

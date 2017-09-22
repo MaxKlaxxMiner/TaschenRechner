@@ -198,6 +198,12 @@ namespace TaschenRechnerTest
       Debug.Assert(val09.ToString() == new string('9', 100));
       var val10 = val08 - val09;
       Debug.Assert(val10.ToString() == "1");
+
+      var val11 = new ui(((BigInteger.One << 1024) - 1).ToString());
+      var val12 = new ui((BigInteger.One << 1024).ToString());
+      var val13 = val12 - val11;
+      Debug.Assert(val13.ToString() == "1");
+      //var val14 = val11 - val12; // error
     }
 
     static void Mul()
@@ -287,8 +293,8 @@ namespace TaschenRechnerTest
       //SpeedDiv();
       //SpeedCheckStr();
       //SpeedCheckAdd();
-      SpeedCheckInc();
-      //SpeedCheckSub();
+      //SpeedCheckInc();
+      SpeedCheckSub();
       //SpeedCheckMul();
       //SpeedCheckDiv();
 

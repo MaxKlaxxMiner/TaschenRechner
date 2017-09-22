@@ -1,6 +1,4 @@
-﻿using System;
-using TaschenRechnerLib.BigIntegerExtras;
-using TaschenRechnerLib.Core;
+﻿using TaschenRechnerLib.Core;
 
 namespace TaschenRechnerLib
 {
