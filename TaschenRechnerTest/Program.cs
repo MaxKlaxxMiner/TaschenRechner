@@ -279,7 +279,7 @@ namespace TaschenRechnerTest
       //Constructor();
       //Add();
       //Compare();
-      Sub();
+      //Sub();
       //Mul();
       //Div();
       //Mod();
@@ -287,7 +287,7 @@ namespace TaschenRechnerTest
       //SpeedDiv();
       //SpeedCheckStr();
       //SpeedCheckAdd();
-      //SpeedCheckSub();
+      SpeedCheckSub();
       //SpeedCheckMul();
       //SpeedCheckDiv();
 
