@@ -79,9 +79,9 @@
     <Compile Include="UIntSimple\Compare.cs" />
     <Compile Include="UIntSimple\UIntSimple.cs" />
     <Compile Include="UIntXb\Add.cs" />
+    <Compile Include="UIntXb\Compare.cs" />
     <Compile Include="UIntXb\Const.cs" />
     <Compile Include="UIntXb\Parse.cs" />
-    <Compile Include="UIntXb\Properties.cs" />
     <Compile Include="UIntXb\ToString.cs" />
     <Compile Include="UIntXb\UIntXb.cs" />
     <Compile Include="UIntX\Add.cs" />
