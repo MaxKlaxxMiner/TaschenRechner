@@ -1,11 +1,9 @@
 ﻿using TaschenRechnerLib.BigIntegerExtras;
-using TaschenRechnerLib.Core;
-
 // ReSharper disable UnusedMember.Global
 
 namespace TaschenRechnerLib
 {
-  public unsafe partial class UIntX
+  public partial struct UIntX
   {
     /// <summary>
     /// gibt die Zahl als lesbare Zeichenkette zurück
@@ -13,9 +11,7 @@ namespace TaschenRechnerLib
     /// <returns>lesbare Zeichenkette</returns>
     public override string ToString()
     {
-      var bits = new uint[limbsCount];
-      Xtr.CopyLimbs(limbs, bits, limbsCount);
-      return BigIntegerHelpers.GetOldFromBits(bits).ToString(); // todo -> langsam
+      return BigIntegerHelpers.GetOldFromBits(limbs).ToString(); // todo -> langsam
     }
 
     /// <summary>
@@ -23,7 +19,7 @@ namespace TaschenRechnerLib
     /// </summary>
     /// <param name="sepChar">Zeichen, welches für den Tausenderpunkt verwendet werden soll (default: ',')</param>
     /// <returns>lesbare Zeichenkette</returns>
-    public string ToStringThousandsSep(char sepChar = ',')
+    public unsafe string ToStringThousandsSep(char sepChar = ',')
     {
       string num = ToString();
       int len = num.Length + (num.Length - 1) / 3;

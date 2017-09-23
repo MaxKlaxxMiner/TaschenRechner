@@ -5,7 +5,7 @@ using TaschenRechnerLib.BigIntegerExtras;
 
 namespace TaschenRechnerLib
 {
-  public sealed unsafe partial class UIntX
+  public partial struct UIntX
   {
     /// <summary>
     /// liest eine Zeichenkette als Zahl ein

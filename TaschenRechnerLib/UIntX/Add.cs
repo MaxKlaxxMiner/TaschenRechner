@@ -1,9 +1,6 @@
-﻿using System;
-using TaschenRechnerLib.Core;
-
-namespace TaschenRechnerLib
+﻿namespace TaschenRechnerLib
 {
-  public sealed unsafe partial class UIntX
+  public unsafe partial struct UIntX
   {
     /// <summary>
     /// Operator zum addieren zweier Zahlen
@@ -13,40 +10,29 @@ namespace TaschenRechnerLib
     /// <returns>fertiges Ergebnis</returns>
     public static UIntX operator +(UIntX val1, UIntX val2)
     {
-      if (val1 == null || val2 == null) throw new ArgumentNullException();
+      if (val1.limbCount < val2.limbCount) { var tmp = val1; val1 = val2; val2 = tmp; }
+      if (val2.limbs[0] == 0 && val2.limbCount == 1) return val1;
 
-      if (val2.IsZero) return val1;
-      if (val1.IsZero) return val2;
+      var result = new uint[val1.limbCount + 1];
 
-      if (val1.limbsCount < val2.limbsCount) { var tmp = val1; val1 = val2; val2 = tmp; }
-
-      var target = AllocLimbs(val1.limbsCount + 1);
-
-      long addLen = val2.limbsCount;
-      var carry = Xtr.Add(target, val1.limbs, val2.limbs, addLen);
-      if (carry == 0)
+      long addLen = val2.limbCount;
+      fixed (uint* target = result, l1 = val1.limbs, l2 = val2.limbs)
       {
-        Xtr.CopyLimbs(val1.limbs + addLen, target + addLen, val1.limbsCount - addLen);
-        addLen = val1.limbsCount;
-      }
-      else
-      {
-        addLen += AddCarry(target + addLen, val1.limbs + addLen, val1.limbsCount - addLen, carry);
+        var carry = Xtr.Add(target, l1, l2, addLen);
+        while (carry != 0)
+        {
+          carry = l1[addLen] + carry;
+          target[addLen] = (uint)carry;
+          addLen++;
+          carry >>= 32;
+        }
+        if (val1.limbCount - addLen > 0)
+        {
+          addLen += Xtr.CopyLimbs(l1 + addLen, target + addLen, val1.limbCount - addLen);
+        }
       }
 
-      return new UIntX(target, addLen);
-    }
-
-    static long AddCarry(uint* target, uint* val, long minlen, ulong carry)
-    {
-      for (long count = 0; count < minlen; count++)
-      {
-        carry = val[count] + carry;
-        target[count] = (uint)carry;
-        carry >>= 32;
-      }
-      target[minlen] = (uint)carry;
-      return minlen + (long)carry;
+      return new UIntX(result, addLen);
     }
 
     /// <summary>
@@ -56,15 +42,21 @@ namespace TaschenRechnerLib
     /// <returns>fertig inkrementierte Zahl</returns>
     public static UIntX operator ++(UIntX val)
     {
-      if (val == null) throw new ArgumentNullException();
-
-      if (*val.limbs < uint.MaxValue) // schnelle direkte Variante möglich?
+      var result = new uint[val.limbCount + 1];
+      fixed (uint* target = result, src = val.limbs)
       {
-        (*val.limbs)++;
-        return val;
+        Xtr.CopyLimbs(src, target, val.limbCount);
+        ulong carry = 1;
+        long len = 0;
+        while (carry != 0)
+        {
+          carry = target[len] + carry;
+          target[len] = (uint)carry;
+          len++;
+          carry >>= 32;
+        }
+        return new UIntX(result, val.limbCount + target[val.limbCount]);
       }
-
-      return val + One;
     }
   }
 }

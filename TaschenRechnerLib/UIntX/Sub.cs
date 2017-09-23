@@ -1,10 +1,9 @@
 ﻿using System;
 using TaschenRechnerLib.BigIntegerExtras;
-using TaschenRechnerLib.Core;
 
 namespace TaschenRechnerLib
 {
-  public unsafe partial struct UIntXb
+  public unsafe partial struct UIntX
   {
     /// <summary>
     /// Operator zum subtrahieren zweier Zahlen
@@ -12,7 +11,7 @@ namespace TaschenRechnerLib
     /// <param name="val1">erster Wert, welcher verwendet werden soll</param>
     /// <param name="val2">zweiter Wert, welcher verwendet werden soll</param>
     /// <returns>fertiges Ergebnis</returns>
-    public static UIntXb operator -(UIntXb val1, UIntXb val2)
+    public static UIntX operator -(UIntX val1, UIntX val2)
     {
       if (val2.limbs[0] == 0 && val2.limbCount == 1) return val1;
       if (val1.limbCount < val2.limbCount) throw new InvalidCalcException();
@@ -33,7 +32,7 @@ namespace TaschenRechnerLib
             if (borrow != 0) throw new InvalidCalcException();
           }
 
-          return new UIntXb(result, len);
+          return new UIntX(result, len);
         }
         else
         {
@@ -54,7 +53,7 @@ namespace TaschenRechnerLib
               subLen += Xtr.CopyLimbs(l1 + subLen, target + subLen, val1.limbCount - subLen);
             }
             else while (subLen > 1 && target[subLen - 1] == 0) subLen--;
-            return new UIntXb(result, subLen);
+            return new UIntX(result, subLen);
           }
         }
       }
@@ -65,13 +64,8 @@ namespace TaschenRechnerLib
     /// </summary>
     /// <param name="val">Zahl, welche dekrementiert werden soll</param>
     /// <returns>fertig dekrementierte Zahl</returns>
-    public static UIntXb operator --(UIntXb val)
+    public static UIntX operator --(UIntX val)
     {
-      //if (val.limbs[0] == 0 && val.limbCount == 1) throw new InvalidCalcException();
-      //var bb = new BigIntegerBuilder(val);
-      //bb.Sub(1);
-      //return bb.GetUIntXb();
-
       var result = new uint[val.limbCount];
       fixed (uint* target = result, src = val.limbs)
       {
@@ -88,10 +82,10 @@ namespace TaschenRechnerLib
           if (len == val.limbCount)
           {
             if (borrow != 0) throw new InvalidCalcException();
-            return new UIntXb(result, Math.Max(1, val.limbCount - 1));
+            return new UIntX(result, Math.Max(1, val.limbCount - 1));
           }
         }
-        return new UIntXb(result, val.limbCount);
+        return new UIntX(result, val.limbCount);
       }
     }
   }

@@ -1,5 +1,5 @@
 ﻿
-namespace TaschenRechnerLib.Core
+namespace TaschenRechnerLib
 {
   /// <summary>
   /// Klasse mit Hochgeschwindikeits-Funktionen

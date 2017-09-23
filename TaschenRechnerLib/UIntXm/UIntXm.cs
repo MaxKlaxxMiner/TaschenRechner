@@ -1,110 +1,112 @@
 ﻿using System;
+using System.Diagnostics;
+
+// ReSharper disable NotAccessedField.Local
+// ReSharper disable UnusedMember.Global
 // ReSharper disable MemberCanBePrivate.Global
+// ReSharper disable RedundantAssignment
 
 namespace TaschenRechnerLib
 {
-  public partial struct UIntXb
+  public sealed unsafe partial class UIntXm
   {
     /// <summary>
     /// merkt sich die eigentlichen Daten der Zahl
     /// </summary>
-    internal readonly uint[] limbs;
+    readonly uint* limbs;
     /// <summary>
-    /// merkt sich die Anzahl der belgten Limbs
+    /// merkt sich Anzahl der Limbs, welche benutzt werden
     /// </summary>
-    internal readonly long limbCount;
+    readonly long limbsCount;
 
     /// <summary>
     /// Konstruktor mit einem signierten 8-Bit Wert
     /// </summary>
     /// <param name="val">Wert, welcher verwendet werden soll (darf nicht kleiner als 0 sein)</param>
-    public UIntXb(sbyte val) : this((long)val) { }
+    public UIntXm(sbyte val) : this((long)val) { }
 
     /// <summary>
     /// Konstruktor mit einem signierten 16-Bit Wert
     /// </summary>
     /// <param name="val">Wert, welcher verwendet werden soll (darf nicht kleiner als 0 sein)</param>
-    public UIntXb(short val) : this((long)val) { }
+    public UIntXm(short val) : this((long)val) { }
 
     /// <summary>
     /// Konstruktor mit einem signierten 32-Bit Wert
     /// </summary>
     /// <param name="val">Wert, welcher verwendet werden soll (darf nicht kleiner als 0 sein)</param>
-    public UIntXb(int val) : this((uint)val) { if (val < 0) throw new ArgumentOutOfRangeException("val"); }
+    public UIntXm(int val) : this((uint)val) { if (val < 0) throw new ArgumentOutOfRangeException("val"); }
 
     /// <summary>
     /// Konstruktor mit einem signierten 64-Bit Wert
     /// </summary>
     /// <param name="val">Wert, welcher verwendet werden soll (darf nicht kleiner als 0 sein)</param>
-    public UIntXb(long val) : this((ulong)val) { if (val < 0) throw new ArgumentOutOfRangeException("val"); }
+    public UIntXm(long val) : this((ulong)val) { if (val < 0) throw new ArgumentOutOfRangeException("val"); }
 
     /// <summary>
     /// Konstruktor mit einem unsignierten 8-Bit Wert
     /// </summary>
     /// <param name="val">Wert, welcher verwendet werden soll</param>
-    public UIntXb(byte val) : this((ulong)val) { }
+    public UIntXm(byte val) : this((ulong)val) { }
 
     /// <summary>
     /// Konstruktor mit einem unsignierten 16-Bit Wert
     /// </summary>
     /// <param name="val">Wert, welcher verwendet werden soll</param>
-    public UIntXb(ushort val) : this((ulong)val) { }
+    public UIntXm(ushort val) : this((ulong)val) { }
 
     /// <summary>
     /// Konstruktor mit einem unsignierten 32-Bit Wert
     /// </summary>
     /// <param name="val">Wert, welcher verwendet werden soll</param>
-    public UIntXb(uint val) : this((ulong)val)
-    {
-      limbs = new[] { val };
-      limbCount = 1;
-    }
+    public UIntXm(uint val) : this((ulong)val) { }
 
     /// <summary>
     /// Konstruktor mit einem unsignierten 64-Bit Wert
     /// </summary>
     /// <param name="val">Wert, welcher verwendet werden soll</param>
-    public UIntXb(ulong val)
+    public UIntXm(ulong val)
     {
-      if (val <= uint.MaxValue)
-      {
-        limbs = new[] { (uint)val };
-        limbCount = 1;
-      }
-      else
-      {
-        limbs = new[] { (uint)val, (uint)(val >> 32) };
-        limbCount = 2;
-      }
+      limbs = AllocLimbs(2);
+      *(ulong*)limbs = val;
+      limbsCount = val <= uint.MaxValue ? 1 : 2;
     }
 
     /// <summary>
     /// Konstruktor mit einer Zeichenkette, welche aus einer unsignierten Integer-Zahl besteht
     /// </summary>
     /// <param name="val">Wert, welcher verwendet werden soll</param>
-    public UIntXb(string val) : this(ParseInternal(val)) { }
+    public UIntXm(string val) : this(ParseInternal(val)) { }
 
     /// <summary>
-    /// direkter Konstruktor mit den einzelnen Zahlen
+    /// direkter Konstruktor mit direkter Speicheradresse
     /// </summary>
-    /// <param name="limbs">Bit-Kette, welche direkt verwendet werden soll</param>
-    internal UIntXb(uint[] limbs)
+    /// <param name="limbs">Limbs, welche direkt verwendet werden sollen</param>
+    /// <param name="limbsCount">Anzahl der Limbs, welche benutzt werden</param>
+    internal UIntXm(uint* limbs, long limbsCount)
     {
-      if (limbs == null) throw new ArgumentNullException("limbs");
       this.limbs = limbs;
-      limbCount = limbs.Length;
+      this.limbsCount = limbsCount;
     }
 
     /// <summary>
-    /// direkter Konstruktor mit den einzelnen Zahlen
+    /// Konstruktor mit Limbs, welche direkt verwendet werden sollen
     /// </summary>
-    /// <param name="limbs">Bit-Kette, welche direkt verwendet werden soll</param>
-    /// <param name="limbCount">Anzahl der gesetzten Limbs</param>
-    internal UIntXb(uint[] limbs, long limbCount)
+    /// <param name="limbs">Array mit den Limbs, welche verwendet werden sollen</param>
+    internal UIntXm(uint[] limbs)
     {
-      if (limbs == null) throw new ArgumentNullException("limbs");
-      this.limbs = limbs;
-      this.limbCount = limbCount;
+      this.limbs = AllocLimbs(limbs.Length);
+      limbsCount = limbs.Length;
+      Xtr.CopyLimbs(limbs, this.limbs, limbsCount);
+    }
+
+    /// <summary>
+    /// Destructor zum freigeben des Speicherbereiches
+    /// </summary>
+    ~UIntXm()
+    {
+      bool ok = FreeLimbs(limbs);
+      Debug.Assert(ok);
     }
   }
 }

@@ -32,7 +32,7 @@ namespace TaschenRechnerLib.BigIntegerExtras
     /// Konstruktor
     /// </summary>
     /// <param name="bn">BitInteger mit Bit-Kette, welche verwendet werden soll</param>
-    public BigIntegerBuilder(UIntXb bn)
+    public BigIntegerBuilder(UIntX bn)
     {
       fWritable = false;
       rgu = bn.limbs;
@@ -132,9 +132,9 @@ namespace TaschenRechnerLib.BigIntegerExtras
     /// gibt den Wert wieder als neu erstelltes UIntXb zurück
     /// </summary>
     /// <returns></returns>
-    public UIntXb GetUIntXb()
+    public UIntX GetUIntXb()
     {
-      return new UIntXb(GetIntegerParts());
+      return new UIntX(GetIntegerParts());
     }
 
     /// <summary>

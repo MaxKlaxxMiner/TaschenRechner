@@ -2,7 +2,7 @@
 
 namespace TaschenRechnerLib
 {
-  public partial struct UIntXb : IComparable<UIntXb>
+  public partial struct UIntX : IComparable<UIntX>
   {
     /// <summary>
     /// Operator zum vergleichen zweier Werte (gleich)
@@ -10,7 +10,7 @@ namespace TaschenRechnerLib
     /// <param name="val1">Wert1</param>
     /// <param name="val2">Wert2</param>
     /// <returns>Vergleichsergebnis</returns>
-    public static bool operator ==(UIntXb val1, UIntXb val2)
+    public static bool operator ==(UIntX val1, UIntX val2)
     {
       return val1.CompareTo(val2) == 0;
     }
@@ -21,7 +21,7 @@ namespace TaschenRechnerLib
     /// <param name="val1">Wert1</param>
     /// <param name="val2">Wert2</param>
     /// <returns>Vergleichsergebnis</returns>
-    public static bool operator !=(UIntXb val1, UIntXb val2)
+    public static bool operator !=(UIntX val1, UIntX val2)
     {
       return val1.CompareTo(val2) != 0;
     }
@@ -32,7 +32,7 @@ namespace TaschenRechnerLib
     /// <param name="val1">Wert1</param>
     /// <param name="val2">Wert2</param>
     /// <returns>Vergleichsergebnis</returns>
-    public static bool operator <(UIntXb val1, UIntXb val2)
+    public static bool operator <(UIntX val1, UIntX val2)
     {
       return val1.CompareTo(val2) < 0;
     }
@@ -43,7 +43,7 @@ namespace TaschenRechnerLib
     /// <param name="val1">Wert1</param>
     /// <param name="val2">Wert2</param>
     /// <returns>Vergleichsergebnis</returns>
-    public static bool operator <=(UIntXb val1, UIntXb val2)
+    public static bool operator <=(UIntX val1, UIntX val2)
     {
       return val1.CompareTo(val2) <= 0;
     }
@@ -54,7 +54,7 @@ namespace TaschenRechnerLib
     /// <param name="val1">Wert1</param>
     /// <param name="val2">Wert2</param>
     /// <returns>Vergleichsergebnis</returns>
-    public static bool operator >(UIntXb val1, UIntXb val2)
+    public static bool operator >(UIntX val1, UIntX val2)
     {
       return val1.CompareTo(val2) > 0;
     }
@@ -65,7 +65,7 @@ namespace TaschenRechnerLib
     /// <param name="val1">Wert1</param>
     /// <param name="val2">Wert2</param>
     /// <returns>Vergleichsergebnis</returns>
-    public static bool operator >=(UIntXb val1, UIntXb val2)
+    public static bool operator >=(UIntX val1, UIntX val2)
     {
       return val1.CompareTo(val2) >= 0;
     }
@@ -78,7 +78,7 @@ namespace TaschenRechnerLib
     public override bool Equals(object obj)
     {
       if (ReferenceEquals(null, obj)) return false;
-      return obj is UIntXb && CompareTo((UIntXb)obj) == 0;
+      return obj is UIntX && CompareTo((UIntX)obj) == 0;
     }
 
     /// <summary>
@@ -102,7 +102,7 @@ namespace TaschenRechnerLib
     /// </summary>
     /// <param name="other">Wert, welcher verglichen werden soll</param>
     /// <returns>Vergleichsergebnis</returns>
-    public int CompareTo(UIntXb other)
+    public int CompareTo(UIntX other)
     {
       if (limbCount == other.limbCount)
       {

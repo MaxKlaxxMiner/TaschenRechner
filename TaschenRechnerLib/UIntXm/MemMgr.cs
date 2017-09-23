@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 // ReSharper disable HeuristicUnreachableCode
 #pragma warning disable 162
 
-namespace TaschenRechnerLib.Core
+namespace TaschenRechnerLib
 {
   /// <summary>
   /// Klasse zum verwalten von Arbeitsspeicher
@@ -158,7 +158,7 @@ namespace TaschenRechnerLib.Core
             Debug.Assert(result >= data);
             Debug.Assert(result + elementSize <= DataPointerEnd);
 
-            if(DoAssertFull)AssertFull();
+            if (DoAssertFull) AssertFull();
 
             return result;
           }

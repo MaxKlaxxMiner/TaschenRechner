@@ -1,10 +1,9 @@
-﻿using TaschenRechnerLib.Core;
-// ReSharper disable MemberCanBePrivate.Global
+﻿// ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable UnusedMember.Local
 
 namespace TaschenRechnerLib
 {
-  public sealed unsafe partial class UIntX
+  public sealed unsafe partial class UIntXm
   {
     /// <summary>
     /// reserviert den Speicherplatz von mehreren Limbs

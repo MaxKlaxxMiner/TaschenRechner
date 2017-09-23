@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using TaschenRechnerLib;
-using TaschenRechnerLib.Core;
 
 // ReSharper disable UnusedMember.Local
 

@@ -1,24 +1,18 @@
 ﻿using System;
-using System.Diagnostics;
-using TaschenRechnerLib.Core;
-
-// ReSharper disable NotAccessedField.Local
-// ReSharper disable UnusedMember.Global
 // ReSharper disable MemberCanBePrivate.Global
-// ReSharper disable RedundantAssignment
 
 namespace TaschenRechnerLib
 {
-  public sealed unsafe partial class UIntX
+  public partial struct UIntX
   {
     /// <summary>
     /// merkt sich die eigentlichen Daten der Zahl
     /// </summary>
-    readonly uint* limbs;
+    internal readonly uint[] limbs;
     /// <summary>
-    /// merkt sich Anzahl der Limbs, welche benutzt werden
+    /// merkt sich die Anzahl der belgten Limbs
     /// </summary>
-    readonly long limbsCount;
+    internal readonly long limbCount;
 
     /// <summary>
     /// Konstruktor mit einem signierten 8-Bit Wert
@@ -60,7 +54,11 @@ namespace TaschenRechnerLib
     /// Konstruktor mit einem unsignierten 32-Bit Wert
     /// </summary>
     /// <param name="val">Wert, welcher verwendet werden soll</param>
-    public UIntX(uint val) : this((ulong)val) { }
+    public UIntX(uint val) : this((ulong)val)
+    {
+      limbs = new[] { val };
+      limbCount = 1;
+    }
 
     /// <summary>
     /// Konstruktor mit einem unsignierten 64-Bit Wert
@@ -68,9 +66,16 @@ namespace TaschenRechnerLib
     /// <param name="val">Wert, welcher verwendet werden soll</param>
     public UIntX(ulong val)
     {
-      limbs = AllocLimbs(2);
-      *(ulong*)limbs = val;
-      limbsCount = val <= uint.MaxValue ? 1 : 2;
+      if (val <= uint.MaxValue)
+      {
+        limbs = new[] { (uint)val };
+        limbCount = 1;
+      }
+      else
+      {
+        limbs = new[] { (uint)val, (uint)(val >> 32) };
+        limbCount = 2;
+      }
     }
 
     /// <summary>
@@ -80,34 +85,26 @@ namespace TaschenRechnerLib
     public UIntX(string val) : this(ParseInternal(val)) { }
 
     /// <summary>
-    /// direkter Konstruktor mit direkter Speicheradresse
+    /// direkter Konstruktor mit den einzelnen Zahlen
     /// </summary>
-    /// <param name="limbs">Limbs, welche direkt verwendet werden sollen</param>
-    /// <param name="limbsCount">Anzahl der Limbs, welche benutzt werden</param>
-    internal UIntX(uint* limbs, long limbsCount)
-    {
-      this.limbs = limbs;
-      this.limbsCount = limbsCount;
-    }
-
-    /// <summary>
-    /// Konstruktor mit Limbs, welche direkt verwendet werden sollen
-    /// </summary>
-    /// <param name="limbs">Array mit den Limbs, welche verwendet werden sollen</param>
+    /// <param name="limbs">Bit-Kette, welche direkt verwendet werden soll</param>
     internal UIntX(uint[] limbs)
     {
-      this.limbs = AllocLimbs(limbs.Length);
-      limbsCount = limbs.Length;
-      Xtr.CopyLimbs(limbs, this.limbs, limbsCount);
+      if (limbs == null) throw new ArgumentNullException("limbs");
+      this.limbs = limbs;
+      limbCount = limbs.Length;
     }
 
     /// <summary>
-    /// Destructor zum freigeben des Speicherbereiches
+    /// direkter Konstruktor mit den einzelnen Zahlen
     /// </summary>
-    ~UIntX()
+    /// <param name="limbs">Bit-Kette, welche direkt verwendet werden soll</param>
+    /// <param name="limbCount">Anzahl der gesetzten Limbs</param>
+    internal UIntX(uint[] limbs, long limbCount)
     {
-      bool ok = FreeLimbs(limbs);
-      Debug.Assert(ok);
+      if (limbs == null) throw new ArgumentNullException("limbs");
+      this.limbs = limbs;
+      this.limbCount = limbCount;
     }
   }
 }
