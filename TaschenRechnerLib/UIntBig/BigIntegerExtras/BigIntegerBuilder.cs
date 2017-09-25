@@ -132,7 +132,7 @@ namespace TaschenRechnerLib.BigIntegerExtras
     /// gibt den Wert wieder als neu erstelltes UIntXb zurück
     /// </summary>
     /// <returns></returns>
-    public UIntX GetUIntXb()
+    public UIntX GetUIntX()
     {
       return new UIntX(GetIntegerParts());
     }

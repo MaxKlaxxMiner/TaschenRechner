@@ -1,5 +1,4 @@
 ﻿#region # using *.*
-using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
@@ -13,7 +12,7 @@ using System.Collections.Generic;
 //using ui = TaschenRechnerLib.UIntSimple;
 //using ui = TaschenRechnerLib.UIntLimbs;
 //using ui = TaschenRechnerLib.UIntBig;
-//using ui = TaschenRechnerLib.UIntX;
+using ui = TaschenRechnerLib.UIntX;
 
 namespace TaschenRechnerTest
 {
@@ -171,7 +170,9 @@ namespace TaschenRechnerTest
       int hash03 = val03.GetHashCode();
       int hash04 = val04.GetHashCode();
       Debug.Assert(hash03 == hash04);
+      // ReSharper disable once RedundantCast
       Debug.Assert(val03.Equals((object)val04));
+      // ReSharper disable once RedundantCast
       Debug.Assert(!val03.Equals((object)val02));
     }
 
@@ -218,31 +219,31 @@ namespace TaschenRechnerTest
 
     static void Mul()
     {
-      //var val01 = new ui(123);
-      //Debug.Assert(val01.ToString() == "123");
-      //var val02 = new ui(456);
-      //Debug.Assert(val02.ToString() == "456");
-      //var val03 = val02 * val02;
-      //Debug.Assert(val03.ToString() == "207936");
-      //var val04 = val01 * val01;
-      //Debug.Assert(val04.ToString() == "15129");
-      //var val05 = val01 * val02;
-      //Debug.Assert(val05.ToString() == "56088");
-      //var val06 = new ui(9999999999999999999UL);
-      //Debug.Assert(val06.ToString() == "9999999999999999999");
-      //var val07 = val06 * val06;
-      //Debug.Assert(val07.ToString() == "99999999999999999980000000000000000001");
-      //var val08 = new ui(new string('9', 1000));
-      //Debug.Assert(val08.ToString() == new string('9', 1000));
-      //var val09 = val08 * val08;
-      //Debug.Assert(val09.ToString() == new string('9', 999) + "8" + new string('0', 999) + "1");
-      //var val10 = val01 * val02 * val03 * val04 * val05;
-      //Debug.Assert(val10.ToString() == "9896458695813697536");
-      //val10 *= val10;
-      //val10 *= val10;
-      //var val11 = val10 * val10 * val09;
-      //string cmp11 = (BigInteger.Parse(val10.ToString()) * BigInteger.Parse(val10.ToString()) * BigInteger.Parse(val09.ToString())).ToString();
-      //Debug.Assert(val11.ToString() == cmp11);
+      var val01 = new ui(123);
+      Debug.Assert(val01.ToString() == "123");
+      var val02 = new ui(456);
+      Debug.Assert(val02.ToString() == "456");
+      var val03 = val02 * val02;
+      Debug.Assert(val03.ToString() == "207936");
+      var val04 = val01 * val01;
+      Debug.Assert(val04.ToString() == "15129");
+      var val05 = val01 * val02;
+      Debug.Assert(val05.ToString() == "56088");
+      var val06 = new ui(9999999999999999999UL);
+      Debug.Assert(val06.ToString() == "9999999999999999999");
+      var val07 = val06 * val06;
+      Debug.Assert(val07.ToString() == "99999999999999999980000000000000000001");
+      var val08 = new ui(new string('9', 1000));
+      Debug.Assert(val08.ToString() == new string('9', 1000));
+      var val09 = val08 * val08;
+      Debug.Assert(val09.ToString() == new string('9', 999) + "8" + new string('0', 999) + "1");
+      var val10 = val01 * val02 * val03 * val04 * val05;
+      Debug.Assert(val10.ToString() == "9896458695813697536");
+      val10 *= val10;
+      val10 *= val10;
+      var val11 = val10 * val10 * val09;
+      string cmp11 = (BigInteger.Parse(val10.ToString()) * BigInteger.Parse(val10.ToString()) * BigInteger.Parse(val09.ToString())).ToString();
+      Debug.Assert(val11.ToString() == cmp11);
     }
 
     static void Div()
@@ -296,7 +297,7 @@ namespace TaschenRechnerTest
       //Add();
       //Compare();
       //Sub();
-      //Mul();
+      Mul();
       //Div();
       //Mod();
 
@@ -304,7 +305,7 @@ namespace TaschenRechnerTest
       //SpeedCheckInc();
       //SpeedCheckSub();
       //SpeedCheckDec();
-      SpeedCheckMul();
+      //SpeedCheckMul();
       //SpeedCheckDiv();
       //SpeedCheckStr();
 

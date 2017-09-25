@@ -81,6 +81,7 @@
     <Compile Include="UIntX\Add.cs" />
     <Compile Include="UIntX\Compare.cs" />
     <Compile Include="UIntX\Const.cs" />
+    <Compile Include="UIntX\Mul.cs" />
     <Compile Include="UIntX\Parse.cs" />
     <Compile Include="UIntX\Sub.cs" />
     <Compile Include="UIntX\ToString.cs" />
