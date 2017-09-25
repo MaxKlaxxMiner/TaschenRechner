@@ -1,5 +1,4 @@
 ﻿using System;
-using TaschenRechnerLib.BigIntegerExtras;
 // ReSharper disable UnusedMember.Global
 
 namespace TaschenRechnerLib
@@ -32,18 +31,18 @@ namespace TaschenRechnerLib
 
       var result = new byte[byteCount];
 
-      int limbCopy = Math.Min((int)limbCount, byteCount / 4);
-      if (limbCopy > 0)
+      int limbFastCopy = Math.Min((int)limbCount, byteCount / 4);
+      if (limbFastCopy > 0)
       {
         fixed (byte* target = result)
         fixed (uint* limbsP = limbs)
         {
-          Xtr.CopyLimbs(limbsP, (uint*)target, limbCopy);
+          Xtr.CopyLimbs(limbsP, (uint*)target, limbFastCopy);
         }
       }
 
       // --- rest kopieren ---
-      for (int i = limbCopy * 4; i < result.Length; i++)
+      for (int i = limbFastCopy * 4; i < result.Length; i++)
       {
         if (i >> 2 < limbCount) result[i] = (byte)(limbs[i >> 2] >> (i & 3) * 8);
       }

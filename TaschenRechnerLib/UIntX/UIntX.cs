@@ -54,7 +54,8 @@ namespace TaschenRechnerLib
     /// Konstruktor mit einem unsignierten 32-Bit Wert
     /// </summary>
     /// <param name="val">Wert, welcher verwendet werden soll</param>
-    public UIntX(uint val) : this((ulong)val)
+    public UIntX(uint val)
+      : this((ulong)val)
     {
       limbs = new[] { val };
       limbCount = 1;
@@ -88,7 +89,7 @@ namespace TaschenRechnerLib
     /// direkter Konstruktor mit den einzelnen Zahlen
     /// </summary>
     /// <param name="limbs">Bit-Kette, welche direkt verwendet werden soll</param>
-    internal UIntX(uint[] limbs)
+    public UIntX(uint[] limbs)
     {
       if (limbs == null) throw new ArgumentNullException("limbs");
       this.limbs = limbs;
@@ -105,6 +106,34 @@ namespace TaschenRechnerLib
       if (limbs == null) throw new ArgumentNullException("limbs");
       this.limbs = limbs;
       this.limbCount = limbCount;
+    }
+
+    /// <summary>
+    /// direkter Konstruktor mit Verwendung eines Byte-Arrays (BigInteger.ToByteArray() kompatibel)
+    /// </summary>
+    /// <param name="val">Wert, welcher verwendet werden soll</param>
+    public unsafe UIntX(byte[] val)
+    {
+      if (val == null || val.Length == 0) throw new ArgumentNullException("val");
+      if (val[val.Length - 1] > 0x7f) throw new ArgumentException("val"); // marker für negative Zahl gesetzt?
+
+      limbCount = (val.Length + 3) / 4;
+      limbs = new uint[limbCount];
+
+      if (val.Length >= 4) // komplette Limbs direkt kopieren (schneller)
+      {
+        fixed (uint* target = limbs)
+        fixed (byte* valP = val)
+        {
+          Xtr.CopyLimbs((uint*)valP, target, val.Length / 4);
+        }
+      }
+
+      // --- restliche Bytes einzeln anfügen ---
+      for (int i = val.Length / 4 * 4; i < val.Length; i++)
+      {
+        limbs[i >> 2] |= (uint)val[i] << (i & 3) * 8;
+      }
     }
   }
 }
