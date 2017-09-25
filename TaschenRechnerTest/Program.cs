@@ -313,20 +313,8 @@ namespace TaschenRechnerTest
       //SpeedCheckDiv();
       //SpeedCheckStr();
 
-      //for (int c = 0; c < 1000000; c++)
-      //{
-      //  string str = "1" + new string('0', c);
-      //  var b = BigInteger.Parse(str);
-      //  var u = UIntX.Parse(str);
-      //  var bx = b.ToByteArray();
-      //  var ux = u.ToByteArray();
-      //  if (bx.Length != ux.Length) throw new Exception();
-      //  for (int i = 0; i < bx.Length; i++) if (bx[i] != ux[i]) throw new Exception();
-      //  if (new UIntX(bx).ToString() != str) throw new Exception();
-      //}
-
       //SpeedDiv();
-      SpeedClass();
+      SpeedValues();
       //MemTest();
     }
   }
