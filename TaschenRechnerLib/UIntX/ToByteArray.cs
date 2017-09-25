@@ -1,4 +1,5 @@
-﻿using TaschenRechnerLib.BigIntegerExtras;
+﻿using System;
+using TaschenRechnerLib.BigIntegerExtras;
 // ReSharper disable UnusedMember.Global
 
 namespace TaschenRechnerLib
@@ -9,7 +10,7 @@ namespace TaschenRechnerLib
     /// gibt den Wert als Byte-Array zurück (kompatibel mit BigInteger.ToByteArray())
     /// </summary>
     /// <returns>fertiges Byte-Array</returns>
-    public byte[] ToByteArray()
+    public unsafe byte[] ToByteArray()
     {
       int byteCount = (int)(limbCount * 4 - 3);
       if (limbs[limbCount - 1] > 0x7f)
@@ -31,7 +32,18 @@ namespace TaschenRechnerLib
 
       var result = new byte[byteCount];
 
-      for (int i = 0; i < result.Length; i++)
+      int limbCopy = Math.Min((int)limbCount, byteCount / 4);
+      if (limbCopy > 0)
+      {
+        fixed (byte* target = result)
+        fixed (uint* limbsP = limbs)
+        {
+          Xtr.CopyLimbs(limbsP, (uint*)target, limbCopy);
+        }
+      }
+
+      // --- rest kopieren ---
+      for (int i = limbCopy * 4; i < result.Length; i++)
       {
         if (i >> 2 < limbCount) result[i] = (byte)(limbs[i >> 2] >> (i & 3) * 8);
       }
