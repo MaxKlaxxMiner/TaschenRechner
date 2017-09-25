@@ -314,7 +314,8 @@ namespace TaschenRechnerTest
       //SpeedCheckStr();
 
       //SpeedDiv();
-      SpeedValues();
+      //SpeedValues();
+      SpeedCalc();
       //MemTest();
     }
   }
