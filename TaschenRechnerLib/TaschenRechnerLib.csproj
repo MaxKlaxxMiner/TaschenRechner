@@ -84,6 +84,7 @@
     <Compile Include="UIntX\Mul.cs" />
     <Compile Include="UIntX\Parse.cs" />
     <Compile Include="UIntX\Sub.cs" />
+    <Compile Include="UIntX\ToByteArray.cs" />
     <Compile Include="UIntX\ToString.cs" />
     <Compile Include="UIntX\UIntX.cs" />
     <Compile Include="UIntXm\Add.cs" />

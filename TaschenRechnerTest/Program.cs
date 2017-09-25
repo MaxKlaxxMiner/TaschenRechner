@@ -1,4 +1,8 @@
-﻿#region # using *.*
+﻿
+using System;
+
+#region # using *.*
+
 using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
@@ -308,6 +312,17 @@ namespace TaschenRechnerTest
       //SpeedCheckMul();
       //SpeedCheckDiv();
       //SpeedCheckStr();
+
+      for (int c = 0; c < 1000000; c++)
+      {
+        string str = "1" + new string('0', c);
+        var b = BigInteger.Parse(str);
+        var u = UIntX.Parse(str);
+        var bx = b.ToByteArray();
+        var ux = u.ToByteArray();
+        if (bx.Length != ux.Length) throw new Exception();
+        for (int i = 0; i < bx.Length; i++) if (bx[i] != ux[i]) throw new Exception();
+      }
 
       //SpeedDiv();
       //MemTest();
