@@ -556,6 +556,9 @@ namespace TaschenRechnerTest
         }
         return cy;
       }
+
+      [DllImport("TaschenRechnerAsm.dll")]
+      public static extern ulong AsmTest();
     }
 
     const int BitCount = 1024;
@@ -617,7 +620,9 @@ namespace TaschenRechnerTest
 
       //SpeedCalcMinMaxBranched();
 
-      SpeedCalcAddArray();
+      //SpeedCalcAddArray();
+
+      if (Adder.AsmTest() != 123) throw new Exception("asm not found");
     }
   }
 }
