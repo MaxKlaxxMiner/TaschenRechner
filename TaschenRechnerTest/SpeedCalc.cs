@@ -3,6 +3,7 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using TaschenRechnerLib;
 
 // ReSharper disable ConvertToConstant.Local
@@ -319,6 +320,26 @@ namespace TaschenRechnerTest
 
     static unsafe class Adder
     {
+      public static ulong AddXtr(uint* rp, uint* up, uint* vp, long n)
+      {
+        return Xtr.Add(rp, up, vp, n);
+      }
+
+      public static ulong AddXtr2(uint* rp, uint* up, uint* vp, long n)
+      {
+        ulong carry = 0;
+        for (long i = 0; i < n; i += 2)
+        {
+          ulong v1 = *(ulong*)(up + i);
+          ulong v2 = *(ulong*)(vp + i);
+          carry = (ulong)(uint)v1 + (uint)v2 + (carry >> 32);
+          rp[i] = (uint)carry;
+          carry = (v1 >> 32) + (v2 >> 32) + (carry >> 32);
+          rp[i + 1] = (uint)carry;
+        }
+        return carry >> 32;
+      }
+
       public static int AddRef(byte* rp, byte* up, byte* vp, long n)
       {
         int carry = 0;
@@ -430,11 +451,6 @@ namespace TaschenRechnerTest
         return cy;
       }
 
-      public static ulong AddXtr(uint* rp, uint* up, uint* vp, long n)
-      {
-        return Xtr.Add(rp, up, vp, n);
-      }
-
       public static ulong AddGmpLong(ulong* rp, ulong* up, ulong* vp, long n)
       {
         ulong cy = 0;
@@ -450,6 +466,94 @@ namespace TaschenRechnerTest
           *rp++ = rl;
         }
         while (--n != 0);
+        return cy;
+      }
+
+      public static ulong AddGmpLong2(ulong* rp, ulong* up, ulong* vp, long n)
+      {
+        var cy1 = default(HackBool);
+        var cy2 = default(HackBool);
+        ulong cy = 0;
+        do
+        {
+          ulong ul = *up++;
+          ulong vl = *vp++;
+          ulong sl = ul + vl;
+          cy1.vBool = sl < ul;
+          ulong rl = sl + cy;
+          cy2.vBool = rl < sl;
+          cy = cy1.vULong | cy2.vULong;
+          *rp++ = rl;
+        }
+        while (--n != 0);
+        return cy;
+      }
+
+      [StructLayout(LayoutKind.Explicit, Size = 8)]
+      struct HackBool
+      {
+        [FieldOffset(0)]
+        public bool vBool;
+        [FieldOffset(0)]
+        public byte vByte;
+        [FieldOffset(0)]
+        public int vInt;
+        [FieldOffset(0)]
+        public uint vUInt;
+        [FieldOffset(0)]
+        public long vLong;
+        [FieldOffset(0)]
+        public ulong vULong;
+      }
+
+      public static ulong AddGmpLong3(ulong* rp, ulong* up, ulong* vp, long n)
+      {
+        ulong* cyb = stackalloc ulong[2];
+        ulong cy = 0;
+        do
+        {
+          ulong ul = *up++;
+          ulong vl = *vp++;
+          ulong sl = ul + vl;
+          *(bool*)(cyb + 0) = sl < ul;
+          ulong rl = sl + cy;
+          *(bool*)(cyb + 1) = rl < sl;
+          cy = cyb[0] | cyb[1];
+          *rp++ = rl;
+        }
+        while (--n != 0);
+        return cy;
+      }
+
+      public static ulong AddGmpLong4(ulong* rp, ulong* up, ulong* vp, long n)
+      {
+        ulong cy = 0;
+        for (long i = 0; i < n; i++)
+        {
+          ulong ul = up[i];
+          ulong vl = vp[i];
+          ulong sl = ul + vl;
+          ulong cy1 = sl < ul ? 1UL : 0UL;
+          ulong rl = sl + cy;
+          ulong cy2 = rl < sl ? 1UL : 0UL;
+          cy = cy1 | cy2;
+          rp[i] = rl;
+        }
+        return cy;
+      }
+
+      public static ulong AddGmpLong5(ulong* rp, ulong* up, ulong* vp, long n)
+      {
+        ulong cy = 0;
+        for (long i = 0; i < n; i++)
+        {
+          ulong ul = up[i];
+          ulong vl = vp[i];
+          ulong sl = ul + vl;
+          ulong rl = sl + cy;
+          rp[i] = rl;
+          cy = sl < ul || rl < sl ? 1UL : 0UL;
+        }
         return cy;
       }
     }
@@ -488,9 +592,14 @@ namespace TaschenRechnerTest
             // Adder.AddGmpShortX((ushort*)rp, (ushort*)up, (ushort*)vp, ByteCount / sizeof(ushort)); // 978,99 ms
             // Adder.AddGmpInt((uint*)rp, (uint*)up, (uint*)vp, ByteCount / sizeof(uint)); // 684,38 ms
             // Adder.AddGmpIntX((uint*)rp, (uint*)up, (uint*)vp, ByteCount / sizeof(uint)); // 554,34 ms
-            Adder.AddGmpLong((ulong*)rp, (ulong*)up, (ulong*)vp, ByteCount / sizeof(ulong)); // 354,95 ms
+            // Adder.AddGmpLong((ulong*)rp, (ulong*)up, (ulong*)vp, ByteCount / sizeof(ulong)); // 354,95 ms
+            // Adder.AddGmpLong2((ulong*)rp, (ulong*)up, (ulong*)vp, ByteCount / sizeof(ulong)); // 1.078,49 ms
+            // Adder.AddGmpLong3((ulong*)rp, (ulong*)up, (ulong*)vp, ByteCount / sizeof(ulong)); // 1.046,07 ms
+            // Adder.AddGmpLong4((ulong*)rp, (ulong*)up, (ulong*)vp, ByteCount / sizeof(ulong)); // 341,16 ms
+            Adder.AddGmpLong5((ulong*)rp, (ulong*)up, (ulong*)vp, ByteCount / sizeof(ulong)); // 206,82 ms - 239,66 ms
 
             // Adder.AddXtr((uint*)rp, (uint*)up, (uint*)vp, ByteCount / sizeof(uint)); // 216,07 ms
+            // Adder.AddXtr2((uint*)rp, (uint*)up, (uint*)vp, ByteCount / sizeof(uint)); // 214,13 ms
           }
         }
         m.Stop();
