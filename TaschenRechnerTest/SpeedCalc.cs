@@ -558,12 +558,16 @@ namespace TaschenRechnerTest
       }
 
       [DllImport("TaschenRechnerAsm.dll")]
-      public static extern ulong AsmTest();
+      public static extern ulong AddAsm(ulong* rp, ulong* up, ulong* vp, long n);
     }
 
     const int BitCount = 1024;
     const int ByteCount = BitCount / 8;
     const int RefResult = 1995198812;
+
+    //const int BitCount = 65536;
+    //const int ByteCount = BitCount / 8;
+    //const int RefResult = 951296797;
 
     static byte[] GetBytes(int addType = 0)
     {
@@ -586,23 +590,25 @@ namespace TaschenRechnerTest
         var v = GetBytes(2);
         fixed (byte* rp = res, up = u, vp = v)
         {
-          for (int i = 0; i < TestCount; i++)
+          for (int i = 0; i < TestCount / BitCount * 1024; i++)
           {
-            // Adder.AddRef(rp, up, vp, ByteCount); // 1.269,12 ms
-            // Adder.AddGmpByte(rp, up, vp, ByteCount); // 2.824,51 ms
-            // Adder.AddGmpByteX(rp, up, vp, ByteCount); // 1.611,47 ms
-            // Adder.AddGmpShort((ushort*)rp, (ushort*)up, (ushort*)vp, ByteCount / sizeof(ushort)); // 1.486,16 ms
-            // Adder.AddGmpShortX((ushort*)rp, (ushort*)up, (ushort*)vp, ByteCount / sizeof(ushort)); // 978,99 ms
-            // Adder.AddGmpInt((uint*)rp, (uint*)up, (uint*)vp, ByteCount / sizeof(uint)); // 684,38 ms
-            // Adder.AddGmpIntX((uint*)rp, (uint*)up, (uint*)vp, ByteCount / sizeof(uint)); // 554,34 ms
-            // Adder.AddGmpLong((ulong*)rp, (ulong*)up, (ulong*)vp, ByteCount / sizeof(ulong)); // 354,95 ms
-            // Adder.AddGmpLong2((ulong*)rp, (ulong*)up, (ulong*)vp, ByteCount / sizeof(ulong)); // 1.078,49 ms
-            // Adder.AddGmpLong3((ulong*)rp, (ulong*)up, (ulong*)vp, ByteCount / sizeof(ulong)); // 1.046,07 ms
-            // Adder.AddGmpLong4((ulong*)rp, (ulong*)up, (ulong*)vp, ByteCount / sizeof(ulong)); // 341,16 ms
-            Adder.AddGmpLong5((ulong*)rp, (ulong*)up, (ulong*)vp, ByteCount / sizeof(ulong)); // 206,82 ms - 239,66 ms
+            // Adder.AddRef(rp, up, vp, ByteCount); // 1.269,12 ms / 1.195,87 ms
+            // Adder.AddGmpByte(rp, up, vp, ByteCount); // 2.824,51 ms / 2.816,84 ms
+            // Adder.AddGmpByteX(rp, up, vp, ByteCount); // 1.611,47 ms / 1.551,23 ms
+            // Adder.AddGmpShort((ushort*)rp, (ushort*)up, (ushort*)vp, ByteCount / sizeof(ushort)); // 1.486,16 ms / 1.451,76 ms
+            // Adder.AddGmpShortX((ushort*)rp, (ushort*)up, (ushort*)vp, ByteCount / sizeof(ushort)); // 978,99 ms / 853,07 ms
+            // Adder.AddGmpInt((uint*)rp, (uint*)up, (uint*)vp, ByteCount / sizeof(uint)); // 684,38 ms / 635,75 ms
+            // Adder.AddGmpIntX((uint*)rp, (uint*)up, (uint*)vp, ByteCount / sizeof(uint)); // 554,34 ms / 423,39 ms
+            // Adder.AddGmpLong((ulong*)rp, (ulong*)up, (ulong*)vp, ByteCount / sizeof(ulong)); // 354,95 ms / 371,12 ms
+            // Adder.AddGmpLong2((ulong*)rp, (ulong*)up, (ulong*)vp, ByteCount / sizeof(ulong)); // 1.078,49 ms / 1.020,44 ms
+            // Adder.AddGmpLong3((ulong*)rp, (ulong*)up, (ulong*)vp, ByteCount / sizeof(ulong)); // 1.046,07 ms / 990,21 ms
+            // Adder.AddGmpLong4((ulong*)rp, (ulong*)up, (ulong*)vp, ByteCount / sizeof(ulong)); // 341,16 ms / 352,28 ms
+            // Adder.AddGmpLong5((ulong*)rp, (ulong*)up, (ulong*)vp, ByteCount / sizeof(ulong)); // 239,66 ms / 193,80 ms
 
-            // Adder.AddXtr((uint*)rp, (uint*)up, (uint*)vp, ByteCount / sizeof(uint)); // 216,07 ms
-            // Adder.AddXtr2((uint*)rp, (uint*)up, (uint*)vp, ByteCount / sizeof(uint)); // 214,13 ms
+            // Adder.AddXtr((uint*)rp, (uint*)up, (uint*)vp, ByteCount / sizeof(uint)); // 216,07 ms / 188,70 ms
+            // Adder.AddXtr2((uint*)rp, (uint*)up, (uint*)vp, ByteCount / sizeof(uint)); // 214,13 ms / 188,05 ms
+
+            Adder.AddAsm((ulong*)rp, (ulong*)up, (ulong*)vp, ByteCount / sizeof(ulong)); // 218,75 ms / 85,00 ms
           }
         }
         m.Stop();
@@ -620,9 +626,7 @@ namespace TaschenRechnerTest
 
       //SpeedCalcMinMaxBranched();
 
-      //SpeedCalcAddArray();
-
-      if (Adder.AsmTest() != 123) throw new Exception("asm not found");
+      SpeedCalcAddArray();
     }
   }
 }
