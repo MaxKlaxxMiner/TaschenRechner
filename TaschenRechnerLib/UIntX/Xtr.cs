@@ -4,7 +4,7 @@ namespace TaschenRechnerLib
   /// <summary>
   /// Klasse mit Hochgeschwindikeits-Funktionen
   /// </summary>
-  internal static unsafe class Xtr
+  public static unsafe class Xtr
   {
     /// <summary>
     /// führt eine schnelle Addition durch und gibt das Carry-Flag zurück
