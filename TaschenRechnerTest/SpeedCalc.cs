@@ -559,15 +559,18 @@ namespace TaschenRechnerTest
 
       [DllImport("TaschenRechnerAsm.dll")]
       public static extern ulong AddAsm(ulong* rp, ulong* up, ulong* vp, long n);
+
+      [DllImport("TaschenRechnerAsm.dll")]
+      public static extern ulong AddAsmX2(ulong* rp, ulong* up, ulong* vp, long n);
     }
 
-    const int BitCount = 1024;
-    const int ByteCount = BitCount / 8;
-    const int RefResult = 1995198812;
-
-    //const int BitCount = 65536;
+    //const int BitCount = 1024;
     //const int ByteCount = BitCount / 8;
-    //const int RefResult = 951296797;
+    //const int RefResult = 1995198812;
+
+    const int BitCount = 65536;
+    const int ByteCount = BitCount / 8;
+    const int RefResult = 951296797;
 
     static byte[] GetBytes(int addType = 0)
     {
@@ -608,7 +611,8 @@ namespace TaschenRechnerTest
             // Adder.AddXtr((uint*)rp, (uint*)up, (uint*)vp, ByteCount / sizeof(uint)); // 216,07 ms / 188,70 ms
             // Adder.AddXtr2((uint*)rp, (uint*)up, (uint*)vp, ByteCount / sizeof(uint)); // 214,13 ms / 188,05 ms
 
-            Adder.AddAsm((ulong*)rp, (ulong*)up, (ulong*)vp, ByteCount / sizeof(ulong)); // 218,75 ms / 85,00 ms
+            // Adder.AddAsm((ulong*)rp, (ulong*)up, (ulong*)vp, ByteCount / sizeof(ulong)); // 218,75 ms / 85,00 ms
+            Adder.AddAsmX2((ulong*)rp, (ulong*)up, (ulong*)vp, ByteCount / sizeof(ulong)); // 219,10 ms / 79,47 ms
           }
         }
         m.Stop();
