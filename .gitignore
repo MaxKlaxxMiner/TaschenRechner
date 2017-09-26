@@ -1,7 +1,11 @@
-/*.suo
+*.suo
+*.psess
+*.vsp
+*.vspx
+*.user
+*.opensdf
+*.sdf
 bin
 obj
-/*.psess
-/*.vsp
-/*.vspx
-/*.user
+Debug
+Release
