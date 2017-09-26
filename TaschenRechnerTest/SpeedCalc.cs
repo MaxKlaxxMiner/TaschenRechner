@@ -434,6 +434,24 @@ namespace TaschenRechnerTest
       {
         return Xtr.Add(rp, up, vp, n);
       }
+
+      public static ulong AddGmpLong(ulong* rp, ulong* up, ulong* vp, long n)
+      {
+        ulong cy = 0;
+        do
+        {
+          ulong ul = *up++;
+          ulong vl = *vp++;
+          ulong sl = ul + vl;
+          ulong cy1 = sl < ul ? 1UL : 0UL;
+          ulong rl = sl + cy;
+          ulong cy2 = rl < sl ? 1UL : 0UL;
+          cy = cy1 | cy2;
+          *rp++ = rl;
+        }
+        while (--n != 0);
+        return cy;
+      }
     }
 
     const int BitCount = 1024;
@@ -470,8 +488,9 @@ namespace TaschenRechnerTest
             // Adder.AddGmpShortX((ushort*)rp, (ushort*)up, (ushort*)vp, ByteCount / sizeof(ushort)); // 978,99 ms
             // Adder.AddGmpInt((uint*)rp, (uint*)up, (uint*)vp, ByteCount / sizeof(uint)); // 684,38 ms
             // Adder.AddGmpIntX((uint*)rp, (uint*)up, (uint*)vp, ByteCount / sizeof(uint)); // 554,34 ms
-            Adder.AddXtr((uint*)rp, (uint*)up, (uint*)vp, ByteCount / sizeof(uint)); // 216,07 ms
+            Adder.AddGmpLong((ulong*)rp, (ulong*)up, (ulong*)vp, ByteCount / sizeof(ulong)); // 354,95 ms
 
+            // Adder.AddXtr((uint*)rp, (uint*)up, (uint*)vp, ByteCount / sizeof(uint)); // 216,07 ms
           }
         }
         m.Stop();
