@@ -63,5 +63,96 @@ jnz @for_loop
 ret
 AddAsmX2 endp
 
+; ulong mpn_add_n(ulong* rp, ulong* up, ulong* vp, long n)
+;                 
+mpn_add_n proc export
+
+  mov rdi, rcx
+  mov rsi, rdx
+  mov rdx, r8
+  mov rcx, r9
+
+  mov rax, rcx
+  shr rcx, 2
+  and rax, 3
+jrcxz lt4
+
+  mov r8, [rsi]
+  mov r9, [rsi + 8]
+  dec rcx
+jmp mid
+
+lt4:
+  dec eax
+  mov r8, [rsi]
+jnz l2
+  adc r8, [rdx]
+  mov [rdi], r8
+  adc eax, eax
+ret
+
+l2:
+  dec eax
+  mov r9, [rsi + 8]
+jnz l3
+  adc r8, [rdx]
+  adc r9, [rdx + 8]
+  mov [rdi], r8
+  mov [rdi + 8], r9
+  adc eax, eax
+ret
+
+l3:
+  mov r10, [rsi + 16]
+  adc r8, [rdx]
+  adc r9, [rdx + 8]
+  adc r10, [rdx + 16]
+  mov [rdi], r8
+  mov [rdi + 8], r9
+  mov [rdi + 16], r10
+  setc al
+ret
+
+  align 16
+top:
+  adc r8, [rdx]
+  adc r9, [rdx + 8]
+  adc r10, [rdx + 16]
+  adc r11, [rdx + 24]
+  mov [rdi], r8
+  lea rsi, [rsi + 32]
+  mov [rdi + 8], r9
+  mov [rdi + 16], r10
+  dec rcx
+  mov [rdi + 24], r11
+  lea rdx, [rdx + 32]
+  mov r8, [rsi]
+  mov r9, [rsi + 8]
+  lea rdi, [rdi + 32]
+mid:
+  mov r10, [rsi + 16]
+  mov r11, [rsi + 24]
+jnz top
+
+  lea rsi, [rsi + 32]
+  adc r8, [rdx]
+  adc r9, [rdx + 8]
+  adc r10, [rdx + 16]
+  adc r11, [rdx + 24]
+  lea rdx, [rdx + 32]
+  mov [rdi], r8
+  mov [rdi + 8], r9
+  mov [rdi + 16], r10
+  mov [rdi + 24], r11
+  lea rdi, [rdi + 32]
+
+  inc eax
+  dec eax
+jnz lt4
+  adc eax, eax
+ret
+
+mpn_add_n endp
+
 
 end

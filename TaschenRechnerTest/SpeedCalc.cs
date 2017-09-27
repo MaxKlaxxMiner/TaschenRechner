@@ -562,6 +562,9 @@ namespace TaschenRechnerTest
 
       [DllImport("TaschenRechnerAsm.dll")]
       public static extern ulong AddAsmX2(ulong* rp, ulong* up, ulong* vp, long n);
+
+      [DllImport("TaschenRechnerAsm.dll")]
+      public static extern ulong mpn_add_n(ulong* rp, ulong* up, ulong* vp, long n);
     }
 
     //const int BitCount = 1024;
@@ -612,7 +615,8 @@ namespace TaschenRechnerTest
             // Adder.AddXtr2((uint*)rp, (uint*)up, (uint*)vp, ByteCount / sizeof(uint)); // 214,13 ms / 188,05 ms
 
             // Adder.AddAsm((ulong*)rp, (ulong*)up, (ulong*)vp, ByteCount / sizeof(ulong)); // 218,75 ms / 85,00 ms
-            Adder.AddAsmX2((ulong*)rp, (ulong*)up, (ulong*)vp, ByteCount / sizeof(ulong)); // 219,10 ms / 79,47 ms
+            // Adder.AddAsmX2((ulong*)rp, (ulong*)up, (ulong*)vp, ByteCount / sizeof(ulong)); // 219,10 ms / 79,47 ms
+            Adder.mpn_add_n((ulong*)rp, (ulong*)up, (ulong*)vp, ByteCount / sizeof(ulong)); // 216,94 ms / 71,90 ms
           }
         }
         m.Stop();
