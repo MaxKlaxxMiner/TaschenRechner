@@ -73,7 +73,7 @@ push rdi
 push rsi
 
   mov r11, rcx
-  mov rsi, rdx
+  mov r10, rdx
   mov rcx, r9
 
   mov rax, rcx
@@ -81,14 +81,14 @@ push rsi
   and rax, 3
 jrcxz lt4
 
-  mov rdx, [rsi]
-  mov r9, [rsi + 8]
+  mov rdx, [r10]
+  mov r9, [r10 + 8]
   dec rcx
 jmp mid
 
 lt4:
   dec rax
-  mov rdx, [rsi]
+  mov rdx, [r10]
 jnz l2
   adc rdx, [r8]
   mov [r11], rdx
@@ -99,7 +99,7 @@ ret
 
 l2:
   dec rax
-  mov r9, [rsi + 8]
+  mov r9, [r10 + 8]
 jnz l3
   adc rdx, [r8]
   adc r9, [r8 + 8]
@@ -111,13 +111,13 @@ pop rdi
 ret
 
 l3:
-  mov r10, [rsi + 16]
+  mov rsi, [r10 + 16]
   adc rdx, [r8]
   adc r9, [r8 + 8]
-  adc r10, [r8 + 16]
+  adc rsi, [r8 + 16]
   mov [r11], rdx
   mov [r11 + 8], r9
-  mov [r11 + 16], r10
+  mov [r11 + 16], rsi
   setc al
 pop rsi
 pop rdi
@@ -127,32 +127,32 @@ ret
 top:
   adc rdx, [r8]
   adc r9, [r8 + 8]
-  adc r10, [r8 + 16]
+  adc rsi, [r8 + 16]
   adc rdi, [r8 + 24]
   mov [r11], rdx
-  lea rsi, [rsi + 32]
+  lea r10, [r10 + 32]
   mov [r11 + 8], r9
-  mov [r11 + 16], r10
+  mov [r11 + 16], rsi
   dec rcx
   mov [r11 + 24], rdi
   lea r8, [r8 + 32]
-  mov rdx, [rsi]
-  mov r9, [rsi + 8]
+  mov rdx, [r10]
+  mov r9, [r10 + 8]
   lea r11, [r11 + 32]
 mid:
-  mov r10, [rsi + 16]
-  mov rdi, [rsi + 24]
+  mov rsi, [r10 + 16]
+  mov rdi, [r10 + 24]
 jnz top
 
-  lea rsi, [rsi + 32]
+  lea r10, [r10 + 32]
   adc rdx, [r8]
   adc r9, [r8 + 8]
-  adc r10, [r8 + 16]
+  adc rsi, [r8 + 16]
   adc rdi, [r8 + 24]
   lea r8, [r8 + 32]
   mov [r11], rdx
   mov [r11 + 8], r9
-  mov [r11 + 16], r10
+  mov [r11 + 16], rsi
   mov [r11 + 24], rdi
   lea r11, [r11 + 32]
 
