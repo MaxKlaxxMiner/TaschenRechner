@@ -87,6 +87,7 @@ jrcxz lt4
   dec rcx
 jmp mid
 
+align 16
 lt4:
   mov r10, [rdx]
   dec rax
@@ -96,6 +97,7 @@ jnz l2
   adc rax, rax
 ret
 
+align 16
 l2:
   dec rax
   mov r9, [rdx + 8]
@@ -107,6 +109,7 @@ jnz l3
   adc rax, rax
 ret
 
+align 16
 l3:
   mov rcx, [rdx + 16]
   adc r10, [r8]
@@ -118,7 +121,7 @@ l3:
   setc al
 ret
 
-  align 16
+align 16
 top:
   adc r10, [r8]
   adc r9, [r8 + 8]
