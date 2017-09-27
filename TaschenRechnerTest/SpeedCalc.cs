@@ -626,9 +626,9 @@ namespace TaschenRechnerTest
             // Adder.AddXtr((uint*)rp, (uint*)up, (uint*)vp, ByteCount / sizeof(uint)); // 405,74 ms / 216,07 ms / 188,70 ms / 197,21 ms / 257,31 ms
             // Adder.AddXtr2((uint*)rp, (uint*)up, (uint*)vp, ByteCount / sizeof(uint)); // 394,00 ms / 214,13 ms / 188,05 ms / 196,77 ms / 258,50 ms
 
-            // Adder.AddAsm((ulong*)rp, (ulong*)up, (ulong*)vp, ByteCount / sizeof(ulong)); // 1.345,81 ms / 218,75 ms / 85,00 ms / 118,45 ms / 174,89 ms
-            // Adder.AddAsmX2((ulong*)rp, (ulong*)up, (ulong*)vp, ByteCount / sizeof(ulong)); // 1.362,92 ms / 219,10 ms / 79,47 ms / 118,47 ms / 175,06 ms
-            // Adder.mpn_add_n((ulong*)rp, (ulong*)up, (ulong*)vp, ByteCount / sizeof(ulong)); // 1.448,91 ms / 216,94 ms / 71,90 ms / 114,06 ms / 174,32 ms
+            // Adder.AddAsm((ulong*)rp, (ulong*)up, (ulong*)vp, ByteCount / sizeof(ulong)); // 1.264,86 ms / 218,75 ms / 85,00 ms / 118,45 ms / 174,89 ms
+            // Adder.AddAsmX2((ulong*)rp, (ulong*)up, (ulong*)vp, ByteCount / sizeof(ulong)); // 1.240,13 ms / 219,10 ms / 79,47 ms / 118,47 ms / 175,06 ms
+            // Adder.mpn_add_n((ulong*)rp, (ulong*)up, (ulong*)vp, ByteCount / sizeof(ulong)); // 1.237,31 ms / 216,94 ms / 71,90 ms / 114,06 ms / 174,32 ms
           }
         }
         m.Stop();

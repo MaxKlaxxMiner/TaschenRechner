@@ -11,6 +11,7 @@ tmp db 1
 
 ; ulong AddAsm(ulong* rp, ulong* up, ulong* vp, long n)
 ;              rcx,       rdx,       r8,        r9
+align 16
 AddAsm proc export
 
   lea rcx, [rcx + r9 * 8]
@@ -37,6 +38,7 @@ AddAsm endp
 
 ; ulong AddAsmX2(ulong* rp, ulong* up, ulong* vp, long n)
 ;               rcx,       rdx,       r8,        r9
+align 16
 AddAsmX2 proc export
 
   lea rcx, [rcx + r9 * 8]
@@ -64,7 +66,7 @@ ret
 AddAsmX2 endp
 
 ; ulong mpn_add_n(ulong* rp, ulong* up, ulong* vp, long n)
-;                 
+align 16
 mpn_add_n proc export
 
   mov rdi, rcx
