@@ -629,7 +629,7 @@ namespace TaschenRechnerTest
 
             // Adder.AddAsm((ulong*)rp, (ulong*)up, (ulong*)vp, ByteCount / sizeof(ulong)); // 319,53 ms / 110,96 ms / 82,20 ms / 119,47 ms / 176,06 ms
             // Adder.AddAsmX2((ulong*)rp, (ulong*)up, (ulong*)vp, ByteCount / sizeof(ulong)); // 309,96 ms / 102,06 ms / 79,15 ms / 118,15 ms / 174,29 ms
-            Adder.mpn_add_n((ulong*)rp, (ulong*)up, (ulong*)vp, ByteCount / sizeof(ulong)); // 369,67 ms / 104,81 ms / 69,25 ms / 113,34 ms / 169,54 ms
+            Adder.mpn_add_n((ulong*)rp, (ulong*)up, (ulong*)vp, ByteCount / sizeof(ulong)); // 364,72 ms / 102,19 ms / 69,25 ms / 113,34 ms / 169,54 ms
           }
         }
         m.Stop();
