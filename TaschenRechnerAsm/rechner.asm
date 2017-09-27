@@ -83,23 +83,23 @@ jrcxz lt4
 jmp mid
 
 lt4:
-  dec eax
+  dec rax
   mov r8, [rsi]
 jnz l2
   adc r8, [rdx]
   mov [rdi], r8
-  adc eax, eax
+  adc rax, rax
 ret
 
 l2:
-  dec eax
+  dec rax
   mov r9, [rsi + 8]
 jnz l3
   adc r8, [rdx]
   adc r9, [rdx + 8]
   mov [rdi], r8
   mov [rdi + 8], r9
-  adc eax, eax
+  adc rax, rax
 ret
 
 l3:
@@ -146,10 +146,10 @@ jnz top
   mov [rdi + 24], r11
   lea rdi, [rdi + 32]
 
-  inc eax
-  dec eax
+  inc rax
+  dec rax
 jnz lt4
-  adc eax, eax
+  adc rax, rax
 ret
 
 mpn_add_n endp
