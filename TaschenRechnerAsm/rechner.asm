@@ -72,7 +72,7 @@ mpn_add_n proc export
 push rdi
 push rsi
 
-  mov rdi, rcx
+  mov r11, rcx
   mov rsi, rdx
   mov rcx, r9
 
@@ -91,7 +91,7 @@ lt4:
   mov rdx, [rsi]
 jnz l2
   adc rdx, [r8]
-  mov [rdi], rdx
+  mov [r11], rdx
   adc rax, rax
 pop rsi
 pop rdi
@@ -103,8 +103,8 @@ l2:
 jnz l3
   adc rdx, [r8]
   adc r9, [r8 + 8]
-  mov [rdi], rdx
-  mov [rdi + 8], r9
+  mov [r11], rdx
+  mov [r11 + 8], r9
   adc rax, rax
 pop rsi
 pop rdi
@@ -115,9 +115,9 @@ l3:
   adc rdx, [r8]
   adc r9, [r8 + 8]
   adc r10, [r8 + 16]
-  mov [rdi], rdx
-  mov [rdi + 8], r9
-  mov [rdi + 16], r10
+  mov [r11], rdx
+  mov [r11 + 8], r9
+  mov [r11 + 16], r10
   setc al
 pop rsi
 pop rdi
@@ -128,33 +128,33 @@ top:
   adc rdx, [r8]
   adc r9, [r8 + 8]
   adc r10, [r8 + 16]
-  adc r11, [r8 + 24]
-  mov [rdi], rdx
+  adc rdi, [r8 + 24]
+  mov [r11], rdx
   lea rsi, [rsi + 32]
-  mov [rdi + 8], r9
-  mov [rdi + 16], r10
+  mov [r11 + 8], r9
+  mov [r11 + 16], r10
   dec rcx
-  mov [rdi + 24], r11
+  mov [r11 + 24], rdi
   lea r8, [r8 + 32]
   mov rdx, [rsi]
   mov r9, [rsi + 8]
-  lea rdi, [rdi + 32]
+  lea r11, [r11 + 32]
 mid:
   mov r10, [rsi + 16]
-  mov r11, [rsi + 24]
+  mov rdi, [rsi + 24]
 jnz top
 
   lea rsi, [rsi + 32]
   adc rdx, [r8]
   adc r9, [r8 + 8]
   adc r10, [r8 + 16]
-  adc r11, [r8 + 24]
+  adc rdi, [r8 + 24]
   lea r8, [r8 + 32]
-  mov [rdi], rdx
-  mov [rdi + 8], r9
-  mov [rdi + 16], r10
-  mov [rdi + 24], r11
-  lea rdi, [rdi + 32]
+  mov [r11], rdx
+  mov [r11 + 8], r9
+  mov [r11 + 16], r10
+  mov [r11 + 24], rdi
+  lea r11, [r11 + 32]
 
   inc rax
   dec rax
