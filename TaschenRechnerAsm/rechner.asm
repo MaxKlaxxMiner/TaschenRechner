@@ -69,6 +69,9 @@ AddAsmX2 endp
 align 16
 mpn_add_n proc export
 
+push rdi
+push rsi
+
   mov rdi, rcx
   mov rsi, rdx
   mov rdx, r8
@@ -91,6 +94,8 @@ jnz l2
   adc r8, [rdx]
   mov [rdi], r8
   adc rax, rax
+pop rsi
+pop rdi
 ret
 
 l2:
@@ -102,6 +107,8 @@ jnz l3
   mov [rdi], r8
   mov [rdi + 8], r9
   adc rax, rax
+pop rsi
+pop rdi
 ret
 
 l3:
@@ -113,6 +120,8 @@ l3:
   mov [rdi + 8], r9
   mov [rdi + 16], r10
   setc al
+pop rsi
+pop rdi
 ret
 
   align 16
@@ -152,6 +161,8 @@ jnz top
   dec rax
 jnz lt4
   adc rax, rax
+pop rsi
+pop rdi
 ret
 
 mpn_add_n endp

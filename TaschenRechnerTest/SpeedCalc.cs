@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Security;
 using TaschenRechnerLib;
 
 // ReSharper disable ConvertToConstant.Local
@@ -557,13 +558,13 @@ namespace TaschenRechnerTest
         return cy;
       }
 
-      [DllImport("TaschenRechnerAsm.dll")]
+      [DllImport("TaschenRechnerAsm.dll"), SuppressUnmanagedCodeSecurity]
       public static extern ulong AddAsm(ulong* rp, ulong* up, ulong* vp, long n);
 
-      [DllImport("TaschenRechnerAsm.dll")]
+      [DllImport("TaschenRechnerAsm.dll"), SuppressUnmanagedCodeSecurity]
       public static extern ulong AddAsmX2(ulong* rp, ulong* up, ulong* vp, long n);
 
-      [DllImport("TaschenRechnerAsm.dll")]
+      [DllImport("TaschenRechnerAsm.dll"), SuppressUnmanagedCodeSecurity]
       public static extern ulong mpn_add_n(ulong* rp, ulong* up, ulong* vp, long n);
     }
 
@@ -621,14 +622,14 @@ namespace TaschenRechnerTest
             // Adder.AddGmpLong4((ulong*)rp, (ulong*)up, (ulong*)vp, ByteCount / sizeof(ulong)); // 341,16 ms / 352,28 ms
 
             //                                                                                   128 Bits  / 1024 Bits / 65536 Bits / 1048576 Bits / 10000000 Bits
-            Adder.AddGmpLong5((ulong*)rp, (ulong*)up, (ulong*)vp, ByteCount / sizeof(ulong)); // 310,44 ms / 239,66 ms / 193,80 ms  / 192,84 ms    / 262,96 ms
+            //Adder.AddGmpLong5((ulong*)rp, (ulong*)up, (ulong*)vp, ByteCount / sizeof(ulong)); // 310,44 ms / 239,66 ms / 193,80 ms  / 192,84 ms    / 262,96 ms
 
             // Adder.AddXtr((uint*)rp, (uint*)up, (uint*)vp, ByteCount / sizeof(uint)); // 405,74 ms / 216,07 ms / 188,70 ms / 197,21 ms / 257,31 ms
             // Adder.AddXtr2((uint*)rp, (uint*)up, (uint*)vp, ByteCount / sizeof(uint)); // 394,00 ms / 214,13 ms / 188,05 ms / 196,77 ms / 258,50 ms
 
-            // Adder.AddAsm((ulong*)rp, (ulong*)up, (ulong*)vp, ByteCount / sizeof(ulong)); // 1.264,86 ms / 218,75 ms / 85,00 ms / 118,45 ms / 174,89 ms
-            // Adder.AddAsmX2((ulong*)rp, (ulong*)up, (ulong*)vp, ByteCount / sizeof(ulong)); // 1.240,13 ms / 219,10 ms / 79,47 ms / 118,47 ms / 175,06 ms
-            // Adder.mpn_add_n((ulong*)rp, (ulong*)up, (ulong*)vp, ByteCount / sizeof(ulong)); // 1.237,31 ms / 216,94 ms / 71,90 ms / 114,06 ms / 174,32 ms
+            // Adder.AddAsm((ulong*)rp, (ulong*)up, (ulong*)vp, ByteCount / sizeof(ulong)); // 319,53 ms / 110,96 ms / 82,20 ms / 119,47 ms / 176,06 ms
+            // Adder.AddAsmX2((ulong*)rp, (ulong*)up, (ulong*)vp, ByteCount / sizeof(ulong)); // 309,96 ms / 102,06 ms / 79,15 ms / 118,15 ms / 174,29 ms
+            Adder.mpn_add_n((ulong*)rp, (ulong*)up, (ulong*)vp, ByteCount / sizeof(ulong)); // 391,78 ms / 104,81 ms / 69,25 ms / 113,34 ms / 169,54 ms
           }
         }
         m.Stop();
