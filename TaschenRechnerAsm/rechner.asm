@@ -41,26 +41,27 @@ AddAsm endp
 align 16
 AddAsmX2 proc export
 
-  lea rcx, [rcx + r9 * 8]
-  lea rdx, [rdx + r9 * 8]
-  lea r8, [r8 + r9 * 8]
-  neg r9
-
-  clc
+  mov rax, r9
+  shr rax, 1
 
 @for_loop:
-  mov rax, [rdx + r9 * 8]
-  mov r10, [rdx + r9 * 8 + 8]
-  adc rax, [r8 + r9 * 8]
-  adc r10, [r8 + r9 * 8 + 8]
-  mov [rcx + r9 * 8], rax
-  mov [rcx + r9 * 8 + 8], r10
-  inc r9
-  inc r9
+
+  mov r9, [rdx]
+  mov r10, [rdx + 8]
+  lea rdx, [rdx + 16]
+
+  adc r9, [r8]
+  adc r10, [r8 + 8]
+  lea r8, [r8 + 16]
+
+  mov [rcx], r9
+  mov [rcx + 8], r10
+  lea rcx, [rcx + 16]
+
+  dec rax
 jnz @for_loop
 
-  adc r9, 0
-  mov rax, r9
+  adc rax, rax
   
 ret
 AddAsmX2 endp
