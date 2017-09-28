@@ -3,7 +3,7 @@ using TaschenRechnerLib.BigIntegerExtras;
 
 namespace TaschenRechnerLib
 {
-  public unsafe partial struct UIntX
+  public unsafe partial struct UIntXs
   {
     /// <summary>
     /// Operator zum subtrahieren zweier Zahlen
@@ -11,7 +11,7 @@ namespace TaschenRechnerLib
     /// <param name="val1">erster Wert, welcher verwendet werden soll</param>
     /// <param name="val2">zweiter Wert, welcher verwendet werden soll</param>
     /// <returns>fertiges Ergebnis</returns>
-    public static UIntX operator -(UIntX val1, UIntX val2)
+    public static UIntXs operator -(UIntXs val1, UIntXs val2)
     {
       if (val2.limbs[0] == 0 && val2.limbCount == 1) return val1;
       if (val1.limbCount < val2.limbCount) throw new InvalidCalcException();
@@ -32,7 +32,7 @@ namespace TaschenRechnerLib
             if (borrow != 0) throw new InvalidCalcException();
           }
 
-          return new UIntX(result, len);
+          return new UIntXs(result, len);
         }
         else
         {
@@ -53,7 +53,7 @@ namespace TaschenRechnerLib
               subLen += Xtr.CopyLimbs(l1 + subLen, target + subLen, val1.limbCount - subLen);
             }
             else while (subLen > 1 && target[subLen - 1] == 0) subLen--;
-            return new UIntX(result, subLen);
+            return new UIntXs(result, subLen);
           }
         }
       }
@@ -64,7 +64,7 @@ namespace TaschenRechnerLib
     /// </summary>
     /// <param name="val">Zahl, welche dekrementiert werden soll</param>
     /// <returns>fertig dekrementierte Zahl</returns>
-    public static UIntX operator --(UIntX val)
+    public static UIntXs operator --(UIntXs val)
     {
       var result = new uint[val.limbCount];
       fixed (uint* target = result, src = val.limbs)
@@ -82,10 +82,10 @@ namespace TaschenRechnerLib
           if (len == val.limbCount)
           {
             if (borrow != 0) throw new InvalidCalcException();
-            return new UIntX(result, Math.Max(1, val.limbCount - 1));
+            return new UIntXs(result, Math.Max(1, val.limbCount - 1));
           }
         }
-        return new UIntX(result, val.limbCount);
+        return new UIntXs(result, val.limbCount);
       }
     }
   }

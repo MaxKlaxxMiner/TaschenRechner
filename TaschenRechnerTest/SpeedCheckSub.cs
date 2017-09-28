@@ -42,11 +42,11 @@ namespace TaschenRechnerTest
       Console.WriteLine("  - UIntX.Sub() - Long Result -");
       Console.WriteLine();
       {
-        var val = UIntX.Parse(startValue);
-        var sub = UIntX.Parse(subValue33);
+        var val = UIntXs.Parse(startValue);
+        var sub = UIntXs.Parse(subValue33);
         for (int r = 0; r < RetryCount; r++)
         {
-          var res = new UIntX(0);
+          var res = new UIntXs(0);
           var m = Stopwatch.StartNew();
           for (int i = 0; i < TestCount; i++)
           {
@@ -82,11 +82,11 @@ namespace TaschenRechnerTest
       Console.WriteLine("  - UIntX.Sub() - Short Result - ");
       Console.WriteLine();
       {
-        var val = UIntX.Parse(startValue);
-        var sub = UIntX.Parse(subValueMax);
+        var val = UIntXs.Parse(startValue);
+        var sub = UIntXs.Parse(subValueMax);
         for (int r = 0; r < RetryCount; r++)
         {
-          var res = new UIntX(0);
+          var res = new UIntXs(0);
           var m = Stopwatch.StartNew();
           for (int i = 0; i < TestCount; i++)
           {

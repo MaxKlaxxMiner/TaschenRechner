@@ -3,7 +3,7 @@
 
 namespace TaschenRechnerLib
 {
-  public partial struct UIntX
+  public partial struct UIntXs
   {
     /// <summary>
     /// gibt den Wert als Byte-Array zurück (kompatibel mit BigInteger.ToByteArray())

@@ -37,7 +37,7 @@ namespace TaschenRechnerTest
       Console.WriteLine();
       for (int r = 0; r < RetryCount; r++)
       {
-        var val = UIntX.Parse(StartValue);
+        var val = UIntXs.Parse(StartValue);
         var m = Stopwatch.StartNew();
         for (int i = 0; i < TestCount; i++)
         {
@@ -74,8 +74,8 @@ namespace TaschenRechnerTest
       Console.WriteLine();
       for (int r = 0; r < RetryCount; r++)
       {
-        var val = UIntX.Parse(StartValue);
-        var append = UIntX.Parse(StartValue + new string('0', 100));
+        var val = UIntXs.Parse(StartValue);
+        var append = UIntXs.Parse(StartValue + new string('0', 100));
         var m = Stopwatch.StartNew();
         for (int i = 0; i < TestCount / 5; i++)
         {

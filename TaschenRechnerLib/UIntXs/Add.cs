@@ -1,6 +1,6 @@
 ﻿namespace TaschenRechnerLib
 {
-  public unsafe partial struct UIntX
+  public unsafe partial struct UIntXs
   {
     /// <summary>
     /// Operator zum addieren zweier Zahlen
@@ -8,7 +8,7 @@
     /// <param name="val1">erster Wert, welcher verwendet werden soll</param>
     /// <param name="val2">zweiter Wert, welcher verwendet werden soll</param>
     /// <returns>fertiges Ergebnis</returns>
-    public static UIntX operator +(UIntX val1, UIntX val2)
+    public static UIntXs operator +(UIntXs val1, UIntXs val2)
     {
       if (val1.limbCount < val2.limbCount) { var tmp = val1; val1 = val2; val2 = tmp; }
       if (val2.limbs[0] == 0 && val2.limbCount == 1) return val1;
@@ -32,7 +32,7 @@
         }
       }
 
-      return new UIntX(result, addLen);
+      return new UIntXs(result, addLen);
     }
 
     /// <summary>
@@ -40,7 +40,7 @@
     /// </summary>
     /// <param name="val">Zahl, welche inkrementiert werden soll</param>
     /// <returns>fertig inkrementierte Zahl</returns>
-    public static UIntX operator ++(UIntX val)
+    public static UIntXs operator ++(UIntXs val)
     {
       var result = new uint[val.limbCount + 1];
       fixed (uint* target = result, src = val.limbs)
@@ -55,7 +55,7 @@
           len++;
           carry >>= 32;
         }
-        return new UIntX(result, val.limbCount + target[val.limbCount]);
+        return new UIntXs(result, val.limbCount + target[val.limbCount]);
       }
     }
   }

@@ -3,7 +3,7 @@
 
 namespace TaschenRechnerLib
 {
-  public partial struct UIntX
+  public partial struct UIntXs
   {
     /// <summary>
     /// merkt sich die eigentlichen Daten der Zahl
@@ -18,43 +18,43 @@ namespace TaschenRechnerLib
     /// Konstruktor mit einem signierten 8-Bit Wert
     /// </summary>
     /// <param name="val">Wert, welcher verwendet werden soll (darf nicht kleiner als 0 sein)</param>
-    public UIntX(sbyte val) : this((long)val) { }
+    public UIntXs(sbyte val) : this((long)val) { }
 
     /// <summary>
     /// Konstruktor mit einem signierten 16-Bit Wert
     /// </summary>
     /// <param name="val">Wert, welcher verwendet werden soll (darf nicht kleiner als 0 sein)</param>
-    public UIntX(short val) : this((long)val) { }
+    public UIntXs(short val) : this((long)val) { }
 
     /// <summary>
     /// Konstruktor mit einem signierten 32-Bit Wert
     /// </summary>
     /// <param name="val">Wert, welcher verwendet werden soll (darf nicht kleiner als 0 sein)</param>
-    public UIntX(int val) : this((uint)val) { if (val < 0) throw new ArgumentOutOfRangeException("val"); }
+    public UIntXs(int val) : this((uint)val) { if (val < 0) throw new ArgumentOutOfRangeException("val"); }
 
     /// <summary>
     /// Konstruktor mit einem signierten 64-Bit Wert
     /// </summary>
     /// <param name="val">Wert, welcher verwendet werden soll (darf nicht kleiner als 0 sein)</param>
-    public UIntX(long val) : this((ulong)val) { if (val < 0) throw new ArgumentOutOfRangeException("val"); }
+    public UIntXs(long val) : this((ulong)val) { if (val < 0) throw new ArgumentOutOfRangeException("val"); }
 
     /// <summary>
     /// Konstruktor mit einem unsignierten 8-Bit Wert
     /// </summary>
     /// <param name="val">Wert, welcher verwendet werden soll</param>
-    public UIntX(byte val) : this((ulong)val) { }
+    public UIntXs(byte val) : this((ulong)val) { }
 
     /// <summary>
     /// Konstruktor mit einem unsignierten 16-Bit Wert
     /// </summary>
     /// <param name="val">Wert, welcher verwendet werden soll</param>
-    public UIntX(ushort val) : this((ulong)val) { }
+    public UIntXs(ushort val) : this((ulong)val) { }
 
     /// <summary>
     /// Konstruktor mit einem unsignierten 32-Bit Wert
     /// </summary>
     /// <param name="val">Wert, welcher verwendet werden soll</param>
-    public UIntX(uint val)
+    public UIntXs(uint val)
       : this((ulong)val)
     {
       limbs = new[] { val };
@@ -65,7 +65,7 @@ namespace TaschenRechnerLib
     /// Konstruktor mit einem unsignierten 64-Bit Wert
     /// </summary>
     /// <param name="val">Wert, welcher verwendet werden soll</param>
-    public UIntX(ulong val)
+    public UIntXs(ulong val)
     {
       if (val <= uint.MaxValue)
       {
@@ -83,13 +83,13 @@ namespace TaschenRechnerLib
     /// Konstruktor mit einer Zeichenkette, welche aus einer unsignierten Integer-Zahl besteht
     /// </summary>
     /// <param name="val">Wert, welcher verwendet werden soll</param>
-    public UIntX(string val) : this(ParseInternal(val)) { }
+    public UIntXs(string val) : this(ParseInternal(val)) { }
 
     /// <summary>
     /// direkter Konstruktor mit den einzelnen Zahlen
     /// </summary>
     /// <param name="limbs">Bit-Kette, welche direkt verwendet werden soll</param>
-    public UIntX(uint[] limbs)
+    public UIntXs(uint[] limbs)
     {
       if (limbs == null) throw new ArgumentNullException("limbs");
       this.limbs = limbs;
@@ -101,7 +101,7 @@ namespace TaschenRechnerLib
     /// </summary>
     /// <param name="limbs">Bit-Kette, welche direkt verwendet werden soll</param>
     /// <param name="limbCount">Anzahl der gesetzten Limbs</param>
-    internal UIntX(uint[] limbs, long limbCount)
+    internal UIntXs(uint[] limbs, long limbCount)
     {
       if (limbs == null) throw new ArgumentNullException("limbs");
       this.limbs = limbs;
@@ -112,7 +112,7 @@ namespace TaschenRechnerLib
     /// direkter Konstruktor mit Verwendung eines Byte-Arrays (BigInteger.ToByteArray() kompatibel)
     /// </summary>
     /// <param name="val">Wert, welcher verwendet werden soll</param>
-    public unsafe UIntX(byte[] val)
+    public unsafe UIntXs(byte[] val)
     {
       if (val == null || val.Length == 0) throw new ArgumentNullException("val");
       if (val[val.Length - 1] > 0x7f) throw new ArgumentException("val"); // marker für negative Zahl gesetzt?

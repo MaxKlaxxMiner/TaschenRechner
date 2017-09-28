@@ -5,16 +5,16 @@ using TaschenRechnerLib.BigIntegerExtras;
 
 namespace TaschenRechnerLib
 {
-  public partial struct UIntX
+  public partial struct UIntXs
   {
     /// <summary>
     /// liest eine Zeichenkette als Zahl ein
     /// </summary>
     /// <param name="number">Zeichenkette, welche als Zahl eingelesen werden soll</param>
     /// <returns>fertig eingelesene Zahl</returns>
-    public static UIntX Parse(string number)
+    public static UIntXs Parse(string number)
     {
-      return new UIntX(number);
+      return new UIntXs(number);
     }
 
     /// <summary>

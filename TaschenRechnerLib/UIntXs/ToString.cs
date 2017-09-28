@@ -3,7 +3,7 @@
 
 namespace TaschenRechnerLib
 {
-  public partial struct UIntX
+  public partial struct UIntXs
   {
     /// <summary>
     /// gibt die Zahl als lesbare Zeichenkette zurück
