@@ -25,7 +25,7 @@ namespace TaschenRechnerLib
       var bb = new BigIntegerBuilder(val1);
       var regMul = new BigIntegerBuilder(val2);
       bb.Mul(ref regMul);
-      return bb.GetUIntX();
+      return bb.GetUIntXs();
     }
   }
 }
