@@ -142,7 +142,7 @@ l3:
   mov rcx, [rdx + 16]
   adc r10, [r8]
   adc r9, [r8 + 8]
-  adc rsi, [r8 + 16]
+  adc rcx, [r8 + 16]
   mov [r11], r10
   mov [r11 + 8], r9
   mov [r11 + 16], rcx
