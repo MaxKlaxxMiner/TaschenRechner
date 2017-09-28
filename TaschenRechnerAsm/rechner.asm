@@ -14,59 +14,56 @@ tmp db 1
 align 16
 UIntX_Add proc export
 
-;|  cy: ?  |  rax: ?  |  rcx: rp  |  rdx: up  |  r8: vp  |  r9: n  |  r10: ?  |  r11: ?  |  n/a: r12, r13, r14, r15, r16, rsi, rdi
-  mov r10, rcx
-;|  cy: ?  |  rax: ?  |  rcx: rp  |  rdx: up  |  r8: vp  |  r9: n  |  r10: rp  |  r11: ?  |  n/a: r12, r13, r14, r15, r16, rsi, rdi
-  mov rcx, r9
-;|  cy: ?  |  rax: ?  |  rcx: n  |  rdx: up  |  r8: vp  |  r9: n  |  r10: rp  |  r11: ?  |  n/a: r12, r13, r14, r15, r16, rsi, rdi
+  xchg r9, rcx
   xor rax, rax
-;|  cy: ?  |  rax: 0  |  rcx: n  |  rdx: up  |  r8: vp  |  r9: n  |  r10: rp  |  r11: ?  |  n/a: r12, r13, r14, r15, r16, rsi, rdi
+
+  ; - check n % 2 == 0 -
   shr rcx, 1
-;|  cy: n % 2  |  rax: 0  |  rcx: n / 2  |  rdx: up  |  r8: vp  |  r9: n  |  r10: rp  |  r11: ?  |  n/a: r12, r13, r14, r15, r16, rsi, rdi
   jnc @l2
-;|  cy: 1  |  rax: 0  |  rcx: n / 2  |  rdx: up  |  r8: vp  |  r9: n  |  r10: rp  |  r11: ?  |  n/a: r12, r13, r14, r15, r16, rsi, rdi
 
-  mov r11, [rdx]
-;|  cy: 1  |  rax: 0  |  rcx: n / 2  |  rdx: up  |  r8: vp  |  r9: n  |  r10: rp  |  r11: up[0]  |  n/a: r12, r13, r14, r15, r16, rsi, rdi
-  add r11, [r8]
-;|  cy: c  |  rax: 0  |  rcx: n / 2  |  rdx: up  |  r8: vp  |  r9: n  |  r10: rp  |  r11: up[0] + vp[0]  |  n/a: r12, r13, r14, r15, r16, rsi, rdi
-  mov [r10], r11
+  ; - 1 limb -
+  mov r10, [rdx]
+  add r10, [r8]
+  mov [r9], r10
 
-  jrcxz @end
+  jrcxz @end ; - no more limbs -
 
-;  lea rdx, [rdx + 8]
-;  lea r8, [r8 + 8]
-;  lea r10, [r10 + 8]
+  ; - move pointers 1 limb -
+  lea rdx, [rdx + 8]
+  lea r8, [r8 + 8]
+  lea r10, [r10 + 8]
+
+  adc rax, rax ; - save carry -
 
 @l2:
-;|  cy: 0  |  rax: 0  |  rcx: n / 2  |  rdx: up  |  r8: vp  |  r9: n  |  r10: rp  |  r11: ?  |  n/a: r12, r13, r14, r15, r16, rsi, rdi
   shr rcx, 1
-;|  cy: n / 2 % 2  |  rax: 0  |  rcx: n / 4  |  rdx: up  |  r8: vp  |  r9: n  |  r10: rp  |  r11: ?  |  n/a: r12, r13, r14, r15, r16, rsi, rdi
   jnc @l4
-;|  cy: 1  |  rax: 0  |  rcx: n / 4  |  rdx: up  |  r8: vp  |  r9: n  |  r10: rp  |  r11: ?  |  n/a: r12, r13, r14, r15, r16, rsi, rdi
 
-; - todo: add 2 limbs -
+  ; - 2 limbs -
+  bt rax, 1 ; - reload carry -
+  mov r10, [rdx]
+  mov r11, [rdx + 8]
+  adc r10, [r8]
+  adc r11, [r8 + 8]
+  mov [r9], r10
+  mov [r9 + 8], r11
+
+  jrcxz @end ; - no more limbs -
 
 @l4:
-;|  cy: 0  |  rax: 0  |  rcx: n / 4  |  rdx: up  |  r8: vp  |  r9: n  |  r10: rp  |  r11: ?  |  n/a: r12, r13, r14, r15, r16, rsi, rdi
   shr rcx, 1
-;|  cy: n / 4 % 2  |  rax: 0  |  rcx: n / 8  |  rdx: up  |  r8: vp  |  r9: n  |  r10: rp  |  r11: ?  |  n/a: r12, r13, r14, r15, r16, rsi, rdi
   jnc @l8
-;|  cy: 1  |  rax: 0  |  rcx: n / 8  |  rdx: up  |  r8: vp  |  r9: n  |  r10: rp  |  r11: ?  |  n/a: r12, r13, r14, r15, r16, rsi, rdi
 
 ; - todo: add 4 limbs -
 
 @l8:
-;|  cy: 0  |  rax: 0  |  rcx: n / 8  |  rdx: up  |  r8: vp  |  r9: n  |  r10: rp  |  r11: ?  |  n/a: r12, r13, r14, r15, r16, rsi, rdi
 
 ; - todo: add 8 limbs inner loop -
 
 align 16
 @end:
 
-;|  cy: c  |  rax: 0  |  rcx: 0  |  rdx: up  |  r8: vp  |  r9: n  |  r10: rp  |  r11: ?  |  n/a: r12, r13, r14, r15, r16, rsi, rdi
   adc rax, rax
-;|  cy: c  |  rax: c  |  rcx: 0  |  rdx: up  |  r8: vp  |  r9: n  |  r10: rp  |  r11: ?  |  n/a: r12, r13, r14, r15, r16, rsi, rdi
 
 ret
 UIntX_Add endp

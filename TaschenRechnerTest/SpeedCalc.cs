@@ -646,7 +646,7 @@ namespace TaschenRechnerTest
             //   579,42 |   338,38 |
             //Adder.mpn_add_n(rp, up, vp, ByteCount / sizeof(ulong));
 
-            //   570,67 |
+            //   567,65 |   334,80 |
             Adder.UIntX_Add(rp, up, vp, ByteCount / sizeof(ulong));
           }
         m.Stop();
