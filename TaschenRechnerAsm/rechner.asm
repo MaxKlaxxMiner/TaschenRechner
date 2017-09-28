@@ -278,17 +278,17 @@ align 16
 top:
   adc r10, [r8]
   adc r11, [r8 + 8]
-  adc rsi, [r8 + 16]
-  adc rdi, [r8 + 24]
   mov [rcx], r10
+  adc rsi, [r8 + 16]
   lea rdx, [rdx + 32]
+  adc rdi, [r8 + 24]
   mov [rcx + 8], r11
-  mov [rcx + 16], rsi
   dec r9
-  mov [rcx + 24], rdi
   lea r8, [r8 + 32]
   mov r10, [rdx]
+  mov [rcx + 16], rsi
   mov r11, [rdx + 8]
+  mov [rcx + 24], rdi
   lea rcx, [rcx + 32]
 mid:
   mov rsi, [rdx + 16]
