@@ -87,12 +87,43 @@ align 16
   lea r8, [r8 + 32]
   lea rcx, [rcx + 32]
 
-align 16
 @l8:
-
   btr rax, 1 ; - reload carry -
 
+align 16
+@loop:
   ; - 8 limbs -
+  mov r10, [rdx]
+  mov r11, [rdx + 8]
+  adc r10, [r8]
+  adc r11, [r8 + 8]
+  mov [rcx], r10
+  mov [rcx + 8], r11
+  mov r10, [rdx + 16]
+  mov r11, [rdx + 24]
+  adc r10, [r8 + 16]
+  adc r11, [r8 + 24]
+  mov [rcx + 16], r10
+  mov [rcx + 24], r11
+  mov r10, [rdx + 32]
+  mov r11, [rdx + 40]
+  adc r10, [r8 + 32]
+  adc r11, [r8 + 40]
+  mov [rcx + 32], r10
+  mov [rcx + 40], r11
+  mov r10, [rdx + 48]
+  mov r11, [rdx + 56]
+  adc r10, [r8 + 48]
+  adc r11, [r8 + 56]
+  mov [rcx + 48], r10
+  mov [rcx + 56], r11
+
+  lea rdx, [rdx + 64]
+  lea r8, [r8 + 64]
+  lea rcx, [rcx + 64]
+
+  dec r9
+  jnz @loop
 
 align 16
 @end:
