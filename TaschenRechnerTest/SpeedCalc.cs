@@ -558,17 +558,8 @@ namespace TaschenRechnerTest
         return cy;
       }
 
-      //[DllImport("TaschenRechnerAsm.dll"), SuppressUnmanagedCodeSecurity]
-      //public static extern ulong AddAsm(ulong* rp, ulong* up, ulong* vp, long n);
-
-      //[DllImport("TaschenRechnerAsm.dll"), SuppressUnmanagedCodeSecurity]
-      //public static extern ulong AddAsmX2(ulong* rp, ulong* up, ulong* vp, long n);
-
-      //[DllImport("TaschenRechnerAsm.dll"), SuppressUnmanagedCodeSecurity]
-      //public static extern ulong AddAsmXd(ulong* rp, ulong* up, ulong* vp, long n);
-
-      //[DllImport("TaschenRechnerAsm.dll"), SuppressUnmanagedCodeSecurity]
-      //public static extern ulong mpn_add_n(ulong* rp, ulong* up, ulong* vp, long n);
+      [DllImport("TaschenRechnerAsm.dll"), SuppressUnmanagedCodeSecurity]
+      public static extern ulong mpn_add_n(ulong* rp, ulong* up, ulong* vp, long n);
 
       [DllImport("TaschenRechnerAsm.dll"), SuppressUnmanagedCodeSecurity]
       public static extern long UIntX_Add(ulong* rp, ulong* up, ulong* vp, long n);
@@ -589,11 +580,11 @@ namespace TaschenRechnerTest
       }
     }
 
-    const int BitCount = 64;
-    const int RefResult = -1235051981;
+    //const int BitCount = 64;
+    //const int RefResult = -1235051981;
 
-    //const int BitCount = 128;
-    //const int RefResult = -1826782628;
+    const int BitCount = 64 * 2;
+    const int RefResult = -1826782628;
 
     //const int BitCount = 1024;
     //const int RefResult = 1995198812;
@@ -644,52 +635,19 @@ namespace TaschenRechnerTest
         fixed (ulong* rp = res, up = u, vp = v)
           for (int i = 0; i < TestCount / BitCount * 1024; i++)
           {
-            //                                         1024 Bits / 65536 Bits
-            // Adder.AddRef((byte*)rp, (byte*)up, (byte*)vp, ByteCount); // 1.269,12 ms / 1.195,87 ms
-            // Adder.AddGmpByte(rp, up, vp, ByteCount); // 2.824,51 ms / 2.816,84 ms
-            // Adder.AddGmpByteX(rp, up, vp, ByteCount); // 1.611,47 ms / 1.551,23 ms
-            // Adder.AddGmpShort((ushort*)rp, (ushort*)up, (ushort*)vp, ByteCount / sizeof(ushort)); // 1.486,16 ms / 1.451,76 ms
-            // Adder.AddGmpShortX((ushort*)rp, (ushort*)up, (ushort*)vp, ByteCount / sizeof(ushort)); // 978,99 ms / 853,07 ms
-            // Adder.AddGmpInt((uint*)rp, (uint*)up, (uint*)vp, ByteCount / sizeof(uint)); // 684,38 ms / 635,75 ms
-            // Adder.AddGmpIntX((uint*)rp, (uint*)up, (uint*)vp, ByteCount / sizeof(uint)); // 554,34 ms / 423,39 ms
-            // Adder.AddGmpLong((ulong*)rp, (ulong*)up, (ulong*)vp, ByteCount / sizeof(ulong)); // 354,95 ms / 371,12 ms
-            // Adder.AddGmpLong2((ulong*)rp, (ulong*)up, (ulong*)vp, ByteCount / sizeof(ulong)); // 1.078,49 ms / 1.020,44 ms
-            // Adder.AddGmpLong3((ulong*)rp, (ulong*)up, (ulong*)vp, ByteCount / sizeof(ulong)); // 1.046,07 ms / 990,21 ms
-            // Adder.AddGmpLong4((ulong*)rp, (ulong*)up, (ulong*)vp, ByteCount / sizeof(ulong)); // 341,16 ms / 352,28 ms
+            //        1 |        2 |
 
-            //                                                                                   128 Bits  / 1024 Bits / 65536 Bits / 1048576 Bits / 10000000 Bits
-            //Adder.AddGmpLong5((ulong*)rp, (ulong*)up, (ulong*)vp, ByteCount / sizeof(ulong)); // 310,44 ms / 239,66 ms / 193,80 ms  / 192,84 ms    / 262,96 ms
+            // 1.275,60 | 1.222,85 |
+            //Adder.AddRef((byte*)rp, (byte*)up, (byte*)vp, ByteCount);
 
-            // Adder.AddXtr((uint*)rp, (uint*)up, (uint*)vp, ByteCount / sizeof(uint)); // 405,74 ms / 216,07 ms / 188,70 ms / 197,21 ms / 257,31 ms
-            // Adder.AddXtr2((uint*)rp, (uint*)up, (uint*)vp, ByteCount / sizeof(uint)); // 394,00 ms / 214,13 ms / 188,05 ms / 196,77 ms / 258,50 ms
+            //   683,54 |   444,80 |
+            //Adder.AddGmpLong5(res, u, v, ByteCount / sizeof(ulong));
 
-            // Adder.AddAsm((ulong*)rp, (ulong*)up, (ulong*)vp, ByteCount / sizeof(ulong)); // 299,38 ms / 110,96 ms / 82,20 ms / 119,47 ms / 176,06 ms
-            // Adder.AddAsmX2(rp, up, vp, ByteCount / sizeof(ulong)); // 640? 276,45 ms / 116,67 ms / 73,92 ms / 111,58 ms / 166,78 ms
-            // Adder.AddAsmXd(rp, up, vp, ByteCount / 16); // 312,46 ms
+            //   579,42 |   338,38 |
+            //Adder.mpn_add_n(rp, up, vp, ByteCount / sizeof(ulong));
 
-            //if (Adder.AddAsmX2(rp, up, vp, ByteCount / sizeof(ulong)) != 0)
-            //{
-            //  rp[ByteCount / sizeof(ulong)] = 1;
-            //}
-
-            // Adder.mpn_add_n(rp, up, vp, ByteCount / sizeof(ulong)); // 322,54 ms / 98,23 ms / 66,82 ms / 92,73 / 164,45 ms
-
+            //   570,67 |
             Adder.UIntX_Add(rp, up, vp, ByteCount / sizeof(ulong));
-
-            //if (Adder.mpn_add_n(rp, up, vp, ByteCount / sizeof(ulong)) != 0)
-            //{
-            //  rp[ByteCount / sizeof(ulong)] = 1;
-            //}
-
-            //fixed (ulong* rp = res, up = u, vp = v)
-            //{
-            //  Adder.AddAsmX2(rp, up, vp, ByteCount / sizeof(ulong)); // 479,12 ms
-            //  Adder.AddGmpLong5(rp, up, vp, ByteCount / sizeof(ulong)); // 471,74 ms
-            //  Adder.mpn_add_n(rp, up, vp, ByteCount / sizeof(ulong)); // 525,41 ms
-            //}
-            // Adder.AddAsmX2(res, u, v, ByteCount / sizeof(ulong)); //  1.439,92 ms
-
-            // Adder.AddGmpLong5(res, u, v, ByteCount / sizeof(ulong)); // 418,23 ms
           }
         m.Stop();
         Console.WriteLine("    " + string.Concat(UlongToBytes(res).Select(c => c.ToString("x"))).GetHashCode().ToString().Replace(RefResult.ToString(), "ok") + ": " + (m.ElapsedTicks * 1000 / (double)Stopwatch.Frequency).ToString("N2") + " ms");
