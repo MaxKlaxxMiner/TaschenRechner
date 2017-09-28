@@ -14,31 +14,30 @@ tmp db 1
 align 16
 UIntX_Add proc export
 
-  xchg r9, rcx
   xor rax, rax
 
   ; - check n % 2 == 0 -
-  shr rcx, 1
+  shr r9, 1
   jnc @l2
 
   ; - 1 limb -
   mov r10, [rdx]
   add r10, [r8]
-  mov [r9], r10
+  mov [rcx], r10
 
-  test rcx, rcx
+  test r9, r9
   je @end ; - no more limbs -
 
   ; - move pointers 1 limb -
   lea rdx, [rdx + 8]
   lea r8, [r8 + 8]
-  lea r9, [r9 + 8]
+  lea rcx, [rcx + 8]
 
   adc rax, rax ; - save carry -
 
 align 16
 @l2:
-  shr rcx, 1
+  shr r9, 1
   jnc @l4
 
   ; - 2 limbs -
@@ -47,19 +46,20 @@ align 16
   mov r11, [rdx + 8]
   adc r10, [r8]
   adc r11, [r8 + 8]
-  mov [r9], r10
-  mov [r9 + 8], r11
+  mov [rcx], r10
+  mov [rcx + 8], r11
 
-  test rcx, rcx
+  test r9, r9
   je @end ; - no more limbs -
 
   ; - move pointers 2 limbs -
   lea rdx, [rdx + 16]
   lea r8, [r8 + 16]
-  lea r9, [r9 + 16]
+  lea rcx, [rcx + 16]
 
+align 16
 @l4:
-  shr rcx, 1
+  shr r9, 1
   jnc @l8
 
   ; - 4 limbs -
@@ -68,18 +68,19 @@ align 16
   mov r11, [rdx + 8]
   adc r10, [r8]
   adc r11, [r8 + 8]
-  mov [r9], r10
-  mov [r9 + 8], r11
+  mov [rcx], r10
+  mov [rcx + 8], r11
   mov r10, [rdx + 16]
   mov r11, [rdx + 24]
   adc r10, [r8 + 16]
   adc r11, [r8 + 24]
-  mov [r9 + 16], r10
-  mov [r9 + 24], r11
+  mov [rcx + 16], r10
+  mov [rcx + 24], r11
 
-  test rcx, rcx
+  test r9, r9
   je @end ; - no more limbs -
 
+align 16
 @l8:
 
 ; - todo: add 8 limbs inner loop -
