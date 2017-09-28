@@ -31,7 +31,7 @@ UIntX_Add proc export
   ; - move pointers 1 limb -
   lea rdx, [rdx + 8]
   lea r8, [r8 + 8]
-  lea r10, [r10 + 8]
+  lea r9, [r9 + 8]
 
   adc rax, rax ; - save carry -
 

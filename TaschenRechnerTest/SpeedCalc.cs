@@ -583,8 +583,14 @@ namespace TaschenRechnerTest
     //const int BitCount = 64;
     //const int RefResult = -1235051981;
 
-    const int BitCount = 64 * 2;
-    const int RefResult = -1826782628;
+    //const int BitCount = 64 * 2;
+    //const int RefResult = -1826782628;
+
+    const int BitCount = 64 * 3;
+    const int RefResult = -2036864205;
+
+    //const int BitCount = 64 * 4;
+    //const int RefResult = -453152164;
 
     //const int BitCount = 1024;
     //const int RefResult = 1995198812;
@@ -635,18 +641,18 @@ namespace TaschenRechnerTest
         fixed (ulong* rp = res, up = u, vp = v)
           for (int i = 0; i < TestCount / BitCount * 1024; i++)
           {
-            //        1 |        2 |
+            //        1 |        2 |        3 |        4 |
 
-            // 1.275,60 | 1.222,85 |
+            // 1.275,60 | 1.222,85 | 1.222,52 | 1.220,00 |
             //Adder.AddRef((byte*)rp, (byte*)up, (byte*)vp, ByteCount);
 
-            //   683,54 |   444,80 |
+            //   683,54 |   444,80 |   367,92 |   335,82 |
             //Adder.AddGmpLong5(res, u, v, ByteCount / sizeof(ulong));
 
-            //   579,42 |   338,38 |
+            //   579,42 |   338,38 | CRASH ?! |   211,21 |
             //Adder.mpn_add_n(rp, up, vp, ByteCount / sizeof(ulong));
 
-            //   567,65 |   334,80 |
+            //   567,65 |   334,80 |   268,65 |
             Adder.UIntX_Add(rp, up, vp, ByteCount / sizeof(ulong));
           }
         m.Stop();
