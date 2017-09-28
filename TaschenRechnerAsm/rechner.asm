@@ -40,7 +40,7 @@ align 16
   shr r9, 1
   jnc @l4
 
-  bt rax, 1 ; - reload carry -
+  btr rax, 1 ; - reload carry -
 
   ; - 2 limbs -
   mov r10, [rdx]
@@ -63,7 +63,7 @@ align 16
   shr r9, 1
   jnc @l8
 
-  bt rax, 1 ; - reload carry -
+  btr rax, 1 ; - reload carry -
 
   ; - 4 limbs -
   mov r10, [rdx]
@@ -90,7 +90,7 @@ align 16
 align 16
 @l8:
 
-  bt rax, 1 ; - reload carry -
+  btr rax, 1 ; - reload carry -
 
   ; - 8 limbs -
 
