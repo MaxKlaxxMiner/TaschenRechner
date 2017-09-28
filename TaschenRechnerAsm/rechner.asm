@@ -28,7 +28,7 @@ UIntX_Add proc export
   test r9, r9
   je @end ; - no more limbs -
 
-  ; - move pointers 1 limb -
+  ; - move pointers for 1 limb -
   lea rdx, [rdx + 8]
   lea r8, [r8 + 8]
   lea rcx, [rcx + 8]
@@ -40,8 +40,9 @@ align 16
   shr r9, 1
   jnc @l4
 
-  ; - 2 limbs -
   bt rax, 1 ; - reload carry -
+
+  ; - 2 limbs -
   mov r10, [rdx]
   mov r11, [rdx + 8]
   adc r10, [r8]
@@ -52,7 +53,7 @@ align 16
   test r9, r9
   je @end ; - no more limbs -
 
-  ; - move pointers 2 limbs -
+  ; - move pointers for 2 limbs -
   lea rdx, [rdx + 16]
   lea r8, [r8 + 16]
   lea rcx, [rcx + 16]
@@ -62,8 +63,9 @@ align 16
   shr r9, 1
   jnc @l8
 
-  ; - 4 limbs -
   bt rax, 1 ; - reload carry -
+
+  ; - 4 limbs -
   mov r10, [rdx]
   mov r11, [rdx + 8]
   adc r10, [r8]
@@ -80,10 +82,17 @@ align 16
   test r9, r9
   je @end ; - no more limbs -
 
+  ; - move pointers for 4 limbs -
+  lea rdx, [rdx + 32]
+  lea r8, [r8 + 32]
+  lea rcx, [rcx + 32]
+
 align 16
 @l8:
 
-; - todo: add 8 limbs inner loop -
+  bt rax, 1 ; - reload carry -
+
+  ; - 8 limbs -
 
 align 16
 @end:
