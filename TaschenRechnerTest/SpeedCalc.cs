@@ -564,8 +564,26 @@ namespace TaschenRechnerTest
       [DllImport("TaschenRechnerAsm.dll"), SuppressUnmanagedCodeSecurity]
       public static extern ulong AddAsmX2(ulong* rp, ulong* up, ulong* vp, long n);
 
+      //[DllImport("TaschenRechnerAsm.dll"), SuppressUnmanagedCodeSecurity]
+      //public static extern ulong AddAsmX2(ulong[] rp, ulong[] up, ulong[] vp, long n);
+
       [DllImport("TaschenRechnerAsm.dll"), SuppressUnmanagedCodeSecurity]
-      public static extern ulong mpn_add_n(ulong* rp, ulong* up, ulong* vp, long n);
+      public static extern ulong mpn_add_n2(ulong* rp, ulong* up, ulong* vp, long n);
+
+      public static ulong AddGmpLong5(ulong[] rp, ulong[] up, ulong[] vp, long n)
+      {
+        ulong cy = 0;
+        for (long i = 0; i < n; i++)
+        {
+          ulong ul = up[i];
+          ulong vl = vp[i];
+          ulong sl = ul + vl;
+          ulong rl = sl + cy;
+          rp[i] = rl;
+          cy = sl < ul || rl < sl ? 1UL : 0UL;
+        }
+        return cy;
+      }
     }
 
     const int BitCount = 128;
@@ -590,6 +608,20 @@ namespace TaschenRechnerTest
       return Enumerable.Range(0, ByteCount).Select(x => (byte)x).ToArray();
     }
 
+    static ulong[] BytesToUlong(byte[] values)
+    {
+      var result = new ulong[values.Length / sizeof(ulong)];
+      Buffer.BlockCopy(values, 0, result, 0, values.Length);
+      return result;
+    }
+
+    static byte[] UlongToBytes(ulong[] values)
+    {
+      var result = new byte[values.Length * sizeof(ulong)];
+      Buffer.BlockCopy(values, 0, result, 0, result.Length);
+      return result;
+    }
+
     static unsafe void SpeedCalcAddArray()
     {
       const int RetryCount = 10;
@@ -601,9 +633,10 @@ namespace TaschenRechnerTest
       for (int r = 0; r < RetryCount; r++)
       {
         var m = Stopwatch.StartNew();
-        var res = GetBytes();
-        var u = GetBytes(1);
-        var v = GetBytes(2);
+        var res = BytesToUlong(GetBytes());
+        var u = BytesToUlong(GetBytes(1));
+        var v = BytesToUlong(GetBytes(2));
+        if (res == null || u == null || v == null || res.Length < ByteCount / sizeof(ulong) || u.Length < ByteCount / sizeof(ulong) || v.Length < ByteCount / sizeof(ulong)) throw new IndexOutOfRangeException();
         for (int i = 0; i < TestCount / BitCount * 1024; i++)
         {
           //                                         1024 Bits / 65536 Bits
@@ -629,13 +662,62 @@ namespace TaschenRechnerTest
           // Adder.AddAsmX2((ulong*)rp, (ulong*)up, (ulong*)vp, ByteCount / sizeof(ulong)); // 276,45 ms / 116,67 ms / 73,92 ms / 111,58 ms / 166,78 ms
           // Adder.mpn_add_n((ulong*)rp, (ulong*)up, (ulong*)vp, ByteCount / sizeof(ulong)); // 322,54 ms / 98,23 ms / 66,82 ms / 92,73 / 164,45 ms
 
-          fixed (byte* rp = res, up = u, vp = v)
+          fixed (ulong* rp = res, up = u, vp = v)
           {
-            Adder.AddAsmX2((ulong*)rp, (ulong*)up, (ulong*)vp, ByteCount / sizeof(ulong)); // 
+            // Adder.AddAsmX2(rp, up, vp, ByteCount / sizeof(ulong)); // 479,12 ms
+            // Adder.AddGmpLong5(rp, up, vp, ByteCount / sizeof(ulong)); // 471,74 ms
+            //Adder.mpn_add_n(rp, up, vp, ByteCount / sizeof(ulong)); // 525,41 ms
           }
+          // Adder.AddAsmX2(res, u, v, ByteCount / sizeof(ulong)); //  1.439,92 ms
+
+          // Adder.AddGmpLong5(res, u, v, ByteCount / sizeof(ulong)); // 418,23 ms
         }
         m.Stop();
-        Console.WriteLine("    " + string.Concat(res.Select(c => c.ToString("x"))).GetHashCode().ToString().Replace(RefResult.ToString(), "ok") + ": " + (m.ElapsedTicks * 1000 / (double)Stopwatch.Frequency).ToString("N2") + " ms");
+        Console.WriteLine("    " + string.Concat(UlongToBytes(res).Select(c => c.ToString("x"))).GetHashCode().ToString().Replace(RefResult.ToString(), "ok") + ": " + (m.ElapsedTicks * 1000 / (double)Stopwatch.Frequency).ToString("N2") + " ms");
+      }
+    }
+
+    static void SpeedCalcMemoryAllocation()
+    {
+      const int RetryCount = 10;
+      const int TestCount = 20000000;
+      const int len = 6;
+
+
+      Console.WriteLine();
+      Console.WriteLine("  - memory limb-allocation " + len +" limbs -");
+      Console.WriteLine();
+      for (int r = 0; r < RetryCount; r++)
+      {
+        var m = Stopwatch.StartNew();
+        ulong sum = 0;
+        for (int i = 0; i < TestCount; i++)
+        {
+          var limbs = new uint[len];
+          limbs[0] = 123;
+          limbs[limbs.Length - 1] = 456;
+          sum += limbs[0] + limbs[limbs.Length - 1];
+        }
+        //    ulong | uint
+        // 1: 111   | 111
+        // 2: 118   | 111
+        // 3: 144   | 118
+        // 4: 134   | 118
+        // 5: 145   | 127
+        // 6: 147   | 127
+        // 7: 155
+        // 8: 162
+        // 9: 172
+        // 10: 177
+        // 11: 188
+        // 12: 190
+        // 13: 196
+        // 14: 201
+        // 15: 211
+        // 16: 219
+
+        m.Stop();
+        Console.WriteLine("    " + sum + " : " + (m.ElapsedTicks * 1000 / (double)Stopwatch.Frequency).ToString("N2") + " ms");
       }
     }
 
@@ -649,7 +731,9 @@ namespace TaschenRechnerTest
 
       //SpeedCalcMinMaxBranched();
 
-      SpeedCalcAddArray();
+      //SpeedCalcAddArray();
+
+      SpeedCalcMemoryAllocation();
     }
   }
 }
