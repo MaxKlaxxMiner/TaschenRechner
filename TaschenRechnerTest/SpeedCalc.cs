@@ -601,8 +601,8 @@ namespace TaschenRechnerTest
     //const int BitCount = 64 * 7;
     //const int RefResult = -47983821;
 
-    const int BitCount = 64 * 8;
-    const int RefResult = 52304988;
+    //const int BitCount = 64 * 8;
+    //const int RefResult = 52304988;
 
     //const int BitCount = 1024;
     //const int RefResult = 1995198812;
@@ -613,8 +613,8 @@ namespace TaschenRechnerTest
     //const int BitCount = 1048576;
     //const int RefResult = -240413923;
 
-    //const int BitCount = 10000000;
-    //const int RefResult = -1524706991;
+    const int BitCount = 10000000;
+    const int RefResult = -1524706991;
 
     const int ByteCount = BitCount / 8;
 
@@ -653,7 +653,7 @@ namespace TaschenRechnerTest
         fixed (ulong* rp = res, up = u, vp = v)
           for (int i = 0; i < TestCount / BitCount * 1024; i++)
           {
-            //        1 |        2 |        3 |        4 |        5 |        6 |        7 |        8 |
+            //        1 |        2 |        3 |        4 |        5 |        6 |        7 |        8 |     16 |  1024 | 16384 | 156250 |
 
             // 1.275,60 | 1.222,85 | 1.222,52 | 1.220,00 | 1.311,65 | 1.295,70 | 1.276,65 | 1.260,80 |
             //Adder.AddRef((byte*)rp, (byte*)up, (byte*)vp, ByteCount);
@@ -661,10 +661,10 @@ namespace TaschenRechnerTest
             //   683,54 |   444,80 |   367,92 |   335,82 |   307,54 |   295,68 |   286,31 |   279,36 |
             //Adder.AddGmpLong5(res, u, v, ByteCount / sizeof(ulong));
 
-            //   579,42 |   338,38 |   230,46 |   211,21 |   175,11 |   161,22 |   144,90 |   138,21 |
+            //   579,42 |   338,38 |   230,29 |   211,21 |   175,11 |   161,22 |   144,90 |   138,21 | 100,79 | 66,74 | 98,40 | 165,30 |
             //Adder.mpn_add_n(rp, up, vp, ByteCount / sizeof(ulong));
 
-            //   552,49 |   326,56 |   230,20 |   184,30 |   165,95 |   145,89 |   138,16 |   120,96 |
+            //   552,67 |   324,30 |   245,58 |   195,87 |   175,09 |   153,57 |   151,42 |   126,72 |  95,10 | 52,85 | 98,49 | 163,91 |
             Adder.UIntX_Add(rp, up, vp, ByteCount / sizeof(ulong));
           }
         m.Stop();
