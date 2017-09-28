@@ -26,7 +26,8 @@ UIntX_Add proc export
   add r10, [r8]
   mov [r9], r10
 
-  jrcxz @end ; - no more limbs -
+  test rcx, rcx
+  je @end ; - no more limbs -
 
   ; - move pointers 1 limb -
   lea rdx, [rdx + 8]
@@ -35,6 +36,7 @@ UIntX_Add proc export
 
   adc rax, rax ; - save carry -
 
+align 16
 @l2:
   shr rcx, 1
   jnc @l4
@@ -48,13 +50,35 @@ UIntX_Add proc export
   mov [r9], r10
   mov [r9 + 8], r11
 
-  jrcxz @end ; - no more limbs -
+  test rcx, rcx
+  je @end ; - no more limbs -
+
+  ; - move pointers 2 limbs -
+  lea rdx, [rdx + 16]
+  lea r8, [r8 + 16]
+  lea r9, [r9 + 16]
 
 @l4:
   shr rcx, 1
   jnc @l8
 
-; - todo: add 4 limbs -
+  ; - 4 limbs -
+  bt rax, 1 ; - reload carry -
+  mov r10, [rdx]
+  mov r11, [rdx + 8]
+  adc r10, [r8]
+  adc r11, [r8 + 8]
+  mov [r9], r10
+  mov [r9 + 8], r11
+  mov r10, [rdx + 16]
+  mov r11, [rdx + 24]
+  adc r10, [r8 + 16]
+  adc r11, [r8 + 24]
+  mov [r9 + 16], r10
+  mov [r9 + 24], r11
+
+  test rcx, rcx
+  je @end ; - no more limbs -
 
 @l8:
 

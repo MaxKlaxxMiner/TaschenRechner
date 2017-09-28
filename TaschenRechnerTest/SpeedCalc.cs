@@ -586,11 +586,11 @@ namespace TaschenRechnerTest
     //const int BitCount = 64 * 2;
     //const int RefResult = -1826782628;
 
-    const int BitCount = 64 * 3;
-    const int RefResult = -2036864205;
+    //const int BitCount = 64 * 3;
+    //const int RefResult = -2036864205;
 
-    //const int BitCount = 64 * 4;
-    //const int RefResult = -453152164;
+    const int BitCount = 64 * 4;
+    const int RefResult = -453152164;
 
     //const int BitCount = 1024;
     //const int RefResult = 1995198812;
@@ -652,7 +652,7 @@ namespace TaschenRechnerTest
             //   579,42 |   338,38 | CRASH ?! |   211,21 |
             //Adder.mpn_add_n(rp, up, vp, ByteCount / sizeof(ulong));
 
-            //   567,65 |   334,80 |   268,65 |
+            //   552,90 |   332,29 |   245,99 |   195,75 |
             Adder.UIntX_Add(rp, up, vp, ByteCount / sizeof(ulong));
           }
         m.Stop();
