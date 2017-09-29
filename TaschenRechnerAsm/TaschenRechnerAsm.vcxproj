@@ -68,13 +68,16 @@
       <OptimizeReferences>true</OptimizeReferences>
       <EntryPointSymbol>main</EntryPointSymbol>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
+      <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <MASM Include="rechner.asm" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="dll-basic.inc" />
+    <ClInclude Include="dll-basic.inc">
+      <FileType>Document</FileType>
+    </ClInclude>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

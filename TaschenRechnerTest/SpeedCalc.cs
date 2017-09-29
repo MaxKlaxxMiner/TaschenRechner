@@ -321,26 +321,6 @@ namespace TaschenRechnerTest
 
     static unsafe class Adder
     {
-      public static ulong AddXtr(uint* rp, uint* up, uint* vp, long n)
-      {
-        return Xtr.Add(rp, up, vp, n);
-      }
-
-      public static ulong AddXtr2(uint* rp, uint* up, uint* vp, long n)
-      {
-        ulong carry = 0;
-        for (long i = 0; i < n; i += 2)
-        {
-          ulong v1 = *(ulong*)(up + i);
-          ulong v2 = *(ulong*)(vp + i);
-          carry = (ulong)(uint)v1 + (uint)v2 + (carry >> 32);
-          rp[i] = (uint)carry;
-          carry = (v1 >> 32) + (v2 >> 32) + (carry >> 32);
-          rp[i + 1] = (uint)carry;
-        }
-        return carry >> 32;
-      }
-
       public static int AddRef(byte* rp, byte* up, byte* vp, long n)
       {
         int carry = 0;
@@ -351,196 +331,6 @@ namespace TaschenRechnerTest
           carry = r >> 8;
         }
         return carry;
-      }
-
-      public static byte AddGmpByte(byte* rp, byte* up, byte* vp, long n)
-      {
-        byte cy = 0;
-        do
-        {
-          byte ul = *up++;
-          byte vl = *vp++;
-          byte sl = (byte)(ul + vl);
-          byte cy1 = sl < ul ? (byte)1 : (byte)0;
-          byte rl = (byte)(sl + cy);
-          byte cy2 = rl < sl ? (byte)1 : (byte)0;
-          cy = (byte)(cy1 | cy2);
-          *rp++ = rl;
-        }
-        while (--n != 0);
-        return cy;
-      }
-
-      public static int AddGmpByteX(byte* rp, byte* up, byte* vp, long n)
-      {
-        int cy = 0;
-        do
-        {
-          byte ul = *up++;
-          byte vl = *vp++;
-          int rl = ul + vl + cy;
-          cy = rl >> 8;
-          *rp++ = (byte)rl;
-        }
-        while (--n != 0);
-        return cy;
-      }
-
-      public static ushort AddGmpShort(ushort* rp, ushort* up, ushort* vp, long n)
-      {
-        ushort cy = 0;
-        do
-        {
-          ushort ul = *up++;
-          ushort vl = *vp++;
-          ushort sl = (ushort)(ul + vl);
-          ushort cy1 = sl < ul ? (ushort)1 : (ushort)0;
-          ushort rl = (ushort)(sl + cy);
-          ushort cy2 = rl < sl ? (ushort)1 : (ushort)0;
-          cy = (ushort)(cy1 | cy2);
-          *rp++ = rl;
-        }
-        while (--n != 0);
-        return cy;
-      }
-
-      public static int AddGmpShortX(ushort* rp, ushort* up, ushort* vp, long n)
-      {
-        int cy = 0;
-        do
-        {
-          ushort ul = *up++;
-          ushort vl = *vp++;
-          int rl = ul + vl + cy;
-          cy = rl >> 16;
-          *rp++ = (ushort)rl;
-        }
-        while (--n != 0);
-        return cy;
-      }
-
-      public static uint AddGmpInt(uint* rp, uint* up, uint* vp, long n)
-      {
-        uint cy = 0;
-        do
-        {
-          uint ul = *up++;
-          uint vl = *vp++;
-          uint sl = ul + vl;
-          uint cy1 = sl < ul ? 1u : 0u;
-          uint rl = sl + cy;
-          uint cy2 = rl < sl ? 1u : 0u;
-          cy = cy1 | cy2;
-          *rp++ = rl;
-        }
-        while (--n != 0);
-        return cy;
-      }
-
-      public static ulong AddGmpIntX(uint* rp, uint* up, uint* vp, long n)
-      {
-        ulong cy = 0;
-        do
-        {
-          uint ul = *up++;
-          uint vl = *vp++;
-          ulong rl = (ulong)ul + vl + cy;
-          cy = rl >> 32;
-          *rp++ = (uint)rl;
-        }
-        while (--n != 0);
-        return cy;
-      }
-
-      public static ulong AddGmpLong(ulong* rp, ulong* up, ulong* vp, long n)
-      {
-        ulong cy = 0;
-        do
-        {
-          ulong ul = *up++;
-          ulong vl = *vp++;
-          ulong sl = ul + vl;
-          ulong cy1 = sl < ul ? 1UL : 0UL;
-          ulong rl = sl + cy;
-          ulong cy2 = rl < sl ? 1UL : 0UL;
-          cy = cy1 | cy2;
-          *rp++ = rl;
-        }
-        while (--n != 0);
-        return cy;
-      }
-
-      public static ulong AddGmpLong2(ulong* rp, ulong* up, ulong* vp, long n)
-      {
-        var cy1 = default(HackBool);
-        var cy2 = default(HackBool);
-        ulong cy = 0;
-        do
-        {
-          ulong ul = *up++;
-          ulong vl = *vp++;
-          ulong sl = ul + vl;
-          cy1.vBool = sl < ul;
-          ulong rl = sl + cy;
-          cy2.vBool = rl < sl;
-          cy = cy1.vULong | cy2.vULong;
-          *rp++ = rl;
-        }
-        while (--n != 0);
-        return cy;
-      }
-
-      [StructLayout(LayoutKind.Explicit, Size = 8)]
-      struct HackBool
-      {
-        [FieldOffset(0)]
-        public bool vBool;
-        [FieldOffset(0)]
-        public byte vByte;
-        [FieldOffset(0)]
-        public int vInt;
-        [FieldOffset(0)]
-        public uint vUInt;
-        [FieldOffset(0)]
-        public long vLong;
-        [FieldOffset(0)]
-        public ulong vULong;
-      }
-
-      public static ulong AddGmpLong3(ulong* rp, ulong* up, ulong* vp, long n)
-      {
-        ulong* cyb = stackalloc ulong[2];
-        ulong cy = 0;
-        do
-        {
-          ulong ul = *up++;
-          ulong vl = *vp++;
-          ulong sl = ul + vl;
-          *(bool*)(cyb + 0) = sl < ul;
-          ulong rl = sl + cy;
-          *(bool*)(cyb + 1) = rl < sl;
-          cy = cyb[0] | cyb[1];
-          *rp++ = rl;
-        }
-        while (--n != 0);
-        return cy;
-      }
-
-      public static ulong AddGmpLong4(ulong* rp, ulong* up, ulong* vp, long n)
-      {
-        ulong cy = 0;
-        for (long i = 0; i < n; i++)
-        {
-          ulong ul = up[i];
-          ulong vl = vp[i];
-          ulong sl = ul + vl;
-          ulong cy1 = sl < ul ? 1UL : 0UL;
-          ulong rl = sl + cy;
-          ulong cy2 = rl < sl ? 1UL : 0UL;
-          cy = cy1 | cy2;
-          rp[i] = rl;
-        }
-        return cy;
       }
 
       public static ulong AddGmpLong5(ulong* rp, ulong* up, ulong* vp, long n)
@@ -559,29 +349,17 @@ namespace TaschenRechnerTest
       }
 
       [DllImport("TaschenRechnerAsm.dll"), SuppressUnmanagedCodeSecurity]
+      public static extern int GetAlignPointers(long[] pointers);
+
+      [DllImport("TaschenRechnerAsm.dll"), SuppressUnmanagedCodeSecurity]
       public static extern ulong mpn_add_n(ulong* rp, ulong* up, ulong* vp, long n);
 
       [DllImport("TaschenRechnerAsm.dll"), SuppressUnmanagedCodeSecurity]
       public static extern long UIntX_Add(ulong* rp, ulong* up, ulong* vp, long n);
-
-      public static ulong AddGmpLong5(ulong[] rp, ulong[] up, ulong[] vp, long n)
-      {
-        ulong cy = 0;
-        for (long i = 0; i < n; i++)
-        {
-          ulong ul = up[i];
-          ulong vl = vp[i];
-          ulong sl = ul + vl;
-          ulong rl = sl + cy;
-          rp[i] = rl;
-          cy = sl < ul || rl < sl ? 1UL : 0UL;
-        }
-        return cy;
-      }
     }
 
-    //const int BitCount = 64;
-    //const int RefResult = -1235051981;
+    const int BitCount = 64;
+    const int RefResult = -1235051981;
 
     //const int BitCount = 64 * 2;
     //const int RefResult = -1826782628;
@@ -601,8 +379,8 @@ namespace TaschenRechnerTest
     //const int BitCount = 64 * 7;
     //const int RefResult = -47983821;
 
-    const int BitCount = 64 * 8;
-    const int RefResult = 52304988;
+    //const int BitCount = 64 * 8;
+    //const int RefResult = 52304988;
 
     //const int BitCount = 1024;
     //const int RefResult = 1995198812;
@@ -717,8 +495,31 @@ namespace TaschenRechnerTest
       }
     }
 
+    static int PointerAlign(long pointer)
+    {
+      int result = 1;
+      while ((pointer & 1) == 0 && pointer != 0)
+      {
+        result <<= 1;
+        pointer >>= 1;
+      }
+      return result;
+    }
+
+    static void PointerCheck()
+    {
+      var p = new long[256];
+      int count = Adder.GetAlignPointers(p);
+      for (int i = 0; i < count; i++)
+      {
+        Console.WriteLine("  0x" + p[i].ToString("x").PadLeft(16, '0') + " (" + PointerAlign(p[i]) + (PointerAlign(p[i]) < 32 ? " ### - " + (32 - (p[i] & 31)) : "") + ")");
+      }
+    }
+
     static void SpeedCalc()
     {
+      PointerCheck();
+
       Console.WriteLine();
       Console.WriteLine("  --- Test Calc ---");
 
