@@ -413,30 +413,33 @@ namespace TaschenRechnerTest
       return result;
     }
 
-    //[DllImport("TaschenRechnerAsm.dll"), SuppressUnmanagedCodeSecurity]
-    //static extern void CallSpeed();
+    [DllImport("TaschenRechnerAsm.dll"), SuppressUnmanagedCodeSecurity]
+    static extern void CallSpeed();
 
-    static void CallSpeedCounter(long count)
+    static void CallSpeedCounter()
     {
-      // 1/23 - 105,33
-      // 2/22 - 105,30
-      // 1/21 - 105,63
-      // 4/20 - 105,40
-      // 1/19 - 105,54
-      // 2/18 - 105,48
+      // 1/23 - 
+      // 2/22 - 
+      // 1/21 - 
+      // 4/20 - 
+      // 1/19 - 
+      // 2/18 - 92,36
 
-      for (long i = 0; i < count; i++)
+      for (long i = 0; i < 10000000 / BitCount * 1024; i++)
       {
-        //CallSpeed();
-        //CallSpeed();
-        //CallSpeed();
-        //CallSpeed();
+        CallSpeed();
+        CallSpeed();
+        CallSpeed();
+        CallSpeed();
       }
     }
 
-    static unsafe void CalcSpeedCounter(ulong* rp, ulong* up, ulong* vp, long count)
+    static unsafe void CalcSpeedCounter(ulong* rp, ulong* up, ulong* vp)
     {
-      for (long i = 0; i < count; i++)
+      var _rp = rp;
+      var _up = up;
+      var _vp = vp;
+      for (long i = 0; i < 10000000 / BitCount * 1024; i++)
       {
         //        1 |        2 |        3 |        4 |        5 |        6 |        7 |        8 |     16 |  1024 | 16384 | 156250 |
 
@@ -451,7 +454,7 @@ namespace TaschenRechnerTest
 
         //   552,67 |   322,80 |   245,58 |   195,87 |   175,09 |   153,57 |   151,42 |   126,72 |  95,10 | 52,85 | 98,49 | 163,91 |
         // j 680,93 |   365,73 |   254,58 |   192,39 |   151,09 |   134,60 |   121,79 |   117,65 |
-        Adder.UIntX_Add(rp, up, vp, ByteCount / sizeof(ulong));
+        Adder.UIntX_Add(_rp, _up, _vp, ByteCount / sizeof(ulong));
       }
     }
 
@@ -473,14 +476,12 @@ namespace TaschenRechnerTest
         Stopwatch m;
         fixed (ulong* rp = res, up = u, vp = v)
         {
-          CalcSpeedCounter(rp, up, vp, 100);
-
           const long Count = TestCount / BitCount * 1024;
 
           m = Stopwatch.StartNew();
 
-          //CallSpeedCounter(Count);
-          CalcSpeedCounter(rp, up, vp, Count);
+          CallSpeedCounter();
+          //CalcSpeedCounter(rp, up, vp);
 
           m.Stop();
           Adder.UIntX_Add(rp, up, vp, ByteCount / sizeof(ulong));
