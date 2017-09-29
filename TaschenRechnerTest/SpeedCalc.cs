@@ -601,14 +601,14 @@ namespace TaschenRechnerTest
     //const int BitCount = 64 * 7;
     //const int RefResult = -47983821;
 
-    //const int BitCount = 64 * 8;
-    //const int RefResult = 52304988;
+    const int BitCount = 64 * 8;
+    const int RefResult = 52304988;
 
     //const int BitCount = 1024;
     //const int RefResult = 1995198812;
 
-    const int BitCount = 65536;
-    const int RefResult = 951296797;
+    //const int BitCount = 65536;
+    //const int RefResult = 951296797;
 
     //const int BitCount = 1048576;
     //const int RefResult = -240413923;
@@ -662,10 +662,11 @@ namespace TaschenRechnerTest
             //Adder.AddGmpLong5(res, u, v, ByteCount / sizeof(ulong));
 
             //   563,64 |   302,74 |   215,50 |   195,82 |   165,84 |   153,61 |   138,20 |   132,36 |  97,84 | 65,05 | 97,06 | 164,92 |
-            Adder.mpn_add_n(rp, up, vp, ByteCount / sizeof(ulong));
+            //Adder.mpn_add_n(rp, up, vp, ByteCount / sizeof(ulong));
 
             //   552,67 |   322,80 |   245,58 |   195,87 |   175,09 |   153,57 |   151,42 |   126,72 |  95,10 | 52,85 | 98,49 | 163,91 |
-            //Adder.UIntX_Add(rp, up, vp, ByteCount / sizeof(ulong));
+            // j 680,93 |   365,73 |   254,58 |   192,39 |   151,09 |   134,60 |   121,79 |   117,65 |
+            Adder.UIntX_Add(rp, up, vp, ByteCount / sizeof(ulong));
           }
         m.Stop();
         Console.WriteLine("    " + string.Concat(UlongToBytes(res).Select(c => c.ToString("x"))).GetHashCode().ToString().Replace(RefResult.ToString(), "ok") + ": " + (m.ElapsedTicks * 1000 / (double)Stopwatch.Frequency).ToString("N2") + " ms");
