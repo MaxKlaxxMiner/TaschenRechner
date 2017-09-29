@@ -391,8 +391,8 @@ namespace TaschenRechnerTest
     //const int BitCount = 1024;
     //const int RefResult = 1995198812;
 
-    //const int BitCount = 65536;
-    //const int RefResult = 951296797;
+    const int BitCount = 65536;
+    const int RefResult = 951296797;
 
     //const int BitCount = 1048576;
     //const int RefResult = -240413923;
@@ -400,8 +400,8 @@ namespace TaschenRechnerTest
     //const int BitCount = 10000000;
     //const int RefResult = -1524706991;
 
-    const int BitCount = 5;
-    const int RefResult = -204293069;
+    //const int BitCount = 5;
+    //const int RefResult = 505297501;
 
     const int ByteCount = BitCount >= 64 ? BitCount / 8 : 1024 + 8;
 
@@ -440,8 +440,7 @@ namespace TaschenRechnerTest
         //   563,64 |   302,74 |   215,50 |   195,82 |   165,84 |   153,61 |   138,20 |   132,36 |  97,84 | 65,05 | 97,06 | 164,92 |
         //Adder.mpn_add_n(_rp, _up, _vp, BitCount >= 64 ? ByteCount / sizeof(ulong) : (i & (ByteCount - 8) / sizeof(ulong) - 1) + 1);
 
-        //   552,67 |   322,80 |   245,58 |   195,87 |   175,09 |   153,57 |   151,42 |   126,72 |  95,10 | 52,85 | 98,49 | 163,91 |
-        // j 680,93 |   365,73 |   254,58 |   192,39 |   151,09 |   134,60 |   121,79 |   117,65 |
+        //   552,22 |   346,56 |   245,74 |   195,80 |   175,11 |   153,53 |   151,37 |   126,67 |  95,10 | 52,85 | 98,49 | 163,91 |
         Adder.UIntX_Add(_rp, _up, _vp, BitCount >= 64 ? ByteCount / sizeof(ulong) : (i & (ByteCount - 8) / sizeof(ulong) - 1) + 1);
       }
     }
@@ -472,7 +471,6 @@ namespace TaschenRechnerTest
           CalcSpeedCounter(rp, up, vp);
 
           m.Stop();
-          Adder.UIntX_Add(rp, up, vp, ByteCount / sizeof(ulong));
         }
         double time = m.ElapsedTicks * 1000 / (double)Stopwatch.Frequency;
         if (time < bestTime)
