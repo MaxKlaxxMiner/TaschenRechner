@@ -6,6 +6,9 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security;
 using TaschenRechnerLib;
+// ReSharper disable ConditionIsAlwaysTrueOrFalse
+// ReSharper disable UnreachableCode
+#pragma warning disable 162
 
 // ReSharper disable ConvertToConstant.Local
 // ReSharper disable MemberCanBePrivate.Local
@@ -351,8 +354,8 @@ namespace TaschenRechnerTest
       [DllImport("TaschenRechnerAsm.dll"), SuppressUnmanagedCodeSecurity]
       public static extern int GetAlignPointers(long[] pointers);
 
-      //[DllImport("TaschenRechnerAsm.dll"), SuppressUnmanagedCodeSecurity]
-      //public static extern ulong mpn_add_n(ulong* rp, ulong* up, ulong* vp, long n);
+      [DllImport("TaschenRechnerAsm.dll"), SuppressUnmanagedCodeSecurity]
+      public static extern ulong mpn_add_n(ulong* rp, ulong* up, ulong* vp, long n);
 
       [DllImport("TaschenRechnerAsm.dll"), SuppressUnmanagedCodeSecurity]
       public static extern long UIntX_Add(ulong* rp, ulong* up, ulong* vp, long n);
@@ -382,8 +385,11 @@ namespace TaschenRechnerTest
     //const int BitCount = 64 * 8;
     //const int RefResult = 52304988;
 
-    const int BitCount = 1024;
-    const int RefResult = 1995198812;
+    //const int BitCount = 64 * 31;
+    //const int RefResult = -1175202428;
+
+    //const int BitCount = 1024;
+    //const int RefResult = 1995198812;
 
     //const int BitCount = 65536;
     //const int RefResult = 951296797;
@@ -394,7 +400,10 @@ namespace TaschenRechnerTest
     //const int BitCount = 10000000;
     //const int RefResult = -1524706991;
 
-    const int ByteCount = BitCount / 8;
+    const int BitCount = 5;
+    const int RefResult = -204293069;
+
+    const int ByteCount = BitCount >= 64 ? BitCount / 8 : 1024 + 8;
 
     static byte[] GetBytes(int addType = 0)
     {
@@ -413,33 +422,12 @@ namespace TaschenRechnerTest
       return result;
     }
 
-    [DllImport("TaschenRechnerAsm.dll"), SuppressUnmanagedCodeSecurity]
-    static extern void CallSpeed();
-
-    static void CallSpeedCounter()
-    {
-      // 1/23 - 
-      // 2/22 - 
-      // 1/21 - 
-      // 4/20 - 
-      // 1/19 - 
-      // 2/18 - 92,36
-
-      for (long i = 0; i < 10000000 / BitCount * 1024; i++)
-      {
-        CallSpeed();
-        CallSpeed();
-        CallSpeed();
-        CallSpeed();
-      }
-    }
-
     static unsafe void CalcSpeedCounter(ulong* rp, ulong* up, ulong* vp)
     {
       var _rp = rp;
       var _up = up;
       var _vp = vp;
-      for (long i = 0; i < 10000000 / BitCount * 1024; i++)
+      for (long i = 0; i < (BitCount >= 64 ? 10000000 / BitCount * 1024 : 5000000); i++)
       {
         //        1 |        2 |        3 |        4 |        5 |        6 |        7 |        8 |     16 |  1024 | 16384 | 156250 |
 
@@ -447,14 +435,14 @@ namespace TaschenRechnerTest
         //Adder.AddRef((byte*)rp, (byte*)up, (byte*)vp, ByteCount);
 
         //   683,54 |   444,80 |   367,92 |   335,82 |   307,54 |   295,68 |   286,31 |   279,36 |
-        //Adder.AddGmpLong5(res, u, v, ByteCount / sizeof(ulong));
+        //Adder.AddGmpLong5(_rp, _up, _vp, BitCount >= 64 ? ByteCount / sizeof(ulong) : (i & (ByteCount - 8) / sizeof(ulong) - 1) + 1);
 
         //   563,64 |   302,74 |   215,50 |   195,82 |   165,84 |   153,61 |   138,20 |   132,36 |  97,84 | 65,05 | 97,06 | 164,92 |
-        //Adder.mpn_add_n(rp, up, vp, ByteCount / sizeof(ulong));
+        //Adder.mpn_add_n(_rp, _up, _vp, BitCount >= 64 ? ByteCount / sizeof(ulong) : (i & (ByteCount - 8) / sizeof(ulong) - 1) + 1);
 
         //   552,67 |   322,80 |   245,58 |   195,87 |   175,09 |   153,57 |   151,42 |   126,72 |  95,10 | 52,85 | 98,49 | 163,91 |
         // j 680,93 |   365,73 |   254,58 |   192,39 |   151,09 |   134,60 |   121,79 |   117,65 |
-        Adder.UIntX_Add(_rp, _up, _vp, ByteCount / sizeof(ulong));
+        Adder.UIntX_Add(_rp, _up, _vp, BitCount >= 64 ? ByteCount / sizeof(ulong) : (i & (ByteCount - 8) / sizeof(ulong) - 1) + 1);
       }
     }
 
@@ -480,8 +468,8 @@ namespace TaschenRechnerTest
 
           m = Stopwatch.StartNew();
 
-          CallSpeedCounter();
-          //CalcSpeedCounter(rp, up, vp);
+          //CallSpeedCounter();
+          CalcSpeedCounter(rp, up, vp);
 
           m.Stop();
           Adder.UIntX_Add(rp, up, vp, ByteCount / sizeof(ulong));

@@ -2,24 +2,18 @@ include dll-basic.inc
 
 .data
 
-alignPointers dq CallSpeed, UIntX_Add, pp001, pp002, pp003, pp004, pp005, pp006,
-                 @dllend
+alignPointers dq UIntX_Add, pp001, pp002, pp003, pp004, pp005, pp006
+                 ;@dllend
 
 alignPointersCount dq (alignPointersCount - alignPointers) / qword
 
 .code
 
-nops 5
-CallSpeed proc export
-ret
-CallSpeed endp
-
-
 ; params: rcx, rdx, r8, r9, [rsp + 40], [rsp + 48]
 
 ; ulong UIntX_Add(ulong* rp, ulong* up, ulong* vp, long n)
 ;                 rcx,       rdx,       r8,        r9
-align 16
+nops 23
 UIntX_Add proc export
 
   xor rax, rax
@@ -43,7 +37,7 @@ UIntX_Add proc export
   lea r8, [r8 + 8]
   lea rcx, [rcx + 8]
 
-align 16
+nops 3
 pp001::
 @l2:
   shr r9, 1
@@ -69,7 +63,7 @@ pp001::
   lea r8, [r8 + 16]
   lea rcx, [rcx + 16]
 
-align 16
+nops 1
 pp002::
 @l4:
   shr r9, 1
@@ -101,7 +95,7 @@ pp002::
   lea r8, [r8 + 32]
   lea rcx, [rcx + 32]
 
-align 16
+nops 1
 pp003::
 @l8:
   shr r9, 1
@@ -145,7 +139,7 @@ pp003::
   lea r8, [r8 + 64]
   lea rcx, [rcx + 64]
 
-align 16
+nops 1
 pp004::
 @l16:
   ; - save registers -
@@ -158,7 +152,7 @@ pp004::
 
   btr rax, 1 ; - reload carry -
 
-align 16
+nops 1
 pp005::
 @loop:
   ; - 16 limbs -
@@ -227,7 +221,7 @@ pp005::
   pop r13
   pop r12
 
-align 16
+nops 0
 pp006::
 @end:
 
