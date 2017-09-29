@@ -351,15 +351,15 @@ namespace TaschenRechnerTest
       [DllImport("TaschenRechnerAsm.dll"), SuppressUnmanagedCodeSecurity]
       public static extern int GetAlignPointers(long[] pointers);
 
-      [DllImport("TaschenRechnerAsm.dll"), SuppressUnmanagedCodeSecurity]
-      public static extern ulong mpn_add_n(ulong* rp, ulong* up, ulong* vp, long n);
+      //[DllImport("TaschenRechnerAsm.dll"), SuppressUnmanagedCodeSecurity]
+      //public static extern ulong mpn_add_n(ulong* rp, ulong* up, ulong* vp, long n);
 
       [DllImport("TaschenRechnerAsm.dll"), SuppressUnmanagedCodeSecurity]
       public static extern long UIntX_Add(ulong* rp, ulong* up, ulong* vp, long n);
     }
 
-    const int BitCount = 64;
-    const int RefResult = -1235051981;
+    //const int BitCount = 64;
+    //const int RefResult = -1235051981;
 
     //const int BitCount = 64 * 2;
     //const int RefResult = -1826782628;
@@ -382,8 +382,8 @@ namespace TaschenRechnerTest
     //const int BitCount = 64 * 8;
     //const int RefResult = 52304988;
 
-    //const int BitCount = 1024;
-    //const int RefResult = 1995198812;
+    const int BitCount = 1024;
+    const int RefResult = 1995198812;
 
     //const int BitCount = 65536;
     //const int RefResult = 951296797;
@@ -413,41 +413,86 @@ namespace TaschenRechnerTest
       return result;
     }
 
+    //[DllImport("TaschenRechnerAsm.dll"), SuppressUnmanagedCodeSecurity]
+    //static extern void CallSpeed();
+
+    static void CallSpeedCounter(long count)
+    {
+      // 1/23 - 105,33
+      // 2/22 - 105,30
+      // 1/21 - 105,63
+      // 4/20 - 105,40
+      // 1/19 - 105,54
+      // 2/18 - 105,48
+
+      for (long i = 0; i < count; i++)
+      {
+        //CallSpeed();
+        //CallSpeed();
+        //CallSpeed();
+        //CallSpeed();
+      }
+    }
+
+    static unsafe void CalcSpeedCounter(ulong* rp, ulong* up, ulong* vp, long count)
+    {
+      for (long i = 0; i < count; i++)
+      {
+        //        1 |        2 |        3 |        4 |        5 |        6 |        7 |        8 |     16 |  1024 | 16384 | 156250 |
+
+        // 1.275,60 | 1.222,85 | 1.222,52 | 1.220,00 | 1.311,65 | 1.295,70 | 1.276,65 | 1.260,80 |
+        //Adder.AddRef((byte*)rp, (byte*)up, (byte*)vp, ByteCount);
+
+        //   683,54 |   444,80 |   367,92 |   335,82 |   307,54 |   295,68 |   286,31 |   279,36 |
+        //Adder.AddGmpLong5(res, u, v, ByteCount / sizeof(ulong));
+
+        //   563,64 |   302,74 |   215,50 |   195,82 |   165,84 |   153,61 |   138,20 |   132,36 |  97,84 | 65,05 | 97,06 | 164,92 |
+        //Adder.mpn_add_n(rp, up, vp, ByteCount / sizeof(ulong));
+
+        //   552,67 |   322,80 |   245,58 |   195,87 |   175,09 |   153,57 |   151,42 |   126,72 |  95,10 | 52,85 | 98,49 | 163,91 |
+        // j 680,93 |   365,73 |   254,58 |   192,39 |   151,09 |   134,60 |   121,79 |   117,65 |
+        Adder.UIntX_Add(rp, up, vp, ByteCount / sizeof(ulong));
+      }
+    }
+
     static unsafe void SpeedCalcAddArray()
     {
-      const int RetryCount = 10;
+      const int RetryCount = 40;
       const int TestCount = 10000000;
 
       Console.WriteLine();
       Console.WriteLine("  - add " + (GetBytes().Length * 8) + " bits - ref -");
       Console.WriteLine();
+      double bestTime = double.MaxValue;
       for (int r = 0; r < RetryCount; r++)
       {
-        var m = Stopwatch.StartNew();
         var res = BytesToUlong(GetBytes());
         var u = BytesToUlong(GetBytes(1));
         var v = BytesToUlong(GetBytes(2));
         if (res == null || u == null || v == null || res.Length < ByteCount / sizeof(ulong) || u.Length < ByteCount / sizeof(ulong) || v.Length < ByteCount / sizeof(ulong)) throw new IndexOutOfRangeException();
+        Stopwatch m;
         fixed (ulong* rp = res, up = u, vp = v)
-          for (int i = 0; i < TestCount / BitCount * 1024; i++)
-          {
-            //        1 |        2 |        3 |        4 |        5 |        6 |        7 |        8 |     16 |  1024 | 16384 | 156250 |
+        {
+          CalcSpeedCounter(rp, up, vp, 100);
 
-            // 1.275,60 | 1.222,85 | 1.222,52 | 1.220,00 | 1.311,65 | 1.295,70 | 1.276,65 | 1.260,80 |
-            //Adder.AddRef((byte*)rp, (byte*)up, (byte*)vp, ByteCount);
+          const long Count = TestCount / BitCount * 1024;
 
-            //   683,54 |   444,80 |   367,92 |   335,82 |   307,54 |   295,68 |   286,31 |   279,36 |
-            //Adder.AddGmpLong5(res, u, v, ByteCount / sizeof(ulong));
+          m = Stopwatch.StartNew();
 
-            //   563,64 |   302,74 |   215,50 |   195,82 |   165,84 |   153,61 |   138,20 |   132,36 |  97,84 | 65,05 | 97,06 | 164,92 |
-            //Adder.mpn_add_n(rp, up, vp, ByteCount / sizeof(ulong));
+          //CallSpeedCounter(Count);
+          CalcSpeedCounter(rp, up, vp, Count);
 
-            //   552,67 |   322,80 |   245,58 |   195,87 |   175,09 |   153,57 |   151,42 |   126,72 |  95,10 | 52,85 | 98,49 | 163,91 |
-            // j 680,93 |   365,73 |   254,58 |   192,39 |   151,09 |   134,60 |   121,79 |   117,65 |
-            Adder.UIntX_Add(rp, up, vp, ByteCount / sizeof(ulong));
-          }
-        m.Stop();
-        Console.WriteLine("    " + string.Concat(UlongToBytes(res).Select(c => c.ToString("x"))).GetHashCode().ToString().Replace(RefResult.ToString(), "ok") + ": " + (m.ElapsedTicks * 1000 / (double)Stopwatch.Frequency).ToString("N2") + " ms");
+          m.Stop();
+          Adder.UIntX_Add(rp, up, vp, ByteCount / sizeof(ulong));
+        }
+        double time = m.ElapsedTicks * 1000 / (double)Stopwatch.Frequency;
+        if (time < bestTime)
+        {
+          bestTime = time;
+          Console.ForegroundColor = ConsoleColor.Yellow;
+        }
+        Console.WriteLine("    " + string.Concat(UlongToBytes(res).Select(c => c.ToString("x"))).GetHashCode().ToString().Replace(RefResult.ToString(), "ok") + ": " + (time).ToString("N2") + " ms");
+        Console.ForegroundColor = ConsoleColor.Gray;
       }
     }
 
