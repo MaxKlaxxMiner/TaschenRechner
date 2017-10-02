@@ -298,14 +298,14 @@ namespace TaschenRechnerTest
     static void Main(string[] args)
     {
       //Constructor();
-      Add();
+      //Add();
       //Compare();
       //Sub();
       //Mul();
       //Div();
       //Mod();
 
-      //SpeedCheckAdd();
+      SpeedCheckAdd();
       //SpeedCheckInc();
       //SpeedCheckSub();
       //SpeedCheckDec();

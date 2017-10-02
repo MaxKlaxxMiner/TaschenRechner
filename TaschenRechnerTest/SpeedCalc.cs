@@ -1,4 +1,5 @@
 ﻿#region # using *.*
+// ReSharper disable RedundantUsingDirective
 using System;
 using System.Diagnostics;
 using System.Linq;
@@ -8,8 +9,6 @@ using System.Security;
 using TaschenRechnerLib;
 // ReSharper disable ConditionIsAlwaysTrueOrFalse
 // ReSharper disable UnreachableCode
-#pragma warning disable 162
-
 // ReSharper disable ConvertToConstant.Local
 // ReSharper disable MemberCanBePrivate.Local
 // ReSharper disable UnusedAutoPropertyAccessor.Local
@@ -18,6 +17,7 @@ using TaschenRechnerLib;
 // ReSharper disable FieldCanBeMadeReadOnly.Local
 // ReSharper disable InconsistentNaming
 // ReSharper disable UnusedMethodReturnValue.Local
+#pragma warning disable 162
 #pragma warning disable 169
 #pragma warning disable 414
 #endregion
