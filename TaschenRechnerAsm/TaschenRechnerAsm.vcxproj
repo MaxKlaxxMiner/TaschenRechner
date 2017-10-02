@@ -72,6 +72,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="Add.asm">
+      <FileType>Document</FileType>
+    </None>
     <MASM Include="rechner.asm" />
   </ItemGroup>
   <ItemGroup>

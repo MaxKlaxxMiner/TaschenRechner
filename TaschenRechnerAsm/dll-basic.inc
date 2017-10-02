@@ -63,3 +63,6 @@ jnz @for
 
 ret
 GetAlignPointers endp
+
+; align 64
+nops 23
