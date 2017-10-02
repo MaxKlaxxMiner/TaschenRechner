@@ -1,4 +1,8 @@
-﻿#region # using *.*
+﻿
+using System.Runtime.InteropServices;
+using System.Security;
+
+#region # using *.*
 // ReSharper disable RedundantUsingDirective
 using System;
 using System.Diagnostics;

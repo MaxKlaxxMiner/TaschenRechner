@@ -101,6 +101,7 @@
     <Compile Include="UIntX\AsmWrapper.cs" />
     <Compile Include="UIntX\Const.cs" />
     <Compile Include="UIntX\Parse.cs" />
+    <Compile Include="UIntX\ToByteArray.cs" />
     <Compile Include="UIntX\ToString.cs" />
     <Compile Include="UIntX\UIntX.cs" />
     <Compile Include="UnsafeHelper.cs" />

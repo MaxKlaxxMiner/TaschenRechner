@@ -32,21 +32,21 @@ namespace TaschenRechnerTest
       //  Console.WriteLine("    " + sum.ToString("N0").Replace("-1.108.288.130", "ok") + ": " + (m.ElapsedTicks * 1000 / (double)Stopwatch.Frequency).ToString("N2") + " ms");
       //}
 
-      //Console.WriteLine();
-      //Console.WriteLine("  - UIntX.Add() -");
-      //Console.WriteLine();
-      //for (int r = 0; r < RetryCount; r++)
-      //{
-      //  var val = UIntX.Parse(StartValue);
-      //  var m = Stopwatch.StartNew();
-      //  for (int i = 0; i < TestCount; i++)
-      //  {
-      //    val += val;
-      //  }
-      //  m.Stop();
-      //  long sum = val.ToString().GetHashCode();
-      //  Console.WriteLine("    " + sum.ToString("N0").Replace("-1.108.288.130", "ok") + ": " + (m.ElapsedTicks * 1000 / (double)Stopwatch.Frequency).ToString("N2") + " ms");
-      //}
+      Console.WriteLine();
+      Console.WriteLine("  - UIntX.Add() -");
+      Console.WriteLine();
+      for (int r = 0; r < RetryCount; r++)
+      {
+        var val = UIntX.Parse(StartValue);
+        var m = Stopwatch.StartNew();
+        for (int i = 0; i < TestCount; i++)
+        {
+          val += val;
+        }
+        m.Stop();
+        long sum = val.ToString().GetHashCode();
+        Console.WriteLine("    " + sum.ToString("N0").Replace("-1.108.288.130", "ok") + ": " + (m.ElapsedTicks * 1000 / (double)Stopwatch.Frequency).ToString("N2") + " ms");
+      }
 
       //Console.WriteLine();
       //Console.WriteLine("  - BigInteger.Add() - +Append x100 -");

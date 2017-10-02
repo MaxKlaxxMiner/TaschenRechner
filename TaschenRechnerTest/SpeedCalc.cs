@@ -391,8 +391,8 @@ namespace TaschenRechnerTest
     //const int BitCount = 1024;
     //const int RefResult = 1995198812;
 
-    const int BitCount = 65536;
-    const int RefResult = 951296797;
+    //const int BitCount = 65536;
+    //const int RefResult = 951296797;
 
     //const int BitCount = 1048576;
     //const int RefResult = -240413923;
@@ -400,8 +400,8 @@ namespace TaschenRechnerTest
     //const int BitCount = 10000000;
     //const int RefResult = -1524706991;
 
-    //const int BitCount = 5;
-    //const int RefResult = 505297501;
+    const int BitCount = 5;
+    const int RefResult = 505297501;
 
     const int ByteCount = BitCount >= 64 ? BitCount / 8 : 1024 + 8;
 
@@ -544,7 +544,8 @@ namespace TaschenRechnerTest
       int count = Adder.GetAlignPointers(p);
       for (int i = 0; i < count; i++)
       {
-        Console.WriteLine("  0x" + p[i].ToString("x").PadLeft(16, '0') + " (" + PointerAlign(p[i]) + (PointerAlign(p[i]) < 32 ? " ### - " + (32 - (p[i] & 31)) : "") + ")");
+        Console.WriteLine("  0x" + p[i].ToString("x").PadLeft(16, '0') + " (" + (p[i] & 15) + " | " + (p[i] & 31) + " | " + (p[i] & 63) + ")");
+//        Console.WriteLine("  0x" + p[i].ToString("x").PadLeft(16, '0') + " (" + PointerAlign(p[i]) + (PointerAlign(p[i]) < 32 ? " ### - " + (32 - (p[i] & 31)) : "") + ")");
       }
     }
 

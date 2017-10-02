@@ -6,6 +6,12 @@ namespace TaschenRechnerTest
 {
   static partial class Program
   {
+    static void AssertArray(byte[] b1, byte[] b2)
+    {
+      if (b1.Length != b2.Length) throw new Exception();
+      for (int i = 0; i < b1.Length; i++) if (b1[i] != b2[i]) throw new Exception();
+    }
+
     static void SpeedDiv()
     {
       for (int r = 0; r < 5; r++)

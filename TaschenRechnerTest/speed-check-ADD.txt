@@ -1,0 +1,25 @@
+﻿
+-- [ Add ] --
+
+- Test 1 = large Numbers (100,000 Bits / 30k digits)
+- Test 2 = small Numbers (336 Bits / 100 digits)
+
+- BigInteger (.Net System.Numerics) -
+Test 1: 316.95 ms
+Test 2: 389.66 ms
+
+- gmp-original (v 5.0.1) -
+Test 1: 122.17 ms
+Test 2: 326.75 ms
+
+- mpn_add_n - ASM (optimized) -
+Test 1:  67.73 ms
+Test 2: 315.76 ms
+
+- UIntX_Add - ASM -
+Test 1:  64.54 ms
+Test 2: 314.56 ms
+
+- UIntX_Add - NoAsm (native C#) -
+Test 1: 105.43 ms
+Test 2: 322.94 ms

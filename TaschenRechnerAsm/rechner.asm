@@ -10,9 +10,8 @@ alignPointersCount dq (alignPointersCount - alignPointers) / qword
 
 .code
 
-; params: rcx, rdx, r8, r9, [rsp + 40], [rsp + 48]
-
 ; ulong mpn_add_n(ulong* rp, ulong* up, ulong* vp, long n)
+align 16
 mpn_add_n proc export
 
   mov rax, r9

@@ -3,151 +3,153 @@
 ;                 rcx,       rdx,       r8,        r9
 UIntX_Add proc export
 
-  xor rax, rax
-
   ; - check n % 2 == 0 -
   shr r9, 1
   jnc @l2
 
   ; - 1 limb -
-  mov r10, [rdx]
-  add r10, [r8]
-  mov [rcx], r10
+  mov rax, [rdx]
+  add rax, [r8]
+  mov [rcx], rax
 
-  adc rax, rax ; - save carry -
+  setc al ; - save carry -
 
   test r9, r9
   je @end ; - no more limbs -
 
   ; - move pointers for 1 limb -
-  lea rdx, [rdx + 8]
-  lea r8, [r8 + 8]
-  lea rcx, [rcx + 8]
+  add rdx, 8
+  add r8, 8
+  add rcx, 8
 
-nops 3
+nops 0
+pp001::
 @l2:
   shr r9, 1
   jnc @l4
 
-  btr rax, 1 ; - reload carry -
+  btr eax, 0 ; - reload carry -
 
   ; - 2 limbs -
-  mov r10, [rdx]
+  mov rax, [rdx]
   mov r11, [rdx + 8]
-  adc r10, [r8]
+  adc rax, [r8]
   adc r11, [r8 + 8]
-  mov [rcx], r10
+  mov [rcx], rax
   mov [rcx + 8], r11
 
-  adc rax, rax ; - save carry -
+  setc al ; - save carry -
 
   test r9, r9
   je @end ; - no more limbs -
 
   ; - move pointers for 2 limbs -
-  lea rdx, [rdx + 16]
-  lea r8, [r8 + 16]
-  lea rcx, [rcx + 16]
+  add rdx, 16
+  add r8, 16
+  add rcx, 16
 
-nops 1
+nops 4
+pp002::
 @l4:
   shr r9, 1
   jnc @l8
 
-  btr rax, 1 ; - reload carry -
+  btr eax, 0 ; - reload carry -
 
   ; - 4 limbs -
-  mov r10, [rdx]
-  mov r11, [rdx + 8]
-  adc r10, [r8]
-  adc r11, [r8 + 8]
-  mov [rcx], r10
-  mov [rcx + 8], r11
-  mov r10, [rdx + 16]
-  mov r11, [rdx + 24]
-  adc r10, [r8 + 16]
-  adc r11, [r8 + 24]
-  mov [rcx + 16], r10
-  mov [rcx + 24], r11
+  mov rax, [rdx]
+  mov r10, [rdx + 8]
+  adc rax, [r8]
+  mov r11, [rdx + 16]
+  adc r10, [r8 + 8]
+  mov [rcx], rax
+  mov rax, [rdx + 24]
+  adc r11, [r8 + 16]
+  mov [rcx + 8], r10
+  adc rax, [r8 + 24]
+  mov [rcx + 16], r11
+  mov [rcx + 24], rax
 
-  adc rax, rax ; - save carry -
+  setc al ; - save carry -
 
   test r9, r9
   je @end ; - no more limbs -
 
   ; - move pointers for 4 limbs -
-  lea rdx, [rdx + 32]
-  lea r8, [r8 + 32]
-  lea rcx, [rcx + 32]
+  add rdx, 32
+  add r8, 32
+  add rcx, 32
 
-nops 1
+nops 2
+pp003::
 @l8:
   shr r9, 1
   jnc @l16
 
-  btr rax, 1 ; - reload carry -
+  btr eax, 0 ; - reload carry -
 
   ; - 8 limbs -
-  mov r10, [rdx]
-  mov r11, [rdx + 8]
-  adc r10, [r8]
-  adc r11, [r8 + 8]
-  mov [rcx], r10
-  mov [rcx + 8], r11
-  mov r10, [rdx + 16]
-  mov r11, [rdx + 24]
-  adc r10, [r8 + 16]
-  adc r11, [r8 + 24]
-  mov [rcx + 16], r10
-  mov [rcx + 24], r11
+  mov rax, [rdx]
+  mov r10, [rdx + 8]
+  adc rax, [r8]
+  mov r11, [rdx + 16]
+  adc r10, [r8 + 8]
+  mov [rcx], rax
+  adc r11, [r8 + 16]
+  mov [rcx + 8], r10
+  mov rax, [rdx + 24]
+  mov [rcx + 16], r11
   mov r10, [rdx + 32]
+  adc rax, [r8 + 24]
   mov r11, [rdx + 40]
   adc r10, [r8 + 32]
+  mov [rcx + 24], rax
   adc r11, [r8 + 40]
   mov [rcx + 32], r10
+  mov rax, [rdx + 48]
   mov [rcx + 40], r11
-  mov r10, [rdx + 48]
-  mov r11, [rdx + 56]
-  adc r10, [r8 + 48]
-  adc r11, [r8 + 56]
-  mov [rcx + 48], r10
-  mov [rcx + 56], r11
+  mov r10, [rdx + 56]
+  adc rax, [r8 + 48]
+  adc r10, [r8 + 56]
+  mov [rcx + 48], rax
+  mov [rcx + 56], r10
 
-  adc rax, rax ; - save carry -
+  setc al ; - save carry -
 
   test r9, r9
   je @end ; - no more limbs -
 
   ; - move pointers for 8 limbs -
-  lea rdx, [rdx + 64]
-  lea r8, [r8 + 64]
-  lea rcx, [rcx + 64]
+  add rdx, 64
+  add r8, 64
+  add rcx, 64
 
-nops 1
+nops 2
+pp004::
 @l16:
   ; - save registers -
-  push r12
-  push r13
+  push rbx
   push r14
   push r15
   push rsi
   push rdi
 
-  btr rax, 1 ; - reload carry -
+  btr eax, 0 ; - reload carry -
 
-nops 1
+nops 5
+pp005::
 @loop:
   ; - 16 limbs -
   mov r10, [rdx]
   mov r11, [rdx + 8]
-  mov r12, [rdx + 16]
+  mov rbx, [rdx + 16]
   adc r10, [r8]
-  mov r13, [rdx + 24]
+  mov rax, [rdx + 24]
   adc r11, [r8 + 8]
   mov r14, [rdx + 32]
-  adc r12, [r8 + 16]
+  adc rbx, [r8 + 16]
   mov r15, [rdx + 40]
-  adc r13, [r8 + 24]
+  adc rax, [r8 + 24]
   mov rsi, [rdx + 48]
   adc r14, [r8 + 32]
   mov rdi, [rdx + 56]
@@ -156,22 +158,22 @@ nops 1
   adc rsi, [r8 + 48]
   mov [rcx + 8], r11
   adc rdi, [r8 + 56]
-  mov [rcx + 16], r12
-  mov [rcx + 24], r13
+  mov [rcx + 16], rbx
+  mov [rcx + 24], rax
   mov [rcx + 32], r14
   mov [rcx + 40], r15
   mov [rcx + 48], rsi
   mov [rcx + 56], rdi
   mov r10, [rdx + 64]
   mov r11, [rdx + 72]
-  mov r12, [rdx + 80]
+  mov rbx, [rdx + 80]
   adc r10, [r8 + 64]
-  mov r13, [rdx + 88]
+  mov rax, [rdx + 88]
   adc r11, [r8 + 72]
   mov r14, [rdx + 96]
-  adc r12, [r8 + 80]
+  adc rbx, [r8 + 80]
   mov r15, [rdx + 104]
-  adc r13, [r8 + 88]
+  adc rax, [r8 + 88]
   mov rsi, [rdx + 112]
   adc r14, [r8 + 96]
   mov rdi, [rdx + 120]
@@ -182,8 +184,8 @@ nops 1
   mov [rcx + 72], r11
   adc rdi, [r8 + 120]
   lea r8, [r8 + 128]
-  mov [rcx + 80], r12
-  mov [rcx + 88], r13
+  mov [rcx + 80], rbx
+  mov [rcx + 88], rax
   mov [rcx + 96], r14
   mov [rcx + 104], r15
   mov [rcx + 112], rsi
@@ -193,20 +195,21 @@ nops 1
   dec r9
   jnz @loop
 
-  adc rax, rax ; - save carry -
+  setc al ; - save carry -
 
   ; - restore registers -
   pop rdi
   pop rsi
   pop r15
   pop r14
-  pop r13
-  pop r12
+  pop rbx
 
 nops 0
+pp006::
 @end:
-
+  and eax, 1
 ret
 UIntX_Add endp
 
-nops 19
+; align 64
+nops 16
