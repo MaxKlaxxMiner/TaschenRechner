@@ -97,7 +97,9 @@
     <Compile Include="UIntXm\Parse.cs" />
     <Compile Include="UIntXm\ToString.cs" />
     <Compile Include="UIntXm\UIntXm.cs" />
+    <Compile Include="UIntX\Add.cs" />
     <Compile Include="UIntX\AsmWrapper.cs" />
+    <Compile Include="UIntX\Const.cs" />
     <Compile Include="UIntX\Parse.cs" />
     <Compile Include="UIntX\ToString.cs" />
     <Compile Include="UIntX\UIntX.cs" />

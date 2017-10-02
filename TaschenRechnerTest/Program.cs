@@ -17,7 +17,6 @@ using System.Collections.Generic;
 //using ui = TaschenRechnerLib.UIntXs;
 using ui = TaschenRechnerLib.UIntX;
 
-
 namespace TaschenRechnerTest
 {
   static partial class Program
@@ -74,70 +73,71 @@ namespace TaschenRechnerTest
 
     static void Add()
     {
-      //var val01 = new ui(123);
-      //Debug.Assert(val01.ToString() == "123");
-      //var val02 = new ui(456);
-      //Debug.Assert(val02.ToString() == "456");
-      //var val03 = val01 + val02;
-      //Debug.Assert(val03.ToString() == "579");
-      //var val04 = new ui(99);
-      //Debug.Assert(val04.ToString() == "99");
-      //var val05 = val01 + val04;
-      //Debug.Assert(val05.ToString() == "222");
-      //var val06 = val04 + val02;
-      //Debug.Assert(val06.ToString() == "555");
-      //var val07 = val01 + ui.Zero;
-      //Debug.Assert(val07.ToString() == "123");
-      //var val08 = val01 + ui.One;
-      //Debug.Assert(val08.ToString() == "124");
-      //var val09 = val01 + ui.Two;
-      //Debug.Assert(val09.ToString() == "125");
-      //var val10 = new ui(49999);
-      //Debug.Assert(val10.ToString() == "49999");
-      //var val11 = new ui(50005);
-      //Debug.Assert(val11.ToString() == "50005");
-      //var val12 = val10 + val10; // 99998
-      //Debug.Assert(val12.ToString() == "99998");
-      //var val13 = val10 + val11; // 100004
-      //Debug.Assert(val13.ToString() == "100004");
-      //var val14 = val11 + val11; // 100010
-      //Debug.Assert(val14.ToString() == "100010");
-      //var val15 = new ui(999999999);
-      //Debug.Assert(val15.ToString() == "999999999");
-      //var val16 = ui.One + val15; // 1000000000
-      //Debug.Assert(val16.ToString() == "1000000000");
-      //var val17 = val15 + ui.One; // 1000000000
-      //Debug.Assert(val17.ToString() == "1000000000");
+      var val01 = new ui(123);
+      Debug.Assert(val01.ToString() == "123");
+      var val02 = new ui(456);
+      Debug.Assert(val02.ToString() == "456");
+      var val03 = val01 + val02;
+      Debug.Assert(val03.ToString() == "579");
+      var val04 = new ui(99);
+      Debug.Assert(val04.ToString() == "99");
+      var val05 = val01 + val04;
+      Debug.Assert(val05.ToString() == "222");
+      var val06 = val04 + val02;
+      Debug.Assert(val06.ToString() == "555");
+      var val07 = val01 + ui.Zero;
+      Debug.Assert(val07.ToString() == "123");
+      var val08 = val01 + ui.One;
+      Debug.Assert(val08.ToString() == "124");
+      var val09 = val01 + ui.Two;
+      Debug.Assert(val09.ToString() == "125");
+      var val10 = new ui(49999);
+      Debug.Assert(val10.ToString() == "49999");
+      var val11 = new ui(50005);
+      Debug.Assert(val11.ToString() == "50005");
+      var val12 = val10 + val10; // 99998
+      Debug.Assert(val12.ToString() == "99998");
+      var val13 = val10 + val11; // 100004
+      Debug.Assert(val13.ToString() == "100004");
+      var val14 = val11 + val11; // 100010
+      Debug.Assert(val14.ToString() == "100010");
+      var val15 = new ui(999999999);
+      Debug.Assert(val15.ToString() == "999999999");
+      var val16 = ui.One + val15; // 1000000000
+      Debug.Assert(val16.ToString() == "1000000000");
+      var val17 = val15 + ui.One; // 1000000000
+      Debug.Assert(val17.ToString() == "1000000000");
 
-      //var val18 = ui.One;
-      //for (int i = 0; i < 8; i++) val18 += val18;
-      //Debug.Assert(val18.ToString() == "256");
-      //for (int i = 8; i < 16; i++) val18 += val18;
-      //Debug.Assert(val18.ToString() == "65536");
-      //for (int i = 16; i < 31; i++) val18 += val18;
-      //val18 += val18;
-      //Debug.Assert(val18.ToString() == "4294967296");
-      //for (int i = 32; i < 64; i++) val18 += val18;
-      //Debug.Assert(val18.ToString() == "18446744073709551616");
-      //for (int i = 64; i < 128; i++) val18 += val18;
-      //Debug.Assert(val18.ToString() == "340282366920938463463374607431768211456");
+      var val18 = ui.One;
+      for (int i = 0; i < 8; i++) val18 += val18;
+      Debug.Assert(val18.ToString() == "256");
+      for (int i = 8; i < 16; i++) val18 += val18;
+      Debug.Assert(val18.ToString() == "65536");
+      for (int i = 16; i < 31; i++) val18 += val18;
+      val18 += val18;
+      Debug.Assert(val18.ToString() == "4294967296");
+      for (int i = 32; i < 63; i++) val18 += val18;
+      val18 += val18;
+      Debug.Assert(val18.ToString() == "18446744073709551616");
+      for (int i = 64; i < 128; i++) val18 += val18;
+      Debug.Assert(val18.ToString() == "340282366920938463463374607431768211456");
 
-      //Debug.Assert(val04.ToString() == "99");
-      //val04++; // 100
-      //Debug.Assert(val04.ToString() == "100");
-      //val04++; // 101
-      //Debug.Assert(val04.ToString() == "101");
+      Debug.Assert(val04.ToString() == "99");
+      val04++; // 100
+      Debug.Assert(val04.ToString() == "100");
+      val04++; // 101
+      Debug.Assert(val04.ToString() == "101");
 
-      //Debug.Assert(val15.ToString() == "999999999");
-      //val15++; // 1000000000
-      //Debug.Assert(val15.ToString() == "1000000000");
+      Debug.Assert(val15.ToString() == "999999999");
+      val15++; // 1000000000
+      Debug.Assert(val15.ToString() == "1000000000");
 
-      //var val19 = new ui(uint.MaxValue);
-      //val19++;
-      //Debug.Assert(val19.ToString() == "4294967296");
-      //var val20 = new ui(ulong.MaxValue);
-      //val20++;
-      //Debug.Assert(val20.ToString() == "18446744073709551616");
+      var val19 = new ui(uint.MaxValue);
+      val19++;
+      Debug.Assert(val19.ToString() == "4294967296");
+      var val20 = new ui(ulong.MaxValue);
+      val20++;
+      Debug.Assert(val20.ToString() == "18446744073709551616");
     }
 
     static void Compare()
@@ -297,8 +297,8 @@ namespace TaschenRechnerTest
 
     static void Main(string[] args)
     {
-      Constructor();
-      //Add();
+      //Constructor();
+      Add();
       //Compare();
       //Sub();
       //Mul();
