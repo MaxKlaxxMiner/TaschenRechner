@@ -16,12 +16,13 @@ UIntX_Copy proc export
   ; rdx = sp
   ; r8 = n
 
-  shr r8, 1 ; check: n % 2 != 0
+  shr r8, 1 ; check: n % 2 == 0
   jnc @l2
 
   ; - copy 1 limb -
   mov rax, [rdx]
   add rdx, 8
+
   mov [rcx], rax
   add rcx, 8
 
@@ -30,17 +31,21 @@ UIntX_Copy proc export
 
 @l2:
 
+;  shr r8, 1 ; check: n % 4 == 0
+;  jnc @l2
+
+
+align 16
 @loop:
-  ; - copy 1 limb -
+
+  ; - copy 2 limbs -
   mov rax, [rdx]
-  add rdx, 8
+  mov r9, [rdx + 8]
+  add rdx, 16
+
   mov [rcx], rax
-  add rcx, 8
-  ; - copy 1 limb -
-  mov rax, [rdx]
-  add rdx, 8
-  mov [rcx], rax
-  add rcx, 8
+  mov [rcx + 8], r9
+  add rcx, 16
 
   dec r8
   jnz @loop
