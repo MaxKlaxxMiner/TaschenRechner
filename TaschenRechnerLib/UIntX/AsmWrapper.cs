@@ -88,7 +88,28 @@ namespace TaschenRechnerLib
     {
       // todo: implement Assembler
       long i = 0;
+      for (; i < n - 7; i += 8)
+      {
+        var t0 = sp[i + 0];
+        var t1 = sp[i + 1];
+        var t2 = sp[i + 2];
+        var t3 = sp[i + 3];
+        var t4 = sp[i + 4];
+        var t5 = sp[i + 5];
+        var t6 = sp[i + 6];
+        var t7 = sp[i + 7];
+        rp[i + 0] = t0;
+        rp[i + 1] = t1;
+        rp[i + 2] = t2;
+        rp[i + 3] = t3;
+        rp[i + 4] = t4;
+        rp[i + 5] = t5;
+        rp[i + 6] = t6;
+        rp[i + 7] = t7;
+      }
+
       for (; i < n; i++) rp[i] = sp[i];
+
       return i;
     }
 #elif USE_REF
@@ -106,9 +127,30 @@ namespace TaschenRechnerLib
     public static long UIntX_Copy(ulong* rp, ulong* sp, long n)
     {
       Debug.Assert(n > 0);
-      // todo: speed-upgrade
+
       long i = 0;
+      for (; i < n - 7; i += 8)
+      {
+        var t0 = sp[i + 0];
+        var t1 = sp[i + 1];
+        var t2 = sp[i + 2];
+        var t3 = sp[i + 3];
+        var t4 = sp[i + 4];
+        var t5 = sp[i + 5];
+        var t6 = sp[i + 6];
+        var t7 = sp[i + 7];
+        rp[i + 0] = t0;
+        rp[i + 1] = t1;
+        rp[i + 2] = t2;
+        rp[i + 3] = t3;
+        rp[i + 4] = t4;
+        rp[i + 5] = t5;
+        rp[i + 6] = t6;
+        rp[i + 7] = t7;
+      }
+
       for (; i < n; i++) rp[i] = sp[i];
+
       return i;
     }
 #endif
