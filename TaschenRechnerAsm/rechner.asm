@@ -67,6 +67,28 @@ UIntX_Copy proc export
 
 @l8:
 
+  test cl, 8
+  jz @loop
+
+  dec r8
+  shl r8, 6
+  movdqu xmm0, [rdx + r8 + 8]
+  movdqu xmm1, [rdx + r8 + 16 + 8]
+  movdqu xmm2, [rdx + r8 + 32 + 8]
+  movdqu xmm3, [rdx + r8 + 48]
+  movdqa [rcx + r8 + 8], xmm0
+  movdqa [rcx + r8 + 16 + 8], xmm1
+  movdqa [rcx + r8 + 32 + 8], xmm2
+  movdqu [rcx + r8 + 48], xmm3
+  shr r8, 6
+  mov rax, [rdx]
+  add rdx, 8
+  mov [rcx], rax
+  add rcx, 8
+
+  test r8, r8
+  je @end
+
 align 16
 @loop:
 
@@ -77,10 +99,10 @@ align 16
   movdqu xmm3, [rdx + 48]
   add rdx, 64
 
-  movdqu [rcx], xmm0
-  movdqu [rcx + 16], xmm1
-  movdqu [rcx + 32], xmm2
-  movdqu [rcx + 48], xmm3
+  movdqa [rcx], xmm0
+  movdqa [rcx + 16], xmm1
+  movdqa [rcx + 32], xmm2
+  movdqa [rcx + 48], xmm3
   add rcx, 64
 
   dec r8

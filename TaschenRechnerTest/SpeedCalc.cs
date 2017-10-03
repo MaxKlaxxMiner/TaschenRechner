@@ -555,7 +555,7 @@ namespace TaschenRechnerTest
       if (limbCount < 256) limit >>= 1;
       if (limbCount < 16) limit >>= 1;
       Console.WriteLine();
-      Console.WriteLine("  - memcpy " + (limbCount * sizeof(ulong) / 1024.0).ToString("N2") + " KByte - (" + (limbCount * limit * sizeof(ulong) / 1048576.0).ToString("N0") + " MB)");
+      Console.WriteLine("  - memcpy " + limbCount.ToString("N0") + " limbs, " + (limbCount * sizeof(ulong) / 1024.0).ToString("N2") + " KByte - (" + (limbCount * limit * sizeof(ulong) / 1048576.0).ToString("N0") + " MB)");
       Console.WriteLine();
       double bestTime = double.MaxValue;
       var bufDst = new ulong[limbCount];
@@ -598,12 +598,14 @@ namespace TaschenRechnerTest
 
     static void SpeedCalcMemCpy()
     {
+      // for (int i = 1; i < 16; i++) SpeedCalcMemCpy(i);
       // SpeedCalcMemCpy(1);
+      // SpeedCalcMemCpy(15);
       // SpeedCalcMemCpy(16);
       // SpeedCalcMemCpy(256);
       // SpeedCalcMemCpy(1024);
-      // SpeedCalcMemCpy(4096);
-      SpeedCalcMemCpy(16384);
+       SpeedCalcMemCpy(4096);
+      // SpeedCalcMemCpy(16384);
       // SpeedCalcMemCpy(65536);
       // SpeedCalcMemCpy(262144);
       // SpeedCalcMemCpy(1048576);
