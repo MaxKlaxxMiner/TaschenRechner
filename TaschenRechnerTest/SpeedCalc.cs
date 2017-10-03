@@ -588,6 +588,8 @@ namespace TaschenRechnerTest
     {
       for (long i = 0; i < limit; i++)
       {
+        // AsmWrapper.UIntX_Copy_Ref(dst, src, limbCount);
+        // AsmWrapper.UIntX_Copy_Opti(dst, src, limbCount);
         AsmWrapper.UIntX_Copy(dst, src, limbCount);
         // AsmWrapper.mpn_copyd(dst, src, limbCount);
         // AsmWrapper.mpn_copyd_sse(dst, src, limbCount);
