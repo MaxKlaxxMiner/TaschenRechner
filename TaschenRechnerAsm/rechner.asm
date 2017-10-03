@@ -12,40 +12,54 @@ alignPointersCount dq (alignPointersCount - alignPointers) / qword
 
 ; void UIntX_Copy(ulong* rp, ulong* sp, long n)
 UIntX_Copy proc export
-  ; rcx = rp
-  ; rdx = sp
-  ; r8 = n
+  ; rcx = rp, rdx = sp, r8 = n
 
-  shr r8, 1 ; check: n % 2 == 0
+  ; -- check: n % 2 == 0 --
+  shr r8, 1
   jnc @l2
 
-  ; - copy 1 limb -
+  ; -- copy 1 limb --
   mov rax, [rdx]
   add rdx, 8
 
   mov [rcx], rax
   add rcx, 8
 
+  ; -- no more limbs --
   test r8, r8
-  je @end ; - no more limbs -
+  je @end
 
 @l2:
 
-;  shr r8, 1 ; check: n % 4 == 0
-;  jnc @l2
+  ; -- check: n % 4 == 0 --
+  shr r8, 1
+  jnc @l4
 
+  ; -- copy 2 limbs --
+  movdqu xmm0, [rdx]
+  add rdx, 16
+
+  movdqu [rcx], xmm0
+  add rcx, 16
+
+  ; -- no more limbs --
+  test r8, r8
+  je @end
+
+@l4:
 
 align 16
 @loop:
 
-  ; - copy 2 limbs -
-  mov rax, [rdx]
-  mov r9, [rdx + 8]
-  add rdx, 16
+  ; -- copy 4 limbs --
+  
+  movdqu xmm0, [rdx]
+  movdqu xmm1, [rdx + 16]
+  add rdx, 32
 
-  mov [rcx], rax
-  mov [rcx + 8], r9
-  add rcx, 16
+  movdqu [rcx], xmm0
+  movdqu [rcx + 16], xmm1
+  add rcx, 32
 
   dec r8
   jnz @loop
