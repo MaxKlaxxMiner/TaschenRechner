@@ -3,8 +3,8 @@ include Add.asm
 
 .data
 
-alignPointers dq UIntX_Copy
-                 ;@dllend
+alignPointers dq UIntX_Copy,
+                 @dllend
 
 alignPointersCount dq (alignPointersCount - alignPointers) / qword
 
@@ -16,7 +16,26 @@ UIntX_Copy proc export
   ; rdx = sp
   ; r8 = n
 
+  shr r8, 1 ; check: n % 2 != 0
+  jnc @l2
+
+  ; - copy 1 limb -
+  mov rax, [rdx]
+  add rdx, 8
+  mov [rcx], rax
+  add rcx, 8
+
+  test r8, r8
+  je @end ; - no more limbs -
+
+@l2:
+
 @loop:
+  ; - copy 1 limb -
+  mov rax, [rdx]
+  add rdx, 8
+  mov [rcx], rax
+  add rcx, 8
   ; - copy 1 limb -
   mov rax, [rdx]
   add rdx, 8
@@ -30,6 +49,132 @@ UIntX_Copy proc export
 ret
 UIntX_Copy endp
 
+
+
+align 16
+mpn_copyd_sse proc export
+
+  lea rcx, [rcx + r8 * 8 - 16]
+  lea rdx, [rdx + r8 * 8 - 16]
+
+  test cl, 8
+  jz @ali
+  mov rax, [rdx + 8]
+  lea rdx, [rdx - 8]
+  mov [rcx + 8], rax
+  lea rcx, [rcx - 8]
+  dec r8
+
+  sub r8, 16
+  jc @sma
+
+align 16
+@top:
+  movdqu xmm0, [rdx]
+  movdqu xmm1, [rdx - 16]
+  movdqu xmm2, [rdx - 32]
+  movdqu xmm3, [rdx - 48]
+  movdqu xmm4, [rdx - 64]
+  movdqu xmm5, [rdx - 80]
+  movdqu xmm6, [rdx - 96]
+  movdqu xmm7, [rdx - 112]
+  lea rdx, [rdx - 128]
+  movdqa [rcx], xmm0
+  movdqa [rcx - 16], xmm1
+  movdqa [rcx - 32], xmm2
+  movdqa [rcx - 48], xmm3
+  movdqa [rcx - 64], xmm4
+  movdqa [rcx - 80], xmm5
+  movdqa [rcx - 96], xmm6
+  movdqa [rcx - 112], xmm7
+  lea rcx, [rcx - 128]
+
+@ali:
+  sub r8, 16
+  jnc @top
+
+@sma:
+  test r8b, 8
+  jz @l4
+  movdqu xmm0, [rdx]
+  movdqu xmm1, [rdx - 16]
+  movdqu xmm2, [rdx - 32]
+  movdqu xmm3, [rdx - 48]
+  lea rdx, [rdx - 64]
+  movdqa [rcx], xmm0
+  movdqa [rcx - 16], xmm1
+  movdqa [rcx - 32], xmm2
+  movdqa [rcx - 48], xmm3
+  lea rcx, [rcx - 64]
+@l4:
+  test r8b, 4
+  jz @l2
+  movdqu xmm0, [rdx]
+  movdqu xmm1, [rdx - 16]
+  lea rdx, [rdx - 32]
+  movdqa [rcx], xmm0
+  movdqa [rcx - 16], xmm1
+  lea rcx, [rcx - 32]
+@l2:
+  test r8b, 2
+  jz @l1
+  movdqu xmm0, [rdx]
+  lea rdx, [rdx - 16]
+  movdqa [rcx], xmm0
+  lea rcx, [rcx - 16]
+@l1:
+  test r8b, 1
+  jz @don
+  mov rax, [rdx + 8]
+  mov [rcx + 8], rax
+
+@don:
+ ret
+mpn_copyd_sse endp
+
+
+
+align 16
+mpn_copyd proc export
+  lea rdx, [rdx + r8 * 8 - 8]
+  lea rcx, [rcx + r8 * 8]
+  sub r8, 4
+  jc @end
+  nop
+
+@top:
+  mov rax, [rdx]
+  mov r9, [rdx - 8]
+  lea rcx, [rcx - 32]
+  mov r10, [rdx - 16]
+  mov r11, [rdx - 24]
+  lea rdx, [rdx - 32]
+  mov [rcx + 24], rax
+  mov [rcx + 16], r9
+  sub r8, 4
+  mov [rcx + 8], r10
+  mov [rcx], r11
+jnc @top
+
+@end:
+  shr r8d, 1
+  jnc @l1
+  mov rax, [rdx]
+  mov [rcx - 8], rax
+  lea rcx, [rcx - 8]
+  lea rdx, [rdx - 8]
+
+@l1: 
+  shr r8d, 1
+  jnc @l0
+  mov rax, [rdx]
+  mov r9, [rdx - 8]
+  mov [rcx - 8], rax
+  mov [rcx - 16], r9
+
+@l0:
+  ret
+mpn_copyd endp
 
 
 

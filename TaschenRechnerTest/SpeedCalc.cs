@@ -17,6 +17,7 @@ using TaschenRechnerLib;
 // ReSharper disable FieldCanBeMadeReadOnly.Local
 // ReSharper disable InconsistentNaming
 // ReSharper disable UnusedMethodReturnValue.Local
+// ReSharper disable IntroduceOptionalParameters.Local
 #pragma warning disable 162
 #pragma warning disable 169
 #pragma warning disable 414
@@ -448,7 +449,6 @@ namespace TaschenRechnerTest
     static unsafe void SpeedCalcAddArray()
     {
       const int RetryCount = 40;
-      const int TestCount = 10000000;
 
       Console.WriteLine();
       Console.WriteLine("  - add " + (GetBytes().Length * 8) + " bits - ref -");
@@ -463,8 +463,6 @@ namespace TaschenRechnerTest
         Stopwatch m;
         fixed (ulong* rp = res, up = u, vp = v)
         {
-          const long Count = TestCount / BitCount * 1024;
-
           m = Stopwatch.StartNew();
 
           //CallSpeedCounter();
@@ -545,8 +543,68 @@ namespace TaschenRechnerTest
       for (int i = 0; i < count; i++)
       {
         Console.WriteLine("  0x" + p[i].ToString("x").PadLeft(16, '0') + " (" + (p[i] & 15) + " | " + (p[i] & 31) + " | " + (p[i] & 63) + ")");
-//        Console.WriteLine("  0x" + p[i].ToString("x").PadLeft(16, '0') + " (" + PointerAlign(p[i]) + (PointerAlign(p[i]) < 32 ? " ### - " + (32 - (p[i] & 31)) : "") + ")");
+        //        Console.WriteLine("  0x" + p[i].ToString("x").PadLeft(16, '0') + " (" + PointerAlign(p[i]) + (PointerAlign(p[i]) < 32 ? " ### - " + (32 - (p[i] & 31)) : "") + ")");
       }
+    }
+
+    static unsafe void SpeedCalcMemCpy(long limbCount)
+    {
+      const int RetryCount = 20;
+
+      long limit = 500000000L / limbCount;
+      if (limbCount < 256) limit >>= 1;
+      if (limbCount < 16) limit >>= 1;
+      Console.WriteLine();
+      Console.WriteLine("  - memcpy " + (limbCount * sizeof(ulong) / 1024.0).ToString("N2") + " KByte - (" + (limbCount * limit * sizeof(ulong) / 1048576.0).ToString("N0") + " MB)");
+      Console.WriteLine();
+      double bestTime = double.MaxValue;
+      var bufDst = new ulong[limbCount];
+      var bufSrc = new ulong[limbCount];
+
+      for (int r = 0; r < RetryCount; r++)
+      {
+        Stopwatch m;
+        fixed (ulong* dst = bufDst, src = bufSrc)
+        {
+          m = Stopwatch.StartNew();
+
+          SpeedCalcMemCpy(dst, src, limbCount, limit);
+
+          m.Stop();
+        }
+        double time = m.ElapsedTicks * 1000 / (double)Stopwatch.Frequency;
+        if (time < bestTime)
+        {
+          bestTime = time;
+          Console.ForegroundColor = ConsoleColor.Yellow;
+        }
+        Console.WriteLine("   " + time.ToString("N2") + " ms");
+        Console.ForegroundColor = ConsoleColor.Gray;
+      }
+    }
+
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    static unsafe void SpeedCalcMemCpy(ulong* dst, ulong* src, long limbCount, long limit)
+    {
+      for (long i = 0; i < limit; i++)
+      {
+        AsmWrapper.UIntX_Copy(dst, src, limbCount);
+        // AsmWrapper.mpn_copyd(dst, src, limbCount);
+        // AsmWrapper.mpn_copyd_sse(dst, src, limbCount);
+      }
+    }
+
+    static void SpeedCalcMemCpy()
+    {
+      // SpeedCalcMemCpy(1);
+      // SpeedCalcMemCpy(16);
+      // SpeedCalcMemCpy(256);
+      // SpeedCalcMemCpy(1024);
+      // SpeedCalcMemCpy(4096);
+      SpeedCalcMemCpy(16384);
+      // SpeedCalcMemCpy(65536);
+      // SpeedCalcMemCpy(262144);
+      // SpeedCalcMemCpy(1048576);
     }
 
     static void SpeedCalc()
@@ -561,7 +619,9 @@ namespace TaschenRechnerTest
 
       //SpeedCalcMinMaxBranched();
 
-      SpeedCalcAddArray();
+      //SpeedCalcAddArray();
+
+      SpeedCalcMemCpy();
 
       //SpeedCalcMemoryAllocation();
     }

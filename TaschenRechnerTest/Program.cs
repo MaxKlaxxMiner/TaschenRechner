@@ -328,6 +328,7 @@ namespace TaschenRechnerTest
 
     static void Main(string[] args)
     {
+      // --- Funktionalitäten prüfen ---
       //Constructor();
       //Add();
       //Compare();
@@ -335,8 +336,9 @@ namespace TaschenRechnerTest
       //Mul();
       //Div();
       //Mod();
-      Copy();
+      //Copy();
 
+      // --- Geschwindigkeiten messen ---
       //SpeedCheckAdd();
       //SpeedCheckInc();
       //SpeedCheckSub();
@@ -345,9 +347,10 @@ namespace TaschenRechnerTest
       //SpeedCheckDiv();
       //SpeedCheckStr();
 
+      // --- Extras prüfen ---
       //SpeedDiv();
       //SpeedValues();
-      //SpeedCalc();
+      SpeedCalc();
       //MemTest();
     }
   }

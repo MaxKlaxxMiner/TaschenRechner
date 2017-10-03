@@ -85,6 +85,10 @@ namespace TaschenRechnerLib
 #if USE_ASM
     [DllImport("TaschenRechnerAsm.dll"), SuppressUnmanagedCodeSecurity]
     public static extern void UIntX_Copy(ulong* rp, ulong* sp, long n);
+    [DllImport("TaschenRechnerAsm.dll"), SuppressUnmanagedCodeSecurity]
+    public static extern void mpn_copyd(ulong* rp, ulong* sp, long n);
+    [DllImport("TaschenRechnerAsm.dll"), SuppressUnmanagedCodeSecurity]
+    public static extern void mpn_copyd_sse(ulong* rp, ulong* sp, long n);
 #elif USE_REF
     public static void UIntX_Copy(ulong* rp, ulong* sp, long n)
     {
