@@ -339,7 +339,7 @@ namespace TaschenRechnerTest
       //Copy();
 
       // --- Geschwindigkeiten messen ---
-      //SpeedCheckAdd();
+      SpeedCheckAdd();
       //SpeedCheckInc();
       //SpeedCheckSub();
       //SpeedCheckDec();
@@ -350,7 +350,7 @@ namespace TaschenRechnerTest
       // --- Extras prüfen ---
       //SpeedDiv();
       //SpeedValues();
-      SpeedCalc();
+      //SpeedCalc();
       //MemTest();
     }
   }

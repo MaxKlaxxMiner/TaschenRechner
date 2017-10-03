@@ -18,7 +18,7 @@ Test 2: 315.76 ms
 
 - UIntX_Add - ASM -
 Test 1:  63.73 ms
-Test 2: 284.78 ms
+Test 2: 249.98 ms
 
 - UIntX_Add - NoAsm (native C#) -
 Test 1: 104.26 ms
