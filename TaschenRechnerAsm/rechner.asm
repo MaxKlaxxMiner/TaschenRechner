@@ -16,20 +16,15 @@ UIntX_Copy proc export
   ; rdx = sp
   ; r8 = n
 
-  test r8, r8
-  je @end ; - no more limbs -
+@loop:
+  ; - copy 1 limb -
+  mov rax, [rdx]
+  add rdx, 8
+  mov [rcx], rax
+  add rcx, 8
 
-  shr r8, 1
-  jnc @l2
-
-@l2:
-
-  shr r8, 1
-  jnc @l4
-
-@l4:
-
-  
+  dec r8
+  jnz @loop
 
 @end:
 ret

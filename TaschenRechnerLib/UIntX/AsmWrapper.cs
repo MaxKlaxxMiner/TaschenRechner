@@ -1,9 +1,9 @@
 ﻿
 // --- benutzt Assembler-Routinen für höchste Geschwindigkeit ---
-//#define USE_ASM
+#define USE_ASM
 
 // --- benutzt Referenz-Methoden für bessere Zuverlässigkeit ---
-#define USE_REF
+//#define USE_REF
 
 #region # using *.*
 // ReSharper disable RedundantUsingDirective
