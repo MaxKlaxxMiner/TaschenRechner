@@ -31,7 +31,8 @@
         }
         if (val1.limbCount - addLen > 0)
         {
-          addLen += AsmWrapper.UIntX_Copy(target + addLen, l1 + addLen, val1.limbCount - addLen);
+          AsmWrapper.UIntX_Copy(target + addLen, l1 + addLen, val1.limbCount - addLen);
+          addLen = val1.limbCount;
         }
       }
 

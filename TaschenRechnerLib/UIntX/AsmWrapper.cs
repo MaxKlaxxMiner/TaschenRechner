@@ -1,9 +1,9 @@
 ﻿
 // --- benutzt Assembler-Routinen für höchste Geschwindigkeit ---
-#define USE_ASM
+//#define USE_ASM
 
 // --- benutzt Referenz-Methoden für bessere Zuverlässigkeit ---
-//#define USE_REF
+#define USE_REF
 
 #region # using *.*
 // ReSharper disable RedundantUsingDirective
@@ -75,56 +75,25 @@ namespace TaschenRechnerLib
 #endif
     #endregion
 
-    #region # long UIntX_Copy(ulong* rp, ulong* sp, long n) // kopiert mehrere Limbs und gibt die entsprechende Anzahl zurück
+    #region # long UIntX_Copy(ulong* rp, ulong* sp, long n) // kopiert mehrere Limbs
     /// <summary>
-    /// kopiert mehrere Limbs und gibt die entsprechende Anzahl zurück
+    /// kopiert mehrere Limbs
     /// </summary>
     /// <param name="rp">Ziel-Adresse, wohin die Limbs geschrieben werden sollen</param>
     /// <param name="sp">Quell-Adresse, der Limbs, welche gelesen werden sollen</param>
     /// <param name="n">Anzahl der Limbs, welche kopiert werden sollen (min: 1)</param>
-    /// <returns>Anzahl der kopierten Limbs</returns>
 #if USE_ASM
-    public static long UIntX_Copy(ulong* rp, ulong* sp, long n)
-    {
-      // todo: implement Assembler
-      long i = 0;
-      for (; i < n - 7; i += 8)
-      {
-        var t0 = sp[i + 0];
-        var t1 = sp[i + 1];
-        var t2 = sp[i + 2];
-        var t3 = sp[i + 3];
-        var t4 = sp[i + 4];
-        var t5 = sp[i + 5];
-        var t6 = sp[i + 6];
-        var t7 = sp[i + 7];
-        rp[i + 0] = t0;
-        rp[i + 1] = t1;
-        rp[i + 2] = t2;
-        rp[i + 3] = t3;
-        rp[i + 4] = t4;
-        rp[i + 5] = t5;
-        rp[i + 6] = t6;
-        rp[i + 7] = t7;
-      }
-
-      for (; i < n; i++) rp[i] = sp[i];
-
-      return i;
-    }
+    [DllImport("TaschenRechnerAsm.dll"), SuppressUnmanagedCodeSecurity]
+    public static extern void UIntX_Copy(ulong* rp, ulong* sp, long n);
 #elif USE_REF
-    public static long UIntX_Copy(ulong* rp, ulong* sp, long n)
+    public static void UIntX_Copy(ulong* rp, ulong* sp, long n)
     {
       if (n <= 0) throw new ArgumentOutOfRangeException("n");
 
-      long i = 0;
-
-      for (; i < n; i++) rp[i] = sp[i];
-
-      return i;
+      for (long i = 0; i < n; i++) rp[i] = sp[i];
     }
 #else
-    public static long UIntX_Copy(ulong* rp, ulong* sp, long n)
+    public static void UIntX_Copy(ulong* rp, ulong* sp, long n)
     {
       Debug.Assert(n > 0);
 
@@ -150,8 +119,6 @@ namespace TaschenRechnerLib
       }
 
       for (; i < n; i++) rp[i] = sp[i];
-
-      return i;
     }
 #endif
     #endregion

@@ -1,8 +1,4 @@
-﻿
-using System.Runtime.InteropServices;
-using System.Security;
-
-#region # using *.*
+﻿#region # using *.*
 // ReSharper disable RedundantUsingDirective
 using System;
 using System.Diagnostics;
@@ -10,6 +6,8 @@ using System.Linq;
 using System.Numerics;
 using TaschenRechnerLib;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
+using System.Security;
 // ReSharper disable RedundantAssignment
 // ReSharper disable UnusedVariable
 // ReSharper disable UnusedMember.Local
@@ -23,7 +21,7 @@ using ui = TaschenRechnerLib.UIntX;
 
 namespace TaschenRechnerTest
 {
-  static partial class Program
+  static unsafe partial class Program
   {
     static void Constructor()
     {
@@ -299,6 +297,35 @@ namespace TaschenRechnerTest
       //Debug.Assert(val11.ToString() == "1");
     }
 
+    static void Copy()
+    {
+      const int Len = 65536;
+      var sourceBuf = Enumerable.Range(0, Len).Select(i => (ulong)i * 91UL + 19UL).ToArray();
+      var targetBuf = new ulong[Len];
+      fixed (ulong* target = targetBuf, source = sourceBuf)
+      {
+        for (long copyLen = 1; copyLen < Len - 256; copyLen += copyLen < 300 ? 1 : copyLen / 30)
+        {
+          Console.WriteLine(copyLen + " / 65000");
+          for (long targetOffset = 0; targetOffset < 9; targetOffset++)
+          {
+            for (long sourceOffset = 0; sourceOffset < 9; sourceOffset++)
+            {
+              // --- prepare ---
+              for (long i = 0; i < targetBuf.Length; i++) target[i] = ulong.MaxValue;
+
+              AsmWrapper.UIntX_Copy(target + targetOffset, source + sourceOffset, copyLen);
+
+              // --- check ---
+              for (long i = 0; i < targetOffset; i++) if (target[i] != ulong.MaxValue) throw new Exception("err < targetOffset: " + new { copyLen, targetOffset, sourceOffset });
+              for (long i = 0; i < copyLen; i++) if (target[targetOffset + i] != (ulong)(i + sourceOffset) * 91UL + 19UL) throw new Exception("err (room): " + new { copyLen, targetOffset, sourceOffset });
+              for (long i = targetOffset + copyLen; i < Len; i++) if (target[i] != ulong.MaxValue) throw new Exception("err >= targetOffset + copyLen: " + new { copyLen, targetOffset, sourceOffset });
+            }
+          }
+        }
+      }
+    }
+
     static void Main(string[] args)
     {
       //Constructor();
@@ -308,8 +335,9 @@ namespace TaschenRechnerTest
       //Mul();
       //Div();
       //Mod();
+      Copy();
 
-      SpeedCheckAdd();
+      //SpeedCheckAdd();
       //SpeedCheckInc();
       //SpeedCheckSub();
       //SpeedCheckDec();

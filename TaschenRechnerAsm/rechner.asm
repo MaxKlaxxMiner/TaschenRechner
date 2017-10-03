@@ -3,12 +3,40 @@ include Add.asm
 
 .data
 
-alignPointers dq mpn_add_n
+alignPointers dq UIntX_Copy
                  ;@dllend
 
 alignPointersCount dq (alignPointersCount - alignPointers) / qword
 
 .code
+
+; void UIntX_Copy(ulong* rp, ulong* sp, long n)
+UIntX_Copy proc export
+  ; rcx = rp
+  ; rdx = sp
+  ; r8 = n
+
+  test r8, r8
+  je @end ; - no more limbs -
+
+  shr r8, 1
+  jnc @l2
+
+@l2:
+
+  shr r8, 1
+  jnc @l4
+
+@l4:
+
+  
+
+@end:
+ret
+UIntX_Copy endp
+
+
+
 
 ; ulong mpn_add_n(ulong* rp, ulong* up, ulong* vp, long n)
 align 16
