@@ -3,7 +3,7 @@ include Add.asm
 
 .data
 
-alignPointers dq UIntX_Copy,
+alignPointers dq UIntX_Copy, @len,
                  @dllend
 
 alignPointersCount dq (alignPointersCount - alignPointers) / qword
@@ -48,11 +48,11 @@ UIntX_Copy proc export
 
 @l4:
 
-align 16
-@loop:
+  ; -- check: n % 8 == 0 --
+  shr r8, 1
+  jnc @l8
 
   ; -- copy 4 limbs --
-  
   movdqu xmm0, [rdx]
   movdqu xmm1, [rdx + 16]
   add rdx, 32
@@ -61,6 +61,28 @@ align 16
   movdqu [rcx + 16], xmm1
   add rcx, 32
 
+  ; -- no more limbs --
+  test r8, r8
+  je @end
+
+@l8:
+
+align 16
+@loop:
+
+  ; -- copy 8 limbs --
+  movdqu xmm0, [rdx]
+  movdqu xmm1, [rdx + 16]
+  movdqu xmm2, [rdx + 32]
+  movdqu xmm3, [rdx + 48]
+  add rdx, 64
+
+  movdqu [rcx], xmm0
+  movdqu [rcx + 16], xmm1
+  movdqu [rcx + 32], xmm2
+  movdqu [rcx + 48], xmm3
+  add rcx, 64
+
   dec r8
   jnz @loop
 
@@ -68,6 +90,7 @@ align 16
 ret
 UIntX_Copy endp
 
+@len::
 
 
 align 16
