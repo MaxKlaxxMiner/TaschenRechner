@@ -22,8 +22,6 @@ UIntX_Add proc export
   add r8, 8
   add rcx, 8
 
-nops 0
-pp001::
 @l2:
   shr r9, 1
   jnc @l4
@@ -49,7 +47,6 @@ pp001::
   add rcx, 16
 
 nops 4
-pp002::
 @l4:
   shr r9, 1
   jnc @l8
@@ -81,7 +78,6 @@ pp002::
   add rcx, 32
 
 nops 2
-pp003::
 @l8:
   shr r9, 1
   jnc @l16
@@ -125,7 +121,6 @@ pp003::
   add rcx, 64
 
 nops 2
-pp004::
 @l16:
   ; - save registers -
   push rbx
@@ -137,7 +132,6 @@ pp004::
   btr eax, 0 ; - reload carry -
 
 nops 5
-pp005::
 @loop:
   ; - 16 limbs -
   mov r10, [rdx]
@@ -204,8 +198,6 @@ pp005::
   pop r14
   pop rbx
 
-nops 0
-pp006::
 @end:
   and eax, 1
 ret
