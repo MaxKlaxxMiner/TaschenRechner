@@ -3,12 +3,155 @@ include Add.asm
 
 .data
 
-alignPointers dq UIntX_Copy, @len,
+alignPointers dq mpn_add_n_coreisbr, mpn_add_nc_coreisbr,
                  @dllend
 
 alignPointersCount dq (alignPointersCount - alignPointers) / qword
 
 .code
+
+nops 7
+
+mpn_add_n_coreisbr proc export
+push rbx
+push rsi
+
+  mov r11, rcx
+  mov rcx, r9
+
+  xor r10, r10
+
+@ent:
+  mov eax, ecx
+  shr rcx, 2
+
+  test al, 1
+  jnz @bx1
+
+@bx0:
+  test al, 2
+  jnz @b10
+
+@b00:
+  neg r10
+  mov r10, [rdx]
+  mov r9, [rdx + 8]
+  adc r10, [r8]
+  adc r9, [r8 + 8]
+  mov rbx, [rdx + 16]
+  mov rsi, [rdx + 24]
+  lea rdx, [rdx + 32]
+  adc rbx, [r8 + 16]
+  adc rsi, [r8 + 24]
+  lea r8, [r8 + 32]
+  lea r11, [r11 - 16]
+  jmp @lo0
+
+@b10:
+  neg r10
+  mov rbx, [rdx]
+  mov rsi, [rdx + 8]
+  adc rbx, [r8]
+  adc rsi, [r8 + 8]
+  jrcxz @e2
+  mov r10, [rdx + 16]
+  mov r9, [rdx + 24]
+  lea rdx, [rdx + 16]
+  adc r10, [r8 + 16]
+  adc r9, [r8 + 24]
+  lea r8, [r8 + 16]
+  lea r11, [r11]
+  jmp @lo2
+
+@e2:
+  mov [r11], rbx
+  mov [r11 + 8], rsi
+  setc al
+
+pop rsi
+pop rbx
+ret
+
+@bx1:
+  test al, 2
+  jnz @b11
+
+@b01:
+  neg r10
+  mov rsi, [rdx]
+  adc rsi, [r8]
+  jrcxz @e1
+  mov r10, [rdx + 8]
+  mov r9, [rdx + 16]
+  lea rdx, [rdx + 8]
+  lea r11, [r11 - 8]
+  adc r10, [r8 + 8]
+  adc r9, [r8 + 16]
+  lea r8, [r8 + 8]
+  jmp @lo1
+
+@e1:
+  mov [r11], rsi
+  setc al
+
+pop rsi
+pop rbx
+ret
+
+@b11:
+  neg r10
+  mov r9, [rdx]
+  adc r9, [r8]
+  mov rbx, [rdx + 8]
+  mov rsi, [rdx + 16]
+  lea rdx, [rdx + 24]
+  adc rbx, [r8 + 8]
+  adc rsi, [r8 + 16]
+  lea r8, [r8 + 24]
+  mov [r11], r9
+  lea r11, [r11 + 8]
+  jrcxz @end
+
+  align 16
+@top:
+  mov r10, [rdx]
+  mov r9, [rdx + 8]
+  adc r10, [r8]
+  adc r9, [r8 + 8]
+@lo2:
+  mov [r11], rbx
+@lo1:
+  mov [r11 + 8], rsi
+  mov rbx, [rdx + 16]
+  mov rsi, [rdx + 24]
+  lea rdx, [rdx + 32]
+  adc rbx, [r8 + 16]
+  adc rsi, [r8 + 24]
+  lea r8, [r8 + 32]
+@lo0:
+  mov [r11 + 16], r10
+@lo3:
+  mov [r11 + 24], r9
+  lea r11, [r11 + 32]
+  dec rcx
+  jnz @top
+
+@end:
+  mov eax, ecx
+  mov [r11], rbx
+  mov [r11 + 8], rsi
+  setc al
+
+pop rsi
+pop rbx
+ret
+mpn_add_n_coreisbr endp
+
+mpn_add_nc_coreisbr proc export
+; mov r8, [rsp+40]
+; jmp -> mpn_add_n_coreisbr.@ent
+mpn_add_nc_coreisbr endp
+
 
 ; void UIntX_Copy(ulong* rp, ulong* sp, long n)
 UIntX_Copy proc export

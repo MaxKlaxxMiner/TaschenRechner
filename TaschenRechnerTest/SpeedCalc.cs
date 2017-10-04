@@ -356,7 +356,7 @@ namespace TaschenRechnerTest
       public static extern int GetAlignPointers(long[] pointers);
 
       [DllImport("TaschenRechnerAsm.dll"), SuppressUnmanagedCodeSecurity]
-      public static extern ulong mpn_add_n(ulong* rp, ulong* up, ulong* vp, long n);
+      public static extern ulong mpn_add_n_coreisbr(ulong* rp, ulong* up, ulong* vp, long n);
 
       [DllImport("TaschenRechnerAsm.dll"), SuppressUnmanagedCodeSecurity]
       public static extern long UIntX_Add(ulong* rp, ulong* up, ulong* vp, long n);
@@ -392,8 +392,8 @@ namespace TaschenRechnerTest
     //const int BitCount = 1024;
     //const int RefResult = 1995198812;
 
-    //const int BitCount = 65536;
-    //const int RefResult = 951296797;
+    const int BitCount = 65536;
+    const int RefResult = 951296797;
 
     //const int BitCount = 1048576;
     //const int RefResult = -240413923;
@@ -401,8 +401,8 @@ namespace TaschenRechnerTest
     //const int BitCount = 10000000;
     //const int RefResult = -1524706991;
 
-    const int BitCount = 5;
-    const int RefResult = 505297501;
+    //const int BitCount = 5;
+    //const int RefResult = 505297501;
 
     const int ByteCount = BitCount >= 64 ? BitCount / 8 : 1024 + 8;
 
@@ -423,26 +423,17 @@ namespace TaschenRechnerTest
       return result;
     }
 
+    [MethodImpl(MethodImplOptions.NoInlining)]
     static unsafe void CalcSpeedCounter(ulong* rp, ulong* up, ulong* vp)
     {
-      var _rp = rp;
-      var _up = up;
-      var _vp = vp;
       for (long i = 0; i < (BitCount >= 64 ? 10000000 / BitCount * 1024 : 5000000); i++)
       {
-        //        1 |        2 |        3 |        4 |        5 |        6 |        7 |        8 |     16 |  1024 | 16384 | 156250 |
+        //   full       1     31    1024   65536  10 M
+        // 129,00  588,26  80,90   98,84   52,82  106,16
+        //Adder.UIntX_Add(rp, up, vp, BitCount >= 64 ? ByteCount / sizeof(ulong) : (i & (ByteCount - 8) / sizeof(ulong) - 1) + 1);
 
-        // 1.275,60 | 1.222,85 | 1.222,52 | 1.220,00 | 1.311,65 | 1.295,70 | 1.276,65 | 1.260,80 |
-        //Adder.AddRef((byte*)rp, (byte*)up, (byte*)vp, ByteCount);
-
-        //   683,54 |   444,80 |   367,92 |   335,82 |   307,54 |   295,68 |   286,31 |   279,36 |
-        //Adder.AddGmpLong5(_rp, _up, _vp, BitCount >= 64 ? ByteCount / sizeof(ulong) : (i & (ByteCount - 8) / sizeof(ulong) - 1) + 1);
-
-        //   563,64 |   302,74 |   215,50 |   195,82 |   165,84 |   153,61 |   138,20 |   132,36 |  97,84 | 65,05 | 97,06 | 164,92 |
-        //Adder.mpn_add_n(_rp, _up, _vp, BitCount >= 64 ? ByteCount / sizeof(ulong) : (i & (ByteCount - 8) / sizeof(ulong) - 1) + 1);
-
-        //   552,22 |   346,56 |   245,74 |   195,80 |   175,11 |   153,53 |   151,37 |   126,67 |  95,10 | 52,85 | 98,49 | 163,91 |
-        Adder.UIntX_Add(_rp, _up, _vp, BitCount >= 64 ? ByteCount / sizeof(ulong) : (i & (ByteCount - 8) / sizeof(ulong) - 1) + 1);
+        // 143,35  672,49  80,47  102,71   61,93  108,66
+        Adder.mpn_add_n_coreisbr(rp, up, vp, BitCount >= 64 ? ByteCount / sizeof(ulong) : (i & (ByteCount - 8) / sizeof(ulong) - 1) + 1);
       }
     }
 
@@ -604,7 +595,7 @@ namespace TaschenRechnerTest
       // SpeedCalcMemCpy(16);
       // SpeedCalcMemCpy(256);
       // SpeedCalcMemCpy(1024);
-       SpeedCalcMemCpy(4096);
+      // SpeedCalcMemCpy(4096);
       // SpeedCalcMemCpy(16384);
       // SpeedCalcMemCpy(65536);
       // SpeedCalcMemCpy(262144);
@@ -623,9 +614,9 @@ namespace TaschenRechnerTest
 
       //SpeedCalcMinMaxBranched();
 
-      //SpeedCalcAddArray();
+      SpeedCalcAddArray();
 
-      SpeedCalcMemCpy();
+      //SpeedCalcMemCpy();
 
       //SpeedCalcMemoryAllocation();
     }

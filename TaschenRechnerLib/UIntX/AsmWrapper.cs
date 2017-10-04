@@ -32,9 +32,9 @@ namespace TaschenRechnerLib
     /// <param name="n">Anzahl der Limbs, welche addiert werden sollen (min: 1)</param>
     /// <returns>Carry-Flag, welches übrig geblieben ist (1 oder 0)</returns>
 #if USE_ASM
-    //
     [DllImport("TaschenRechnerAsm.dll"), SuppressUnmanagedCodeSecurity]
     //[DllImport("libgmp-10_5.0.1.dll", EntryPoint = "__gmpn_add_n"), SuppressUnmanagedCodeSecurity]
+    //[DllImport("TaschenRechnerAsm.dll", EntryPoint = "mpn_add_n_coreisbr"), SuppressUnmanagedCodeSecurity]
     public static extern ulong UIntX_Add(ulong* rp, ulong* up, ulong* vp, long n);
 #elif USE_REF
     public static ulong UIntX_Add(ulong* rp, ulong* up, ulong* vp, long n)
