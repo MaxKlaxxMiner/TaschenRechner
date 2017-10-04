@@ -121,7 +121,8 @@ namespace TaschenRechnerTest
       for (int i = 32; i < 63; i++) val18 += val18;
       val18 += val18;
       Debug.Assert(val18.ToString() == "18446744073709551616");
-      for (int i = 64; i < 128; i++) val18 += val18;
+      for (int i = 64; i < 127; i++) val18 += val18;
+      val18 += val18;
       Debug.Assert(val18.ToString() == "340282366920938463463374607431768211456");
 
       Debug.Assert(val04.ToString() == "99");
@@ -138,6 +139,7 @@ namespace TaschenRechnerTest
       val19++;
       Debug.Assert(val19.ToString() == "4294967296");
       var val20 = new ui(ulong.MaxValue);
+      ulong v1 = (ulong)val20;
       val20++;
       Debug.Assert(val20.ToString() == "18446744073709551616");
       val20 += 12345;
@@ -336,7 +338,7 @@ namespace TaschenRechnerTest
     {
       // --- Funktionalitäten prüfen ---
       //Constructor();
-      Add();
+      //Add();
       //Compare();
       //Sub();
       //Mul();
@@ -345,7 +347,7 @@ namespace TaschenRechnerTest
       //Copy();
 
       // --- Geschwindigkeiten messen ---
-      //SpeedCheckAdd();
+      SpeedCheckAdd();
       //SpeedCheckInc();
       //SpeedCheckSub();
       //SpeedCheckDec();

@@ -21,6 +21,7 @@ namespace TaschenRechnerLib
     /// </summary>
     readonly long limbCount;
 
+    #region # // --- Überladungen ---
     /// <summary>
     /// Konstruktor mit einem signierten 8-Bit Wert
     /// </summary>
@@ -62,6 +63,63 @@ namespace TaschenRechnerLib
     /// </summary>
     /// <param name="val">Wert, welcher verwendet werden soll</param>
     public UIntX(uint val) : this((ulong)val) { }
+
+    /// <summary>
+    /// Operator für die implizite Konvertierung
+    /// </summary>
+    /// <param name="val">Wert, welcher verwendet werden soll</param>
+    /// <returns>fertiges Ergebnis</returns>
+    public static implicit operator UIntX(byte val) { return new UIntX(val); }
+
+    /// <summary>
+    /// Operator für die implizite Konvertierung
+    /// </summary>
+    /// <param name="val">Wert, welcher verwendet werden soll</param>
+    /// <returns>fertiges Ergebnis</returns>
+    public static implicit operator UIntX(ushort val) { return new UIntX(val); }
+
+    /// <summary>
+    /// Operator für die implizite Konvertierung
+    /// </summary>
+    /// <param name="val">Wert, welcher verwendet werden soll</param>
+    /// <returns>fertiges Ergebnis</returns>
+    public static implicit operator UIntX(uint val) { return new UIntX(val); }
+
+    /// <summary>
+    /// Operator für die implizite Konvertierung
+    /// </summary>
+    /// <param name="val">Wert, welcher verwendet werden soll</param>
+    /// <returns>fertiges Ergebnis</returns>
+    public static implicit operator UIntX(ulong val) { return new UIntX(val); }
+
+    /// <summary>
+    /// Operator für die explizite Konvertierung
+    /// </summary>
+    /// <param name="val">Wert, welcher verwendet werden soll</param>
+    /// <returns>fertiges Ergebnis</returns>
+    public static explicit operator byte(UIntX val) { return checked((byte)(ulong)val); }
+
+    /// <summary>
+    /// Operator für die explizite Konvertierung
+    /// </summary>
+    /// <param name="val">Wert, welcher verwendet werden soll</param>
+    /// <returns>fertiges Ergebnis</returns>
+    public static explicit operator ushort(UIntX val) { return checked((ushort)(ulong)val); }
+
+    /// <summary>
+    /// Operator für die explizite Konvertierung
+    /// </summary>
+    /// <param name="val">Wert, welcher verwendet werden soll</param>
+    /// <returns>fertiges Ergebnis</returns>
+    public static explicit operator uint(UIntX val) { return checked((uint)(ulong)val); }
+
+    /// <summary>
+    /// Operator für die explizite Konvertierung
+    /// </summary>
+    /// <param name="val">Wert, welcher verwendet werden soll</param>
+    /// <returns>fertiges Ergebnis</returns>
+    public static explicit operator ulong(UIntX val) { if (val.limbCount != 1) throw new OverflowException(); return val.limbs[0]; }
+    #endregion
 
     /// <summary>
     /// Konstruktor mit einem unsignierten 64-Bit Wert

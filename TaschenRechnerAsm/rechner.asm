@@ -3,8 +3,8 @@ include Add.asm
 
 .data
 
-alignPointers dq mpn_add_n_coreisbr, mpn_add_nc_coreisbr,
-                 @dllend
+alignPointers dq UIntX_Add, _@l2, _@l4, _@l8, _@l16, _@end, _@ret
+                 ;@dllend
 
 alignPointersCount dq (alignPointersCount - alignPointers) / qword
 

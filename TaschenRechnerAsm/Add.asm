@@ -3,16 +3,18 @@
 ;                 rcx,       rdx,       r8,        r9
 UIntX_Add proc export
 
+  xor eax, eax ; - temp register for carry flag, default: 0 -
+
   ; - check n % 2 == 0 -
   shr r9, 1
   jnc @l2
 
   ; - 1 limb -
-  mov rax, [rdx]
-  add rax, [r8]
-  mov [rcx], rax
+  mov r10, [rdx]
+  add r10, [r8]
+  mov [rcx], r10
 
-  setc al ; - save carry -
+  sbb eax, eax ; - save carry -
 
   test r9, r9
   je @end ; - no more limbs -
@@ -22,21 +24,23 @@ UIntX_Add proc export
   add r8, 8
   add rcx, 8
 
+nops 0
+_@l2::
 @l2:
   shr r9, 1
   jnc @l4
 
-  btr eax, 0 ; - reload carry -
+  shr eax, 1 ; - reload carry -
 
   ; - 2 limbs -
-  mov rax, [rdx]
+  mov r10, [rdx]
   mov r11, [rdx + 8]
-  adc rax, [r8]
+  adc r10, [r8]
   adc r11, [r8 + 8]
-  mov [rcx], rax
+  mov [rcx], r10
   mov [rcx + 8], r11
 
-  setc al ; - save carry -
+  sbb eax, eax ; - save carry -
 
   test r9, r9
   je @end ; - no more limbs -
@@ -46,12 +50,13 @@ UIntX_Add proc export
   add r8, 16
   add rcx, 16
 
-nops 4
+nops 0
+_@l4::
 @l4:
   shr r9, 1
   jnc @l8
 
-  btr eax, 0 ; - reload carry -
+  shr eax, 1 ; - reload carry -
 
   ; - 4 limbs -
   mov rax, [rdx]
@@ -67,7 +72,7 @@ nops 4
   mov [rcx + 16], r11
   mov [rcx + 24], rax
 
-  setc al ; - save carry -
+  sbb eax, eax ; - save carry -
 
   test r9, r9
   je @end ; - no more limbs -
@@ -77,12 +82,13 @@ nops 4
   add r8, 32
   add rcx, 32
 
-nops 2
+nops 0
+_@l8::
 @l8:
   shr r9, 1
   jnc @l16
 
-  btr eax, 0 ; - reload carry -
+  shr eax, 1 ; - reload carry -
 
   ; - 8 limbs -
   mov rax, [rdx]
@@ -110,7 +116,7 @@ nops 2
   mov [rcx + 48], rax
   mov [rcx + 56], r10
 
-  setc al ; - save carry -
+  sbb eax, eax ; - save carry -
 
   test r9, r9
   je @end ; - no more limbs -
@@ -120,7 +126,8 @@ nops 2
   add r8, 64
   add rcx, 64
 
-nops 2
+nops 0
+_@l16::
 @l16:
   ; - save registers -
   push rbx
@@ -129,9 +136,9 @@ nops 2
   push rsi
   push rdi
 
-  btr eax, 0 ; - reload carry -
+  shr eax, 1 ; - reload carry -
 
-nops 5
+nops 0
 @loop:
   ; - 16 limbs -
   mov r10, [rdx]
@@ -189,7 +196,7 @@ nops 5
   dec r9
   jnz @loop
 
-  setc al ; - save carry -
+  sbb eax, eax ; - save carry -
 
   ; - restore registers -
   pop rdi
@@ -197,11 +204,13 @@ nops 5
   pop r15
   pop r14
   pop rbx
-
+nops 0
+_@end::
 @end:
-  and eax, 1
+  neg eax
+_@ret::
 ret
 UIntX_Add endp
 
 ; align 64
-nops 16
+nops 0

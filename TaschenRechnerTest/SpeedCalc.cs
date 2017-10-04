@@ -392,8 +392,8 @@ namespace TaschenRechnerTest
     //const int BitCount = 1024;
     //const int RefResult = 1995198812;
 
-    const int BitCount = 65536;
-    const int RefResult = 951296797;
+    //const int BitCount = 65536;
+    //const int RefResult = 951296797;
 
     //const int BitCount = 1048576;
     //const int RefResult = -240413923;
@@ -401,8 +401,8 @@ namespace TaschenRechnerTest
     //const int BitCount = 10000000;
     //const int RefResult = -1524706991;
 
-    //const int BitCount = 5;
-    //const int RefResult = 505297501;
+    const int BitCount = 5;
+    const int RefResult = 505297501;
 
     const int ByteCount = BitCount >= 64 ? BitCount / 8 : 1024 + 8;
 
@@ -430,10 +430,10 @@ namespace TaschenRechnerTest
       {
         //   full       1     31    1024   65536  10 M
         // 129,00  588,26  80,90   98,84   52,82  106,16
-        //Adder.UIntX_Add(rp, up, vp, BitCount >= 64 ? ByteCount / sizeof(ulong) : (i & (ByteCount - 8) / sizeof(ulong) - 1) + 1);
+        Adder.UIntX_Add(rp, up, vp, BitCount >= 64 ? ByteCount / sizeof(ulong) : (i & (ByteCount - 8) / sizeof(ulong) - 1) + 1);
 
         // 143,35  672,49  80,47  102,71   61,93  108,66
-        Adder.mpn_add_n_coreisbr(rp, up, vp, BitCount >= 64 ? ByteCount / sizeof(ulong) : (i & (ByteCount - 8) / sizeof(ulong) - 1) + 1);
+        //Adder.mpn_add_n_coreisbr(rp, up, vp, BitCount >= 64 ? ByteCount / sizeof(ulong) : (i & (ByteCount - 8) / sizeof(ulong) - 1) + 1);
       }
     }
 
