@@ -2,6 +2,77 @@
 {
   public unsafe partial struct UIntX
   {
+    #region # // --- Überladungen ---
+    /// <summary>
+    /// inkrementiert eine Zahl
+    /// </summary>
+    /// <param name="val">Zahl, welche inkrementiert werden soll</param>
+    /// <returns>fertig inkrementierte Zahl</returns>
+    public static UIntX operator ++(UIntX val)
+    {
+      return val + 1UL;
+    }
+
+    /// <summary>
+    /// Operator zum addieren zweier Zahlen
+    /// </summary>
+    /// <param name="val1">erster Wert, welcher verwendet werden soll</param>
+    /// <param name="val2">zweiter Wert, welcher verwendet werden soll</param>
+    /// <returns>fertiges Ergebnis</returns>
+    public static UIntX operator +(UIntX val1, byte val2)
+    {
+      return val1 + (ulong)val2;
+    }
+
+    /// <summary>
+    /// Operator zum addieren zweier Zahlen
+    /// </summary>
+    /// <param name="val1">erster Wert, welcher verwendet werden soll</param>
+    /// <param name="val2">zweiter Wert, welcher verwendet werden soll</param>
+    /// <returns>fertiges Ergebnis</returns>
+    public static UIntX operator +(UIntX val1, ushort val2)
+    {
+      return val1 + (ulong)val2;
+    }
+
+    /// <summary>
+    /// Operator zum addieren zweier Zahlen
+    /// </summary>
+    /// <param name="val1">erster Wert, welcher verwendet werden soll</param>
+    /// <param name="val2">zweiter Wert, welcher verwendet werden soll</param>
+    /// <returns>fertiges Ergebnis</returns>
+    public static UIntX operator +(UIntX val1, uint val2)
+    {
+      return val1 + (ulong)val2;
+    }
+    #endregion
+
+    /// <summary>
+    /// Operator zum addieren zweier Zahlen
+    /// </summary>
+    /// <param name="val1">erster Wert, welcher verwendet werden soll</param>
+    /// <param name="val2">zweiter Wert, welcher verwendet werden soll</param>
+    /// <returns>fertiges Ergebnis</returns>
+    public static UIntX operator +(UIntX val1, ulong val2)
+    {
+      var result = new ulong[val1.limbCount + 1];
+      fixed (ulong* rp = result, up = val1.limbs)
+      {
+        AsmWrapper.UIntX_Copy(rp, up, val1.limbCount);
+        ulong cy = val2;
+        long len = 0;
+        while (cy != 0)
+        {
+          ulong sl = rp[len];
+          ulong rl = sl + cy;
+          rp[len] = rl;
+          cy = rl < sl ? 1UL : 0UL;
+          len++;
+        }
+        return new UIntX(result, val1.limbCount + (long)rp[val1.limbCount]);
+      }
+    }
+
     /// <summary>
     /// Operator zum addieren zweier Zahlen
     /// </summary>
@@ -15,53 +86,28 @@
 
       var result = new ulong[val1.limbCount + 1];
 
-      long addLen = val2.limbCount;
-      fixed (ulong* target = result, l1 = val1.limbs, l2 = val2.limbs)
+      long len = val2.limbCount;
+      fixed (ulong* rp = result, up = val1.limbs, vp = val2.limbs)
       {
-        var carry = AsmWrapper.UIntX_Add(target, l1, l2, addLen);
-        while (carry != 0)
+        var cy = AsmWrapper.UIntX_Add(rp, up, vp, len);
+        while (cy != 0)
         {
-          ulong ul = l1[addLen];
-          ulong vl = target[addLen];
+          ulong ul = up[len];
+          ulong vl = rp[len];
           ulong sl = ul + vl;
-          ulong rl = sl + carry;
-          target[addLen] = rl;
-          carry = sl < ul || rl < sl ? 1UL : 0UL;
-          addLen++;
-        }
-        if (val1.limbCount - addLen > 0)
-        {
-          AsmWrapper.UIntX_Copy(target + addLen, l1 + addLen, val1.limbCount - addLen);
-          addLen = val1.limbCount;
-        }
-      }
-
-      return new UIntX(result, addLen);
-    }
-
-    /// <summary>
-    /// inkrementiert eine Zahl
-    /// </summary>
-    /// <param name="val">Zahl, welche inkrementiert werden soll</param>
-    /// <returns>fertig inkrementierte Zahl</returns>
-    public static UIntX operator ++(UIntX val)
-    {
-      var result = new ulong[val.limbCount + 1];
-      fixed (ulong* target = result, src = val.limbs)
-      {
-        AsmWrapper.UIntX_Copy(target, src, val.limbCount);
-        ulong carry = 1;
-        long len = 0;
-        while (carry != 0)
-        {
-          ulong sl = target[len];
-          ulong rl = sl + carry;
-          target[len] = rl;
-          carry = rl < sl ? 1UL : 0UL;
+          ulong rl = sl + cy;
+          rp[len] = rl;
+          cy = sl < ul || rl < sl ? 1UL : 0UL;
           len++;
         }
-        return new UIntX(result, val.limbCount + (long)target[val.limbCount]);
+        if (val1.limbCount - len > 0)
+        {
+          AsmWrapper.UIntX_Copy(rp + len, up + len, val1.limbCount - len);
+          len = val1.limbCount;
+        }
       }
+
+      return new UIntX(result, len);
     }
   }
 }

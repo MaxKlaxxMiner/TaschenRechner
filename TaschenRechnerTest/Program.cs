@@ -140,6 +140,12 @@ namespace TaschenRechnerTest
       var val20 = new ui(ulong.MaxValue);
       val20++;
       Debug.Assert(val20.ToString() == "18446744073709551616");
+      val20 += 12345;
+      Debug.Assert(val20.ToString() == "18446744073709563961");
+      val20 += ulong.MaxValue;
+      Debug.Assert(val20.ToString() == "36893488147419115576");
+      val20 += ulong.MaxValue;
+      Debug.Assert(val20.ToString() == "55340232221128667191");
     }
 
     static void Compare()
@@ -330,7 +336,7 @@ namespace TaschenRechnerTest
     {
       // --- Funktionalitäten prüfen ---
       //Constructor();
-      //Add();
+      Add();
       //Compare();
       //Sub();
       //Mul();
@@ -350,7 +356,7 @@ namespace TaschenRechnerTest
       // --- Extras prüfen ---
       //SpeedDiv();
       //SpeedValues();
-      SpeedCalc();
+      //SpeedCalc();
       //MemTest();
     }
   }
