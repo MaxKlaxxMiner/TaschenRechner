@@ -139,6 +139,7 @@ _@l16::
   shr eax, 1 ; - reload carry -
 
 nops 0
+_@loop::
 @loop:
   ; - 16 limbs -
   mov r10, [rdx]

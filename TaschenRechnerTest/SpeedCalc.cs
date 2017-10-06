@@ -392,8 +392,8 @@ namespace TaschenRechnerTest
     //const int BitCount = 1024;
     //const int RefResult = 1995198812;
 
-    //const int BitCount = 65536;
-    //const int RefResult = 951296797;
+    const int BitCount = 65536;
+    const int RefResult = 951296797;
 
     //const int BitCount = 1048576;
     //const int RefResult = -240413923;
@@ -401,8 +401,8 @@ namespace TaschenRechnerTest
     //const int BitCount = 10000000;
     //const int RefResult = -1524706991;
 
-    const int BitCount = 5;
-    const int RefResult = 505297501;
+    //const int BitCount = 5;
+    //const int RefResult = 505297501;
 
     const int ByteCount = BitCount >= 64 ? BitCount / 8 : 1024 + 8;
 
@@ -429,7 +429,9 @@ namespace TaschenRechnerTest
       for (long i = 0; i < (BitCount >= 64 ? 10000000 / BitCount * 1024 : 5000000); i++)
       {
         //   full       1     31    1024   65536  10 M
-        // 129,00  588,26  80,90   98,84   52,82  106,16
+        // 130,05  597,83  81,70   97,83   52,65  116,19
+        // 133,46  551,99  85,57  106,44   52,75  116,97
+        // 
         Adder.UIntX_Add(rp, up, vp, BitCount >= 64 ? ByteCount / sizeof(ulong) : (i & (ByteCount - 8) / sizeof(ulong) - 1) + 1);
 
         // 143,35  672,49  80,47  102,71   61,93  108,66
@@ -533,8 +535,58 @@ namespace TaschenRechnerTest
       int count = Adder.GetAlignPointers(p);
       for (int i = 0; i < count; i++)
       {
-        Console.WriteLine("  0x" + p[i].ToString("x").PadLeft(16, '0') + " (" + (p[i] & 15) + " | " + (p[i] & 31) + " | " + (p[i] & 63) + ")");
-        //        Console.WriteLine("  0x" + p[i].ToString("x").PadLeft(16, '0') + " (" + PointerAlign(p[i]) + (PointerAlign(p[i]) < 32 ? " ### - " + (32 - (p[i] & 31)) : "") + ")");
+        //Console.WriteLine("  0x" + p[i].ToString("x").PadLeft(16, '0') + " (" + (-p[i] & 15) + " | " + (-p[i] & 31) + " | " + (-p[i] & 63) + ")");
+        long pp = p[i];
+        Console.Write("  0x" + pp.ToString("x").PadLeft(16, '0') + " -");
+        int pmask = (int)(pp & 63);
+        pmask = 36;
+        for (int m = 0; m < 64; m++)
+        {
+          if ((m & 15) == 0) Console.Write(' ');
+          Console.ForegroundColor = ConsoleColor.DarkGray;
+          if (m >= pmask)
+          {
+            switch (pmask)
+            {
+              case 32:
+              case 33:
+              case 34:
+              case 35:
+              case 36: Console.ForegroundColor = ConsoleColor.White; break;
+              case 37:
+              case 38:
+              case 39:
+              case 40: Console.ForegroundColor = ConsoleColor.DarkMagenta; break;
+              case 41:
+              case 42:
+              case 43:
+              case 44: Console.ForegroundColor = ConsoleColor.DarkRed; break;
+              case 45:
+              case 46:
+              case 47: Console.ForegroundColor = ConsoleColor.Red; break;
+
+              case 48:
+              case 49:
+              case 50:
+              case 51:
+              case 52: Console.ForegroundColor = ConsoleColor.Yellow; break;
+              case 53:
+              case 54:
+              case 55:
+              case 56: Console.ForegroundColor = ConsoleColor.DarkMagenta; break;
+              case 57:
+              case 58:
+              case 59:
+              case 60: Console.ForegroundColor = ConsoleColor.DarkRed; break;
+              case 61:
+              case 62:
+              case 63: Console.ForegroundColor = ConsoleColor.Red; break;
+            }
+          }
+          Console.Write('#');
+        }
+        Console.ForegroundColor = ConsoleColor.Gray;
+        Console.WriteLine();
       }
     }
 

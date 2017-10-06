@@ -3,7 +3,7 @@ include Add.asm
 
 .data
 
-alignPointers dq UIntX_Add, _@l2, _@l4, _@l8, _@l16, _@end, _@ret
+alignPointers dq UIntX_Add, _@l2, _@l4, _@l8, _@l16, _@loop, _@end, _@ret
                  ;@dllend
 
 alignPointersCount dq (alignPointersCount - alignPointers) / qword
